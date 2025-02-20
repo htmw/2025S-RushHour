@@ -10,8 +10,6 @@ import elderlyMale from "../../animations/elderly_male.json";
 import elderlyFemale from "../../animations/elderly_female.json";
 import neutral from "../../animations/neutral.json"; // Default animation
 import "../css/PatientQue.css";
-import { SignOutButton } from "@clerk/clerk-react";
-
 
 const Questionnaire = () => {
   const [formData, setFormData] = useState({
@@ -45,11 +43,21 @@ const Questionnaire = () => {
         <h2>Health Questionnaire</h2>
         <div className="form-group">
           <label>Name</label>
-          <input type="text" name="name" value={formData.name} onChange={handleChange} />
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+          />
         </div>
         <div className="form-group">
           <label>Age</label>
-          <input type="number" name="age" value={formData.age} onChange={handleChange} />
+          <input
+            type="number"
+            name="age"
+            value={formData.age}
+            onChange={handleChange}
+          />
         </div>
         <div className="form-group">
           <label>Sex</label>
@@ -61,23 +69,29 @@ const Questionnaire = () => {
         </div>
         <div className="form-group">
           <label>Height (cm)</label>
-          <input type="number" name="height" value={formData.height} onChange={handleChange} />
+          <input
+            type="number"
+            name="height"
+            value={formData.height}
+            onChange={handleChange}
+          />
         </div>
         <div className="form-group">
           <label>Weight (kg)</label>
-          <input type="number" name="weight" value={formData.weight} onChange={handleChange} />
+          <input
+            type="number"
+            name="weight"
+            value={formData.weight}
+            onChange={handleChange}
+          />
         </div>
         <button>Submit</button>
-        
       </div>
 
       {/* Animation Section */}
       <div className="animation-container">
         <Lottie animationData={getAnimation()} loop={true} />
       </div>
-      <SignOutButton>
-        <button style={{ margin: "10px", padding: "10px" }}>Logout</button>
-      </SignOutButton>
     </div>
   );
 };
