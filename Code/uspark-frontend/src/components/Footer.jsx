@@ -92,7 +92,7 @@ const Footer = () => {
         </Grid2>
 
         {/* Footer Bottom */}
-        <Box textAlign="center" mt={4}>
+        <Box textAlign="center" mb={2}>
           <Typography variant="body2">
             © {new Date().getFullYear()} Uspark. All Rights Reserved.
           </Typography>

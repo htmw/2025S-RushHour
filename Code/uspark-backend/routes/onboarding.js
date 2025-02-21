@@ -7,6 +7,7 @@ const { default: authenticate } = require("../Middleware/authenticate");
 
 router.post("/onboarding/patient", authenticate, async (req, res) => {
   const { age, sex, height, weight, healthIssues } = req.body;
+  console.log({ age, sex, height, weight, healthIssues });
 
   try {
     const user = await User.findById(req.user.userId);
@@ -29,7 +30,6 @@ router.post("/onboarding/patient", authenticate, async (req, res) => {
     // ✅ Update User Model
     user.role = "patient";
     user.isOnboarded = true;
-    user.onboardingData = { age, sex, height, weight, healthIssues };
     await user.save();
 
     res.status(201).json({ message: "Patient onboarding completed" });
@@ -62,7 +62,6 @@ router.post("/onboarding/doctor", authenticate, async (req, res) => {
     // ✅ Update User Model
     user.role = "doctor";
     user.isOnboarded = true;
-    user.onboardingData = { specialization, experience, certifications };
     await user.save();
 
     res.status(201).json({ message: "Doctor onboarding completed" });

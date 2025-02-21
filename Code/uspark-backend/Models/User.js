@@ -13,7 +13,6 @@ const UserSchema = new mongoose.Schema(
     },
     role: { type: String, enum: ["patient", "doctor"], required: false },
     isOnboarded: { type: Boolean, default: false },
-    onboardingData: { type: Object, default: {} },
   },
   { timestamps: true }
 );

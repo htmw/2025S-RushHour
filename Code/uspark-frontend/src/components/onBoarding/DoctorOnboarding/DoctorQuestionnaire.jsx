@@ -3,8 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { updateDoctorData } from "../../../store/onBoardingSlice";
 import { TextField, Button, Typography, Paper, Grid2 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { enqueueSnackbar } from "notistack";
 
 const DoctorQuestionnaire = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth); // ✅ Fetch logged-in user data
   const token = user.token;
@@ -40,10 +43,16 @@ const DoctorQuestionnaire = () => {
       );
 
       dispatch(updateDoctorData(formData));
-      alert("Doctor Onboarding Completed!");
+      enqueueSnackbar("Doctor Onboarding Completed!", {
+        variant: "success",
+      });
+      navigate("/dashboard");
     } catch (err) {
       console.error("Onboarding Error:", err);
-      setError(err.response?.data?.message || "Onboarding failed");
+      setError();
+      enqueueSnackbar(err.response?.data?.message || "Onboarding failed", {
+        variant: "error",
+      });
     } finally {
       setLoading(false);
     }

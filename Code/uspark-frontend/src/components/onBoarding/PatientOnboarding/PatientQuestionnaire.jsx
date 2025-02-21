@@ -20,8 +20,11 @@ import adultFemale from "../../../../animations/adult_female.json";
 import elderlyMale from "../../../../animations/elderly_male.json";
 import elderlyFemale from "../../../../animations/elderly_female.json";
 import neutral from "../../../../animations/neutral.json";
+import { enqueueSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
 
 const PatientQuestionnaire = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth); // ✅ Fetch logged-in user data
   const token = user.token;
@@ -59,10 +62,16 @@ const PatientQuestionnaire = () => {
       );
 
       dispatch(updatePatientData(formData));
-      alert("Patient Onboarding Completed!");
+      enqueueSnackbar("Patient Onboarding Completed!", {
+        variant: "success",
+      });
+      navigate("/dashboard");
     } catch (err) {
       console.error("Onboarding Error:", err);
       setError(err.response?.data?.message || "Onboarding failed");
+      enqueueSnackbar(err.response?.data?.message || "Onboarding failed", {
+        variant: "error",
+      });
     } finally {
       setLoading(false);
     }
