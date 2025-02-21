@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { setUserAuth } from "../../store/authSlice";
+import { enqueueSnackbar } from "notistack";
 
 import GoogleIcon from "@mui/icons-material/Google";
 import AppleIcon from "@mui/icons-material/Apple";
@@ -58,6 +59,12 @@ const Login = () => {
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password");
+      enqueueSnackbar(
+        err.response?.data?.message || "Invalid email or password",
+        {
+          variant: "error",
+        }
+      );
     }
   };
 

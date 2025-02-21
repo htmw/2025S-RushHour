@@ -3,6 +3,7 @@ import { lazy } from "react";
 const Login = lazy(() => import("../components/auth/Login"));
 const Signup = lazy(() => import("../components/auth/Signup"));
 const Home = lazy(() => import("../components/Home"));
+const Dashboard = lazy(() => import("../components/Dashboard/index"));
 const Onboarding = lazy(() => import("../components/onBoarding/Onboarding"));
 
 export const PrivateRoutes = [
@@ -11,11 +12,11 @@ export const PrivateRoutes = [
     component: Onboarding,
     exact: true,
   },
-  // {
-  //   path: "/",
-  //   component: Home,
-  //   exact: true,
-  // },
+  {
+    path: "/dashboard",
+    component: Dashboard,
+    exact: true,
+  },
 ];
 
 export const PublicRoutes = [

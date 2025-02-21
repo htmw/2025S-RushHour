@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import { PrivateRoutes, PublicRoutes } from "./routeList";
 import { Suspense } from "react";
-import SuspenseComponent from "../components/Suspense";
+import LoadingSpinner from "../components/Suspense";
 import { useSelector } from "react-redux";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -25,7 +25,7 @@ const AppRoutes = () => {
   return (
     <Router>
       <Header />
-      <Suspense fallback={<SuspenseComponent />}>
+      <Suspense fallback={<LoadingSpinner />}>
         <Routes>
           {PublicRoutes.map(({ path, component: Component }, index) => (
             <Route
