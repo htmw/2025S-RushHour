@@ -1,5 +1,5 @@
 // src/components/Login.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -10,11 +10,9 @@ import {
   Paper,
   Divider,
   Grid2,
+  CircularProgress,
 } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { setUserAuth } from "../../store/authSlice";
-import { enqueueSnackbar } from "notistack";
-
+import { useDispatch, useSelector } from "react-redux";
 import GoogleIcon from "@mui/icons-material/Google";
 import AppleIcon from "@mui/icons-material/Apple";
 
@@ -25,12 +23,15 @@ import {
   appleProvider,
   signInWithPopup,
 } from "../../firebase/firebase";
+import { login, oAuthLogin } from "../../store/actions";
+import history from "../../history";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
+  const { loading, error, token } = useSelector((state) => state.auth);
+  const isOnboarded = useSelector((state) => state.auth.isOnboarded);
 
   // ✅ Handle Email/Password Login
   const handleChange = (e) => {
@@ -39,33 +40,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      const response = await axios.post("http://localhost:5000/auth", {
-        email: form.email,
-        password: form.password,
-      });
-
-      const { token } = response.data;
-      const userPayload = JSON.parse(atob(token.split(".")[1]));
-
-      dispatch(
-        setUserAuth({
-          token,
-          email: userPayload.email,
-          fullName: userPayload.fullName,
-        })
-      );
-      navigate("/");
-    } catch (err) {
-      setError(err.response?.data?.message || "Invalid email or password");
-      enqueueSnackbar(
-        err.response?.data?.message || "Invalid email or password",
-        {
-          variant: "error",
-        }
-      );
-    }
+    dispatch(login(form, navigate));
   };
 
   // ✅ Handle Google/Apple OAuth Login
@@ -73,36 +48,26 @@ const Login = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
-      console.log("OAuth User:", user);
-
-      // ✅ Send user data to backend for JWT generation
-      const response = await axios.post("http://localhost:5000/auth/oauth", {
-        email: user.email,
-        userId: user.uid,
-        fullName: user.displayName,
-        provider: provider.providerId,
-      });
-
-      const { token } = response.data;
-
-      const userPayload = JSON.parse(atob(token.split(".")[1]));
-
       dispatch(
-        setUserAuth({
-          token,
-          email: userPayload.email,
-          fullName: userPayload.fullName,
-        })
+        oAuthLogin(
+          {
+            email: user.email,
+            userId: user.uid,
+            fullName: user.displayName,
+            provider: provider.providerId,
+          },
+          navigate
+        )
       );
-
-      // ✅ Redirect to Home
-      navigate("/");
     } catch (err) {
       console.error("OAuth login error:", err);
-      setError("Social login failed. Please try again.");
     }
   };
+  useEffect(() => {
+    if (token) {
+      history.push(isOnboarded ? "/dashboard" : "/");
+    }
+  }, [token, isOnboarded, navigate]);
 
   return (
     <Container maxWidth="sm">
@@ -150,7 +115,7 @@ const Login = () => {
           onClick={handleSubmit}
           style={{ marginTop: 15 }}
         >
-          Login
+          {loading ? <CircularProgress size={24} /> : "Login"}
         </Button>
 
         <Divider style={{ margin: "20px 0" }}>OR</Divider>
@@ -180,7 +145,7 @@ const Login = () => {
 
         <Typography variant="body2" align="center" style={{ marginTop: 10 }}>
           Don't have an account?{" "}
-          <Button color="primary" onClick={() => navigate("/signup")}>
+          <Button color="primary" onClick={() => history.push("/signup")}>
             Sign Up
           </Button>
         </Typography>

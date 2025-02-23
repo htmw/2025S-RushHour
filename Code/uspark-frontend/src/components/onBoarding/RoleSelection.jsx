@@ -1,17 +1,17 @@
 // src/components/Onboarding/RoleSelection.jsx
 import React from "react";
 import { useDispatch } from "react-redux";
-import { setRole } from "../../store/onBoardingSlice";
 import { Button, Typography, Grid2, Paper } from "@mui/material";
 import Lottie from "lottie-react";
 import doctorAnimation from "../../../animations/Doctor.json";
 import patientAnimation from "../../../animations/Patient.json";
+import { roleSelection } from "../../store/actions";
 
 const RoleSelection = () => {
   const dispatch = useDispatch();
 
   const handleRoleSelect = (role) => {
-    dispatch(setRole(role));
+    dispatch(roleSelection(role, navigate));
   };
 
   return (

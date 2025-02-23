@@ -5,7 +5,7 @@ describe("Home Page", () => {
     cy.contains("Welcome").should("be.visible");
   });
 
-  it("should navigate to the login page", () => {
+  it("should history.push( to the login page", () => {
     cy.visit("/");
 
     cy.get("a[href='/login']").click();

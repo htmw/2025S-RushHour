@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { updateDoctorData } from "../../../store/onBoardingSlice";
 import { TextField, Button, Typography, Paper, Grid2 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { enqueueSnackbar } from "notistack";
+import { doctorOnboarding } from "../../../store/actions";
 
 const DoctorQuestionnaire = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth); // ✅ Fetch logged-in user data
-  const token = user.token;
-  console.log({ token });
+  const user = useSelector((state) => state.auth);
+  const { loading, error, doctorData } = useSelector(
+    (state) => state.onBoarding
+  );
+
   const [formData, setFormData] = useState({
     name: user.fullName || "",
     specialization: "",
@@ -19,43 +19,18 @@ const DoctorQuestionnaire = () => {
     certifications: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  // useEffect(() => {
+  //   if (doctorData) {
+  //     history.push("/dashboard");
+  //   }
+  // }, [doctorData, navigate]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value }, navigate);
   };
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      // ✅ Send data to backend
-      await axios.post(
-        "http://localhost:5000/api/onboarding/doctor",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      dispatch(updateDoctorData(formData));
-      enqueueSnackbar("Doctor Onboarding Completed!", {
-        variant: "success",
-      });
-      navigate("/dashboard");
-    } catch (err) {
-      console.error("Onboarding Error:", err);
-      setError();
-      enqueueSnackbar(err.response?.data?.message || "Onboarding failed", {
-        variant: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleSubmit = () => {
+    dispatch(doctorOnboarding({ formData, token: user.token }, navigate));
   };
 
   return (

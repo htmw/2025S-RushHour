@@ -1,7 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { updatePatientData } from "../../../store/onBoardingSlice";
 import {
   TextField,
   Button,
@@ -11,23 +9,27 @@ import {
   Paper,
 } from "@mui/material";
 import Lottie from "lottie-react";
-import childMale from "../../../../animations/child_male.json";
-import childFemale from "../../../../animations/child_female.json";
-import teenMale from "../../../../animations/teen_male.json";
-import teenFemale from "../../../../animations/teen_female.json";
-import adultMale from "../../../../animations/adult_male.json";
-import adultFemale from "../../../../animations/adult_female.json";
-import elderlyMale from "../../../../animations/elderly_male.json";
-import elderlyFemale from "../../../../animations/elderly_female.json";
-import neutral from "../../../../animations/neutral.json";
-import { enqueueSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
+import {
+  childMale,
+  childFemale,
+  teenMale,
+  teenFemale,
+  adultMale,
+  adultFemale,
+  elderlyMale,
+  elderlyFemale,
+  neutral,
+} from "../../../../animations";
+import { patientOnboarding } from "../../../store/actions";
 
 const PatientQuestionnaire = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth); // ✅ Fetch logged-in user data
-  const token = user.token;
+  const user = useSelector((state) => state.auth);
+  const { loading, error, patientData } = useSelector(
+    (state) => state.onBoarding
+  );
 
   const [formData, setFormData] = useState({
     name: user.fullName || "",
@@ -38,43 +40,18 @@ const PatientQuestionnaire = () => {
     healthIssues: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  // useEffect(() => {
+  //   if (patientData) {
+  //     history.push("/dashboard");
+  //   }
+  // }, [patientData, navigate]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value }, navigate);
   };
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      // ✅ Send data to backend
-      await axios.post(
-        "http://localhost:5000/api/onboarding/patient",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      dispatch(updatePatientData(formData));
-      enqueueSnackbar("Patient Onboarding Completed!", {
-        variant: "success",
-      });
-      navigate("/dashboard");
-    } catch (err) {
-      console.error("Onboarding Error:", err);
-      setError(err.response?.data?.message || "Onboarding failed");
-      enqueueSnackbar(err.response?.data?.message || "Onboarding failed", {
-        variant: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleSubmit = () => {
+    dispatch(patientOnboarding({ formData, token: user.token }, navigate));
   };
 
   // Function to select Lottie animation
