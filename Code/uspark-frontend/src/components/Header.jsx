@@ -15,8 +15,9 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logoutUser } from "../store/authSlice"; // Assume you have a logout action
 import { headerRouteList } from "../routes/routeList";
+import { logoutUser } from "../store/actions";
+import history from "../history";
 const Header = () => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -37,8 +38,9 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logoutUser());
-    navigate("/login");
+    dispatch(logoutUser(navigate));
+    history.push("/login");
+    handleMenuClose();
   };
 
   return (
@@ -48,7 +50,7 @@ const Header = () => {
         <Typography
           variant="h6"
           sx={{ flexGrow: 1, cursor: "pointer" }}
-          onClick={() => navigate("/")}
+          onClick={() => history.push("/")}
         >
           Uspark
         </Typography>
@@ -58,7 +60,7 @@ const Header = () => {
           <>
             {headerRouteList.map(({ name, path }) => {
               return (
-                <Button color="inherit" onClick={() => navigate(path)}>
+                <Button color="inherit" onClick={() => history.push(path)}>
                   {name}
                 </Button>
               );
@@ -77,12 +79,14 @@ const Header = () => {
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
+              <MenuItem onClick={() => history.push("/profile")}>
+                Profile
+              </MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </>
         ) : (
-          <Button color="inherit" onClick={() => navigate("/login")}>
+          <Button color="inherit" onClick={() => history.push("/login")}>
             Login
           </Button>
         )}
@@ -100,19 +104,21 @@ const Header = () => {
             >
               {headerRouteList.map(({ name, path }) => {
                 return (
-                  <MenuItem onClick={() => navigate(path)}>{name}</MenuItem>
+                  <MenuItem onClick={() => history.push(path)}>{name}</MenuItem>
                 );
               })}
 
               {user ? (
                 <>
-                  <MenuItem onClick={() => navigate("/profile")}>
+                  <MenuItem onClick={() => history.push("/profile")}>
                     Profile
                   </MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </>
               ) : (
-                <MenuItem onClick={() => navigate("/login")}>Login</MenuItem>
+                <MenuItem onClick={() => history.push("/login")}>
+                  Login
+                </MenuItem>
               )}
             </Menu>
           </>

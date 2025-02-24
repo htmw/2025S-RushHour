@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect } from "react";
 import {
   Container,
   Typography,
@@ -8,33 +7,21 @@ import {
   Avatar,
   CircularProgress,
 } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDashboard } from "../../store/actions";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
+  const { userData, loading, error } = useSelector((state) => state.dashboard);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = auth.token;
-        const response = await axios.get(
-          "http://localhost:5000/api/dashboard",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setUserData(response.data);
-      } catch (err) {
-        console.error("Error fetching user data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, [auth.token]);
+    if (auth.token) {
+      dispatch(fetchDashboard({ token: auth.token }, navigate));
+    }
+  }, [auth.token, dispatch]);
 
   if (loading) {
     return (
@@ -51,16 +38,25 @@ const Dashboard = () => {
     );
   }
 
-  if (!userData) {
+  if (error) {
     return (
       <Container>
         <Typography variant="h5" color="error">
-          Failed to load user data.
+          {error}
         </Typography>
       </Container>
     );
   }
 
+  if (!userData) {
+    return (
+      <Container>
+        <Typography variant="h5" color="textSecondary">
+          No user data found.
+        </Typography>
+      </Container>
+    );
+  }
   return (
     <Container sx={{ mt: 5 }}>
       <Paper elevation={3} sx={{ p: 4 }}>

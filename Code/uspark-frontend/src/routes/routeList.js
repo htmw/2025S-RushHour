@@ -3,8 +3,8 @@ import { lazy } from "react";
 const Login = lazy(() => import("../components/auth/Login"));
 const Signup = lazy(() => import("../components/auth/Signup"));
 const Home = lazy(() => import("../components/Home"));
-const Dashboard = lazy(() => import("../components/Dashboard/index"));
-const Onboarding = lazy(() => import("../components/onBoarding/Onboarding"));
+const Dashboard = lazy(() => import("../components/Dashboard"));
+const Onboarding = lazy(() => import("../components/onBoarding"));
 
 export const PrivateRoutes = [
   {

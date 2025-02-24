@@ -7,7 +7,12 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 const generateToken = (user) => {
   return jwt.sign(
-    { userId: user._id, email: user.email, fullName: user.fullName },
+    {
+      userId: user._id,
+      email: user.email,
+      fullName: user.fullName,
+      isOnboarded: user.isOnboarded,
+    },
     JWT_SECRET,
     { expiresIn: "1h" }
   );
@@ -62,11 +67,7 @@ router.post("/auth/oauth", async (req, res) => {
       await user.save();
     }
 
-    const token = jwt.sign(
-      { userId: user._id, email: user.email, fullName: user.fullName },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const token = generateToken(user);
 
     res.json({ token });
   } catch (err) {

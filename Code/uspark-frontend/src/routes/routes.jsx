@@ -1,5 +1,5 @@
 import {
-  BrowserRouter as Router,
+  unstable_HistoryRouter as Router,
   Routes,
   Route,
   Navigate,
@@ -10,6 +10,7 @@ import LoadingSpinner from "../components/Suspense";
 import { useSelector } from "react-redux";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import history from "../history";
 const PrivateRoute = ({ Component }) => {
   const token = useSelector((state) => state.auth.token);
   if (!token) return <Navigate to="/login" />;
@@ -18,12 +19,14 @@ const PrivateRoute = ({ Component }) => {
 
 const PublicRoute = ({ Component }) => {
   const token = useSelector((state) => state.auth.token);
-  return token ? <Navigate to="/" /> : <Component />;
+  console.log({ token });
+  const isOnboarded = useSelector((state) => state.auth.isOnboarded);
+  return token && !isOnboarded ? <Navigate to="/" /> : <Component />;
 };
 
 const AppRoutes = () => {
   return (
-    <Router>
+    <Router history={history}>
       <Header />
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>

@@ -1,5 +1,5 @@
 // src/components/Signup.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -9,12 +9,12 @@ import {
   Paper,
   Grid2,
   Divider,
+  CircularProgress,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import AppleIcon from "@mui/icons-material/Apple";
-import axios from "axios";
-import { useDispatch } from "react-redux";
-import { setUserAuth } from "../../store/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { oAuthSignup, signup } from "../../store/actions";
 
 // ✅ Firebase Auth Imports
 import {
@@ -23,7 +23,7 @@ import {
   appleProvider,
   signInWithPopup,
 } from "../../firebase/firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import history from "../../history";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -35,13 +35,12 @@ const Signup = () => {
     confirmPassword: "",
   });
   const [error, setError] = useState("");
+  const { loading, token, isOnboarded } = useSelector((state) => state.auth);
 
-  // ✅ Handle input changes
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ Handle custom email/password signup
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -50,45 +49,16 @@ const Signup = () => {
       return;
     }
 
-    try {
-      // ✅ Create user with Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        form.email,
-        form.password
-      );
-
-      const user = userCredential.user;
-
-      // ✅ Update user profile with display name
-      await updateProfile(user, { displayName: form.name });
-
-      console.log("Firebase User:", user);
-
-      // ✅ Send user data to backend to get JWT
-      const backendResponse = await axios.post("http://localhost:5000/auth", {
-        email: user.email,
-        userId: user.uid,
-        fullName: form.name,
-      });
-
-      const { token } = backendResponse.data;
-      const userPayload = JSON.parse(atob(token.split(".")[1]));
-
-      dispatch(
-        setUserAuth({
-          token,
-          email: userPayload.email,
-          fullName: userPayload.fullName,
-        })
-      );
-
-      // ✅ Redirect to Home
-      navigate("/");
-    } catch (err) {
-      console.error("Sign-up Error:", err);
-      setError(err.message || "Sign-up failed");
-    }
+    dispatch(
+      signup(
+        {
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        },
+        navigate
+      )
+    );
   };
 
   // ✅ Handle OAuth signup for Google/Apple
@@ -97,36 +67,27 @@ const Signup = () => {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      console.log("OAuth User:", user);
-
-      // ✅ Send user data to backend for JWT generation
-      const response = await axios.post("http://localhost:5000/auth/oauth", {
-        email: user.email,
-        userId: user.uid,
-        fullName: user.displayName,
-        provider: provider.providerId,
-      });
-
-      const { token } = response.data;
-
-      const userPayload = JSON.parse(atob(token.split(".")[1]));
-
       dispatch(
-        setUserAuth({
-          token,
-          email: userPayload.email,
-          fullName: userPayload.fullName,
-        })
+        oAuthSignup(
+          {
+            email: user.email,
+            userId: user.uid,
+            fullName: user.displayName,
+            provider: provider.providerId,
+          },
+          navigate
+        )
       );
-
-      // ✅ Redirect to Home
-      navigate("/");
     } catch (err) {
       console.error("OAuth signup error:", err);
       setError("Social signup failed. Please try again.");
     }
   };
-
+  // useEffect(() => {
+  //   if (token) {
+  //     history.push(isOnboarded ? "/dashboard" : "/");
+  //   }
+  // }, [token, isOnboarded, navigate]);
   return (
     <Container maxWidth="sm">
       <Paper elevation={3} style={{ padding: 20, marginTop: 50 }}>
@@ -194,7 +155,7 @@ const Signup = () => {
           onClick={handleSubmit}
           style={{ marginTop: 15 }}
         >
-          Sign Up
+          {loading ? <CircularProgress size={24} /> : "Sign Up"}
         </Button>
 
         <Divider style={{ margin: "20px 0" }}>OR</Divider>
@@ -224,7 +185,7 @@ const Signup = () => {
 
         <Typography variant="body2" align="center" style={{ marginTop: 10 }}>
           Already have an account?{" "}
-          <Button color="primary" onClick={() => navigate("/login")}>
+          <Button color="primary" onClick={() => history.push("/login")}>
             Login
           </Button>
         </Typography>

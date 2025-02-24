@@ -1,0 +1,9 @@
+export { default as childMale } from "./child_male.json";
+export { default as childFemale } from "./child_female.json";
+export { default as teenMale } from "./teen_male.json";
+export { default as teenFemale } from "./teen_female.json";
+export { default as adultMale } from "./adult_male.json";
+export { default as adultFemale } from "./adult_female.json";
+export { default as elderlyMale } from "./elderly_male.json";
+export { default as elderlyFemale } from "./elderly_female.json";
+export { default as neutral } from "./neutral.json";
