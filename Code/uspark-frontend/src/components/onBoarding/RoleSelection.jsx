@@ -6,9 +6,11 @@ import Lottie from "lottie-react";
 import doctorAnimation from "../../../animations/Doctor.json";
 import patientAnimation from "../../../animations/Patient.json";
 import { roleSelection } from "../../store/actions";
+import { useNavigate } from "react-router-dom";
 
 const RoleSelection = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleRoleSelect = (role) => {
     dispatch(roleSelection(role, navigate));
