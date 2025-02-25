@@ -39,4 +39,4 @@ jobs:
         run: npm install
       - name: Run Backend Tests
         working-directory: ./Code/uspark-backend
-        run: npm run test
+        run: npm test
