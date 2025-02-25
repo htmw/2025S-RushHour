@@ -10,7 +10,6 @@ describe("Login Page", () => {
     cy.get("input[name='email']").type("invaliduser@example.com");
     cy.get("input[name='password']").type("wrongpassword");
     cy.get("button[type='submit']").click();
-
     cy.contains("Invalid email or password").should("be.visible");
   });
 
