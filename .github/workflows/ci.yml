@@ -3,10 +3,10 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - host # Trigger when pushing to the host branch
+      - main # Trigger when pushing to the host branch
   pull_request:
     branches:
-      - host
+      - main
 
 jobs:
   test-frontend:
