@@ -44,19 +44,7 @@ export const doctorOnboarding = createAsyncActions(types.DOCTOR_ONBOARDING);
 export const logoutUser = createAsyncActions(types.LOGOUT_USER);
 export const patientOnboarding = createAsyncActions(types.PATIENT_ONBOARDING);
 export const roleSelection = createAsyncActions(types.ROLE_SELECION);
+export const uploadProfileImage = createAsyncActions(types.UPLOAD_PROFILE_IMAGE);
 
-export const uploadProfileImageRequest = (formData) => ({
-  type: UPLOAD_PROFILE_IMAGE_REQUEST,
-  payload: formData,
-});
 
-export const uploadProfileImageSuccess = (imageUrl) => ({
-  type: UPLOAD_PROFILE_IMAGE_SUCCESS,
-  payload: imageUrl,
-});
-
-export const uploadProfileImageFailure = (error) => ({
-  type: UPLOAD_PROFILE_IMAGE_FAILURE,
-  payload: error,
-});
 

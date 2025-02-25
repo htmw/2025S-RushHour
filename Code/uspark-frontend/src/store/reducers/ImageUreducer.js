@@ -1,6 +1,6 @@
 import {
     UPLOAD_PROFILE_IMAGE_SUCCESS,
-    UPLOAD_PROFILE_IMAGE_FAILURE,
+    UPLOAD_PROFILE_IMAGE_ERROR,
   } from "../actions/types";
   
   const initialState = {
@@ -16,7 +16,7 @@ import {
           imageUrl: action.payload,
           error: null,
         };
-      case UPLOAD_PROFILE_IMAGE_FAILURE:
+      case UPLOAD_PROFILE_IMAGE_ERROR:
         return {
           ...state,
           error: action.payload,

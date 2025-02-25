@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Avatar, IconButton, Button } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { uploadProfileImageRequest } from "../../store/actions/index"; // Adjust path as necessary
+import { uploadProfileImage } from "../../store/actions/index"; // Adjust path as necessary
 
 const ProfileImageUpload = ({ userData }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -35,7 +35,7 @@ const ProfileImageUpload = ({ userData }) => {
     formData.append("userId", userData.userId);
 
     // Dispatch the upload action
-    dispatch(uploadProfileImageRequest(formData));
+    dispatch(uploadProfileImage(formData));
   };
 
   return (
