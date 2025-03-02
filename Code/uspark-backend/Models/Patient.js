@@ -13,7 +13,6 @@ const PatientSchema = new mongoose.Schema(
     height: { type: Number, required: true },
     weight: { type: Number, required: true },
     healthIssues: { type: String },
-    image: { type: String }, // Stores the image URL or file path
   },
   { timestamps: true }
 );

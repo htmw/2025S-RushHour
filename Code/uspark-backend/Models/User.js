@@ -13,6 +13,7 @@ const UserSchema = new mongoose.Schema(
     },
     role: { type: String, enum: ["patient", "doctor"], required: false },
     isOnboarded: { type: Boolean, default: false },
+    image: { type: String }, // Stores the image URL or file path
   },
   { timestamps: true }
 );

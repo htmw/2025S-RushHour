@@ -2,8 +2,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
 import rootSaga from "./sagas";
 import { reducer } from "./reducers";
-import { watchUploadProfileImage } from "./sagas/ImageUsaga";
-
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -13,13 +11,11 @@ const store = configureStore({
     getDefaultMiddleware({
       thunk: false,
       serializableCheck: {
-        ignoredActionPaths: ["meta.navigate"], // Ignore non-serializable navigate
+        ignoredActionPaths: ["meta.navigate"],
       },
     }).concat(sagaMiddleware),
 });
 
 sagaMiddleware.run(rootSaga);
-
-
 
 export default store;
