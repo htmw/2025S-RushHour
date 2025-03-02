@@ -27,9 +27,7 @@ function* handleLogin(action) {
     yield put(
       login.success({
         token,
-        email: userPayload.email,
-        fullName: userPayload.fullName,
-        isOnboarded: userPayload.isOnboarded,
+        ...userPayload,
       })
     );
     localStorage.setItem("token", token);
@@ -60,18 +58,9 @@ function* handleOAuthLogin(action) {
     yield put(
       oAuthLogin.success({
         token,
-        email: userPayload.email,
-        fullName: userPayload.fullName,
-        isOnboarded: userPayload.isOnboarded,
+        ...userPayload,
       })
     );
-    console.log({
-      userPayload,
-      issue: oAuthLogin.success(),
-      navigate,
-      history,
-      isOnboarded: userPayload.isOnboarded,
-    });
     localStorage.setItem("token", token);
 
     enqueueSnackbar("OAuth Login Successful!", { variant: "success" });
@@ -100,9 +89,7 @@ function* handleSignup(action) {
     yield put(
       signup.success({
         token,
-        email: userPayload.email,
-        fullName: userPayload.fullName,
-        isOnboarded: userPayload.isOnboarded,
+        ...userPayload,
       })
     );
     localStorage.setItem("token", token);
@@ -134,9 +121,7 @@ function* handleOAuthSignup(action) {
     yield put(
       oAuthSignup.success({
         token,
-        email: userPayload.email,
-        fullName: userPayload.fullName,
-        isOnboarded: userPayload.isOnboarded,
+        ...userPayload,
       })
     );
     localStorage.setItem("token", token);
