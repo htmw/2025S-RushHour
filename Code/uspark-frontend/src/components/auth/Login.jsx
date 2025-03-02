@@ -8,7 +8,7 @@ import {
   Button,
   Paper,
   Divider,
-  Grid,
+  Grid2,
   CircularProgress,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -73,8 +73,8 @@ const Login = () => {
           Login to Your Account
         </Typography>
 
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
+        <Grid2 container spacing={2}>
+          <Grid2 size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="Email"
@@ -85,8 +85,8 @@ const Login = () => {
               required
               data-cy="login-email"
             />
-          </Grid>
-          <Grid item xs={12}>
+          </Grid2>
+          <Grid2 size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="Password"
@@ -97,8 +97,8 @@ const Login = () => {
               required
               data-cy="login-password"
             />
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
 
         {error && (
           <Typography color="error" variant="body2" data-cy="login-error">

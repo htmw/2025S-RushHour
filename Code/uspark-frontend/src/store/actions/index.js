@@ -1,3 +1,4 @@
+import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 import * as types from "./types";
 
 /**
@@ -44,7 +45,7 @@ export const doctorOnboarding = createAsyncActions(types.DOCTOR_ONBOARDING);
 export const logoutUser = createAsyncActions(types.LOGOUT_USER);
 export const patientOnboarding = createAsyncActions(types.PATIENT_ONBOARDING);
 export const roleSelection = createAsyncActions(types.ROLE_SELECION);
-export const uploadProfileImage = createAsyncActions(types.UPLOAD_PROFILE_IMAGE);
-
-
-
+export const uploadProfileImage = createAsyncActions(
+  types.UPLOAD_PROFILE_IMAGE
+);
+export const setTheme = createAsyncActions(types.SET_THEME);
