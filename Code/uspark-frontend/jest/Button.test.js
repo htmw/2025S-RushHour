@@ -1,6 +1,7 @@
+import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Button from "./Button";
+import Button from "./Components/Button";
 
 describe("Button Component", () => {
   test("renders with provided text", () => {
