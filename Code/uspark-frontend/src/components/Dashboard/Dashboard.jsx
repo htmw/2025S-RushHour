@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 import ProfileImageUpload from "../Dashboard/Imageupload";
 import PatientProfile from "./PatientProfile";
 import DoctorProfile from "./DoctorProfile";
+import PatientHomePage from "../../pages/Patient";
+import DoctorHomePage from "../../pages/Doctor";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -54,7 +56,7 @@ const Dashboard = () => {
     return (
       <Container>
         <Typography variant="h5" color="textSecondary">
-          No user data found.
+          No user data found
         </Typography>
       </Container>
     );
@@ -65,16 +67,14 @@ const Dashboard = () => {
       <Paper elevation={3} sx={{ p: 4 }}>
         <Grid container spacing={4}>
           {/* Profile Image Upload Component */}
-          <Grid item xs={12} md={4}>
-            <ProfileImageUpload userData={userData} />
-          </Grid>
+          
 
           {/* Profile Details Section */}
           <Grid item xs={12} md={8}>
             {userData.role === "patient" ? (
-              <PatientProfile userData={userData} />
+              <PatientHomePage/>
             ) : userData.role === "doctor" ? (
-              <DoctorProfile userData={userData} />
+              <DoctorHomePage/>
             ) : (
               <Typography>No additional profile details found.</Typography>
             )}
