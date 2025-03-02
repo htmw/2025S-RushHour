@@ -45,26 +45,26 @@ const Signup = () => {
     e.preventDefault();
     let errors = [];
 
-  if (!form.name) {
-    errors.push("Name is required");
-  }
-  if (!form.email) {
-    errors.push("Email is required");
-  }
-  if (!form.password) {
-    errors.push("Password is required");
-  }
-  if (!form.confirmPassword) {
-    errors.push("Confirm Password is required");
-  }
-  if (form.password !== form.confirmPassword) {
-    errors.push("Passwords do not match");
-  }
+    if (!form.name) {
+      errors.push("Name is required");
+    }
+    if (!form.email) {
+      errors.push("Email is required");
+    }
+    if (!form.password) {
+      errors.push("Password is required");
+    }
+    if (!form.confirmPassword) {
+      errors.push("Confirm Password is required");
+    }
+    if (form.password !== form.confirmPassword) {
+      errors.push("Passwords do not match");
+    }
 
-  if (errors.length > 0) {
-    setError(errors.join("\n"));
-    return;
-  }
+    if (errors.length > 0) {
+      setError(errors.join("\n"));
+      return;
+    }
 
     dispatch(
       signup(
@@ -100,11 +100,6 @@ const Signup = () => {
       setError("Social signup failed. Please try again.");
     }
   };
-  // useEffect(() => {
-  //   if (token) {
-  //     history.push(isOnboarded ? "/dashboard" : "/");
-  //   }
-  // }, [token, isOnboarded, navigate]);
   return (
     <Container maxWidth="sm">
       <Paper elevation={3} style={{ padding: 20, marginTop: 50 }}>
@@ -134,7 +129,7 @@ const Signup = () => {
               value={form.email}
               onChange={handleChange}
               required
-              data-cy="signup-email" 
+              data-cy="signup-email"
             />
           </Grid2>
           <Grid2 size={{ xs: 12 }}>
@@ -217,5 +212,3 @@ const Signup = () => {
 };
 
 export default Signup;
-
-
