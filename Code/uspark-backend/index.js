@@ -30,6 +30,9 @@ app.use("/api", onBoardingRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", profileImage);
 
+app.get("/test", (req, res) => {
+  res.send("Hello Tester");
+});
 // ✅ Start Server
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)

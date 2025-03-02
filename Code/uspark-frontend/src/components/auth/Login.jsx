@@ -297,6 +297,7 @@ const Login = () => {
 
         <Button
           fullWidth
+          data-cy="signInWithApple"
           variant="outlined"
           color="secondary"
           startIcon={<AppleIcon />}
