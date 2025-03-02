@@ -49,8 +49,8 @@ const Header = () => {
         {/* Logo / App Name */}
         <Typography
           variant="h6"
-          sx={{ flexGrow: 1, cursor: "pointer" }}
-          onClick={() => history.push("/")}
+          sx={{ flexGrow: 1}}
+          
         >
           Uspark
         </Typography>

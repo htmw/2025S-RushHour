@@ -13,6 +13,7 @@ const initialState = {
   isOnboarded: false,
   loading: false,
   error: null,
+  imageUrl: "",
   ...userPayload,
 };
 

@@ -43,11 +43,28 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let errors = [];
 
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
+  if (!form.name) {
+    errors.push("Name is required");
+  }
+  if (!form.email) {
+    errors.push("Email is required");
+  }
+  if (!form.password) {
+    errors.push("Password is required");
+  }
+  if (!form.confirmPassword) {
+    errors.push("Confirm Password is required");
+  }
+  if (form.password !== form.confirmPassword) {
+    errors.push("Passwords do not match");
+  }
+
+  if (errors.length > 0) {
+    setError(errors.join("\n"));
+    return;
+  }
 
     dispatch(
       signup(
@@ -91,7 +108,7 @@ const Signup = () => {
   return (
     <Container maxWidth="sm">
       <Paper elevation={3} style={{ padding: 20, marginTop: 50 }}>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" gutterBottom data-cy="signup-title">
           Create an Account
         </Typography>
 
@@ -105,6 +122,7 @@ const Signup = () => {
               value={form.name}
               onChange={handleChange}
               required
+              data-cy="signup-name"
             />
           </Grid2>
           <Grid2 size={{ xs: 12 }}>
@@ -116,6 +134,7 @@ const Signup = () => {
               value={form.email}
               onChange={handleChange}
               required
+              data-cy="signup-email" 
             />
           </Grid2>
           <Grid2 size={{ xs: 12 }}>
@@ -127,6 +146,7 @@ const Signup = () => {
               value={form.password}
               onChange={handleChange}
               required
+              data-cy="signup-password"
             />
           </Grid2>
           <Grid2 size={{ xs: 12 }}>
@@ -138,12 +158,13 @@ const Signup = () => {
               value={form.confirmPassword}
               onChange={handleChange}
               required
+              data-cy="signup-confirm-password"
             />
           </Grid2>
         </Grid2>
 
         {error && (
-          <Typography color="error" variant="body2">
+          <Typography color="error" variant="body2" data-cy="signup-error">
             {error}
           </Typography>
         )}
@@ -154,6 +175,7 @@ const Signup = () => {
           color="primary"
           onClick={handleSubmit}
           style={{ marginTop: 15 }}
+          data-cy="signup-button"
         >
           {loading ? <CircularProgress size={24} /> : "Sign Up"}
         </Button>
@@ -195,3 +217,5 @@ const Signup = () => {
 };
 
 export default Signup;
+
+

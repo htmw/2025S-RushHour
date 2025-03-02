@@ -11,7 +11,7 @@ const store = configureStore({
     getDefaultMiddleware({
       thunk: false,
       serializableCheck: {
-        ignoredActionPaths: ["meta.navigate"], // Ignore non-serializable navigate
+        ignoredActionPaths: ["meta.navigate"],
       },
     }).concat(sagaMiddleware),
 });
