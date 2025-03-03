@@ -29,14 +29,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <Container
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "80vh",
-        }}
-      >
+      <Container>
         <CircularProgress size={80} />
       </Container>
     );
@@ -45,7 +38,7 @@ const Dashboard = () => {
   if (error) {
     return (
       <Container>
-        <Typography variant="h5" color="error">
+        <Typography variant="h5" color="error" align="center">
           {error}
         </Typography>
       </Container>
@@ -55,8 +48,8 @@ const Dashboard = () => {
   if (!userData) {
     return (
       <Container>
-        <Typography variant="h5" color="textSecondary">
-          No user data found
+        <Typography variant="h5" color="textSecondary" align="center">
+          No user data found.
         </Typography>
       </Container>
     );
@@ -75,7 +68,9 @@ const Dashboard = () => {
             ) : userData.role === "doctor" ? (
               <DoctorHomePage />
             ) : (
-              <Typography>No additional profile details found.</Typography>
+              <Typography align="center">
+                No additional profile details found.
+              </Typography>
             )}
           </Grid2>
         </Grid2>
