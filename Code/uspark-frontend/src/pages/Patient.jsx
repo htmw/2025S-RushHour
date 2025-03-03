@@ -1,15 +1,53 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Typography } from "@mui/material";
 import PatientLayout from "./PatLayout";
+import "../css/PatientHomePage.css";
+import health from "../components/Fact";
+import OneCard from "./OneCard";
+import { motion } from "framer-motion";
+
+const healthFacts = health;
 
 const PatientHomePage = () => {
+  const [healthFact, setHealthFact] = useState(healthFacts[0]);
+  const { fullName } = useSelector((state) => state.auth);
+
+  const getNewHealthFact = () => {
+    const nextIndex = Math.floor(Math.random() * healthFacts.length);
+    setHealthFact(healthFacts[nextIndex]);
+  };
+
+  useEffect(() => {
+    getNewHealthFact();
+    const interval = setInterval(getNewHealthFact, 1800000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <PatientLayout>
-      <Typography variant="h4">Welcome to Your Patient Dashboard</Typography>
-      <Typography variant="body1" sx={{ mt: 2 }}>
-        Here you can access your medical records, book appointments, and manage your health data.
-      </Typography>
+      <motion.div
+        className="patient-home-container"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <Typography variant="h4" className="patient-home-title">
+          Welcome, {fullName}!
+        </Typography>
+        <Typography variant="body1" className="patient-home-subtitle">
+          Access your medical records, book appointments, and manage your health data with ease.
+        </Typography>
+        <motion.div className="health-fact-box">
+          <Typography variant="h6">Health Tip of the Moment:</Typography>
+          <Typography variant="body2">{healthFact}</Typography>
+        </motion.div>
+        <OneCard />
+      </motion.div>
+      
     </PatientLayout>
+  
+    
   );
 };
 

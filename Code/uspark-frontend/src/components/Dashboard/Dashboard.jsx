@@ -29,14 +29,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <Container
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "80vh",
-        }}
-      >
+      <Container>
         <CircularProgress size={80} />
       </Container>
     );
@@ -45,7 +38,7 @@ const Dashboard = () => {
   if (error) {
     return (
       <Container>
-        <Typography variant="h5" color="error">
+        <Typography variant="h5" color="error" align="center">
           {error}
         </Typography>
       </Container>
@@ -55,32 +48,35 @@ const Dashboard = () => {
   if (!userData) {
     return (
       <Container>
-        <Typography variant="h5" color="textSecondary">
-          No user data found
+        <Typography variant="h5" color="textSecondary" align="center">
+          No user data found.
         </Typography>
       </Container>
     );
   }
 
   return (
-    <Container sx={{ mt: 5 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Grid container spacing={4}>
-          {/* Profile Image Upload Component */}
-          
-
-          {/* Profile Details Section */}
-          <Grid item xs={12} md={8}>
+    <Container>
+      
+        
+        <Grid >
+          {/* Uncomment below if you want to show the profile image upload */}
+          {/* <Grid item xs={12} md={4}>
+            <ProfileImageUpload userData={userData} />
+          </Grid> */}
+          <Grid  >
             {userData.role === "patient" ? (
-              <PatientHomePage/>
+              <PatientHomePage />
             ) : userData.role === "doctor" ? (
-              <DoctorHomePage/>
+              <DoctorHomePage />
             ) : (
-              <Typography>No additional profile details found.</Typography>
+              <Typography align="center">
+                No additional profile details found.
+              </Typography>
             )}
           </Grid>
         </Grid>
-      </Paper>
+      
     </Container>
   );
 };
