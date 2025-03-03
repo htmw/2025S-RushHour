@@ -11,13 +11,19 @@ import {
   ListItemIcon,
   IconButton,
   Box,
-  Divider
+  Divider,
 } from "@mui/material";
-import { Menu as MenuIcon, Home, Person, Info, ExitToApp } from "@mui/icons-material";
+import {
+  Menu as MenuIcon,
+  Home,
+  Person,
+  Info,
+  ExitToApp,
+} from "@mui/icons-material";
 
 const drawerWidth = 240;
 
-const DoctorLayout = ({ children }) => {
+const PatientLayout = ({ children }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false); // Sidebar initially closed
 
@@ -26,25 +32,24 @@ const DoctorLayout = ({ children }) => {
   };
 
   const handleLogout = () => {
-    // Adjust the route as needed. Here we redirect to the login page on logout.
-    navigate("/signup");
+    navigate("/signup"); // Redirect to signup page on logout
   };
 
   return (
-    <Box sx={{ display: "flex", height: "100vh" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       {/* HEADER WITH MENU ICON */}
       <AppBar position="fixed">
         <Toolbar>
-          <IconButton 
-            color="inherit" 
-            edge="start" 
-            onClick={toggleDrawer} 
+          <IconButton
+            color="inherit"
+            edge="start"
+            onClick={toggleDrawer}
             sx={{ mr: 2, cursor: "pointer" }}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Doctor Dashboard
+            Patient Dashboard
           </Typography>
         </Toolbar>
       </AppBar>
@@ -62,9 +67,9 @@ const DoctorLayout = ({ children }) => {
         }}
       >
         <List>
-          <ListItem 
-            button 
-            onClick={() => navigate("/dashboard")} 
+          <ListItem
+            button
+            onClick={() => navigate("/dashboard")}
             sx={{ cursor: "pointer" }}
           >
             <ListItemIcon sx={{ cursor: "pointer" }}>
@@ -73,9 +78,9 @@ const DoctorLayout = ({ children }) => {
             <ListItemText primary="Home" />
           </ListItem>
 
-          <ListItem 
-            button 
-            onClick={() => navigate("/docprofile")} 
+          <ListItem
+            button
+            onClick={() => navigate("/patprofile")}
             sx={{ cursor: "pointer" }}
           >
             <ListItemIcon sx={{ cursor: "pointer" }}>
@@ -85,15 +90,15 @@ const DoctorLayout = ({ children }) => {
           </ListItem>
 
           <ListItem
-                      button
-                      onClick={() => navigate("/daboutus")}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      <ListItemIcon sx={{ cursor: "pointer" }}>
-                        <Info />
-                      </ListItemIcon>
-                      <ListItemText primary="About Us" />
-                    </ListItem>
+            button
+            onClick={() => navigate("/aboutus")}
+            sx={{ cursor: "pointer" }}
+          >
+            <ListItemIcon sx={{ cursor: "pointer" }}>
+              <Info />
+            </ListItemIcon>
+            <ListItemText primary="About Us" />
+          </ListItem>
         </List>
 
         <Divider sx={{ my: 2 }} />
@@ -122,4 +127,4 @@ const DoctorLayout = ({ children }) => {
   );
 };
 
-export default DoctorLayout;
+export default PatientLayout;

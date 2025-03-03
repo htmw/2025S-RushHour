@@ -3,7 +3,7 @@ import { Typography } from "@mui/material";
 import {useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchDashboard } from "../../store/actions";
-import DoctorLayout from "../../pages/DoctorLayout";
+import DoctorLayout from "../../pages/Doctor/DoctorLayout";
 
 const DoctorProfile = () => {
   const navigate = useNavigate();

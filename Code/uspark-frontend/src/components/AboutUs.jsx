@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography, Box, Container, Paper } from "@mui/material";
-import PatientLayout from "../pages/PatLayout";
+import PatientLayout from "../pages/Patient/PatLayout";
 
 const AboutUs = () => {
   return (
