@@ -3,7 +3,7 @@ import {
   Container,
   Typography,
   Paper,
-  Grid,
+  Grid2,
   CircularProgress,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -56,15 +56,13 @@ const Dashboard = () => {
   }
 
   return (
-    <Container>
-      
-        
-        <Grid >
-          {/* Uncomment below if you want to show the profile image upload */}
-          {/* <Grid item xs={12} md={4}>
-            <ProfileImageUpload userData={userData} />
-          </Grid> */}
-          <Grid  >
+    <Container sx={{ mt: 5 }}>
+      <Paper elevation={3} sx={{ p: 4 }}>
+        <Grid2 container spacing={4}>
+          {/* Profile Image Upload Component */}
+
+          {/* Profile Details Section */}
+          <Grid2 item size={{ xs: 12, md: 8 }}>
             {userData.role === "patient" ? (
               <PatientHomePage />
             ) : userData.role === "doctor" ? (
@@ -74,9 +72,9 @@ const Dashboard = () => {
                 No additional profile details found.
               </Typography>
             )}
-          </Grid>
-        </Grid>
-      
+          </Grid2>
+        </Grid2>
+      </Paper>
     </Container>
   );
 };
