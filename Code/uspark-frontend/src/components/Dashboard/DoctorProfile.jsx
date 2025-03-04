@@ -3,7 +3,7 @@ import { Typography, Button, Modal, Box, Alert } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchDashboard } from "../../store/actions";
-import DoctorLayout from "../../pages/DoctorLayout";
+import DoctorLayout from "../../pages/Doctor/DoctorLayout";
 import axios from "axios";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"; 
 
