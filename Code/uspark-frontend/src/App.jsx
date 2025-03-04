@@ -7,6 +7,7 @@ import { ThemeProvider, CssBaseline } from "@mui/material";
 import theme from "./theme/theme.js";
 import SnackbarCustomizedProvider from "./components/SnackBarCustomizedProvider.jsx";
 import "./App.css";
+
 function App() {
   return (
     <Provider store={store}>
@@ -14,6 +15,7 @@ function App() {
         <SnackbarCustomizedProvider />
         <CssBaseline /> {/* Normalizes CSS across browsers */}
         <AppRoutes />
+       
       </ThemeProvider>
     </Provider>
   );
