@@ -11,13 +11,19 @@ import {
   ListItemIcon,
   IconButton,
   Box,
-  Divider
+  Divider,
 } from "@mui/material";
-import { Menu as MenuIcon, Home, Person, Info, ExitToApp } from "@mui/icons-material";
+import {
+  Menu as MenuIcon,
+  Home,
+  Person,
+  Info,
+  ExitToApp,
+} from "@mui/icons-material";
 
 const drawerWidth = 240;
 
-const PatientLayout = ({ children }) => {
+const DoctorLayout = ({ children }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false); // Sidebar initially closed
 
@@ -26,11 +32,12 @@ const PatientLayout = ({ children }) => {
   };
 
   const handleLogout = () => {
-    navigate("/signup"); // Redirect to signup page on logout
+    // Adjust the route as needed. Here we redirect to the login page on logout.
+    navigate("/signup");
   };
 
   return (
-    <Box sx={{ display: "flex", height: "100vh" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       {/* HEADER WITH MENU ICON */}
       <AppBar position="fixed">
         <Toolbar>
@@ -43,7 +50,7 @@ const PatientLayout = ({ children }) => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Patient Dashboard
+            Doctor Dashboard
           </Typography>
         </Toolbar>
       </AppBar>
@@ -74,7 +81,7 @@ const PatientLayout = ({ children }) => {
 
           <ListItem
             button
-            onClick={() => navigate("/patprofile")}
+            onClick={() => navigate("/docprofile")}
             sx={{ cursor: "pointer" }}
           >
             <ListItemIcon sx={{ cursor: "pointer" }}>
@@ -85,7 +92,7 @@ const PatientLayout = ({ children }) => {
 
           <ListItem
             button
-            onClick={() => navigate("/aboutus")}
+            onClick={() => navigate("/daboutus")}
             sx={{ cursor: "pointer" }}
           >
             <ListItemIcon sx={{ cursor: "pointer" }}>
@@ -121,4 +128,4 @@ const PatientLayout = ({ children }) => {
   );
 };
 
-export default PatientLayout;
+export default DoctorLayout;

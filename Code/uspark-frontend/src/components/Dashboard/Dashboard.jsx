@@ -12,8 +12,8 @@ import { useNavigate } from "react-router-dom";
 import ProfileImageUpload from "../Dashboard/Imageupload";
 import PatientProfile from "./PatientProfile";
 import DoctorProfile from "./DoctorProfile";
-import PatientHomePage from "../../pages/Patient";
-import DoctorHomePage from "../../pages/Doctor";
+import PatientHomePage from "../../pages/Patient/Patient";
+import DoctorHomePage from "../../pages/Doctor/Doctor";
 
 const Dashboard = () => {
   const navigate = useNavigate();

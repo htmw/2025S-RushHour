@@ -1,0 +1,53 @@
+.insurance-card {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  background: #ffffff;
+  transition: transform 0.2s ease-in-out;
+}
+
+.insurance-card:hover {
+  transform: scale(1.02);
+}
+
+.edit-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #1976d2;
+  cursor: pointer;
+}
+
+.edit-icon:hover {
+  color: #1565c0;
+}
+
+.insurance-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.insurance-field {
+  font-size: 1rem;
+  color: #444;
+  padding: 8px 0;
+}
+
+.save-button {
+  background-color: #1976d2;
+  color: white;
+  font-weight: bold;
+  padding: 1px;
+  border-radius: 1px;
+  width: 100%;
+}
+
+.save-button:hover {
+  background-color: #1565c0;
+}

@@ -42,7 +42,11 @@ export const PrivateRoutes = [
     exact: true,
   },
 
-
+  {
+    path: "/home",
+    component: Dashboard,
+    exact: true,
+  },
 ];
 
 export const PublicRoutes = [
