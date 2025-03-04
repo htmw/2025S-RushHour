@@ -37,7 +37,6 @@ const AppRoutes = () => {
               element={<PublicRoute Component={Component} />}
             />
           ))}
-
           {PrivateRoutes.map(({ path, component: Component }, index) => (
             <Route
               key={index}

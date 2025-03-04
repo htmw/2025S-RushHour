@@ -3,7 +3,7 @@ import {
   Container,
   Typography,
   Paper,
-  Grid,
+  Grid2,
   CircularProgress,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,8 +12,8 @@ import { useNavigate } from "react-router-dom";
 import ProfileImageUpload from "../Dashboard/Imageupload";
 import PatientProfile from "./PatientProfile";
 import DoctorProfile from "./DoctorProfile";
-import PatientHomePage from "../../pages/Patient";
-import DoctorHomePage from "../../pages/Doctor";
+import PatientHomePage from "../../pages/Patient/Patient";
+import DoctorHomePage from "../../pages/Doctor/Doctor";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -29,14 +29,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <Container
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "80vh",
-        }}
-      >
+      <Container>
         <CircularProgress size={80} />
       </Container>
     );
@@ -45,7 +38,7 @@ const Dashboard = () => {
   if (error) {
     return (
       <Container>
-        <Typography variant="h5" color="error">
+        <Typography variant="h5" color="error" align="center">
           {error}
         </Typography>
       </Container>
@@ -55,8 +48,8 @@ const Dashboard = () => {
   if (!userData) {
     return (
       <Container>
-        <Typography variant="h5" color="textSecondary">
-          No user data found
+        <Typography variant="h5" color="textSecondary" align="center">
+          No user data found.
         </Typography>
       </Container>
     );
@@ -65,21 +58,22 @@ const Dashboard = () => {
   return (
     <Container sx={{ mt: 5 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
-        <Grid container spacing={4}>
+        <Grid2 container spacing={4}>
           {/* Profile Image Upload Component */}
-          
 
           {/* Profile Details Section */}
-          <Grid item xs={12} md={8}>
+          <Grid2 item size={{ xs: 12, md: 8 }}>
             {userData.role === "patient" ? (
-              <PatientHomePage/>
+              <PatientHomePage />
             ) : userData.role === "doctor" ? (
-              <DoctorHomePage/>
+              <DoctorHomePage />
             ) : (
-              <Typography>No additional profile details found.</Typography>
+              <Typography align="center">
+                No additional profile details found.
+              </Typography>
             )}
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </Paper>
     </Container>
   );

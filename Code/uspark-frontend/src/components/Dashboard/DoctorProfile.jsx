@@ -3,8 +3,8 @@ import { Typography, Button, Modal, Box, Alert } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchDashboard } from "../../store/actions";
-import axios from "axios";
 import DoctorLayout from "../../pages/DoctorLayout";
+import axios from "axios";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"; 
 
 const DoctorProfile = () => {

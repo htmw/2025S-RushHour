@@ -3,7 +3,7 @@ import { Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDashboard } from "../../store/actions";
 import { useNavigate } from "react-router-dom";
-import PatientLayout from "../../pages/PatLayout";
+import PatientLayout from "../../pages/Patient/PatLayout";
 
 const PatientProfile = () => {
   const navigate = useNavigate();
@@ -26,10 +26,12 @@ const PatientProfile = () => {
   return (
     <PatientLayout>
       <Typography variant="h5">Patient Profile</Typography>
+      <Typography variant="body1">Name: {userData.fullName}</Typography>
       <Typography>Age: {userData.age}</Typography>
       <Typography>Sex: {userData.sex}</Typography>
       <Typography>Height: {userData.height} cm</Typography>
       <Typography>Weight: {userData.weight} kg</Typography>
+      
       <Typography>
         Health Issues: {userData.healthIssues || "N/A"}
       </Typography>

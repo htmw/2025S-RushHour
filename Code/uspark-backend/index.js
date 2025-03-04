@@ -7,9 +7,16 @@ const onBoardingRoutes = require("./routes/onboarding");
 const authRoutes = require("./routes/auth");
 const dashboardRoutes = require("./routes/dashboard");
 const profileImage = require("./routes/profileimage");
+const insuranceRoutes = require("./routes/Insuranceroutes");
 const app = express();
 const PORT = process.env.PORT || 5000;
-const adminRoutes = require("./routes/admin"); // ✅ Import Admin Routes
+const adminRoutes = require("./routes/admin"); //  Import Admin Routes
+
+
+
+
+
+
 
 
 
@@ -33,6 +40,8 @@ app.use("/api", onBoardingRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", profileImage);
 app.use("/api/admin", adminRoutes); 
+app.use("/api", insuranceRoutes);
+
 
 app.get("/test", (req, res) => {
   res.send("Hello Tester");

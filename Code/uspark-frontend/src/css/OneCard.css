@@ -1,0 +1,76 @@
+/* OneCard.css */
+.One-Content{
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    flex-grow: 1;
+    align-content: space-between;
+}  
+
+  .one-card-content {
+    display: flex;
+    flex-direction: row;
+    align-items: left; /* Center align cards for a better look */
+    max-width: 400px; /* Limit card width */
+    margin: 0 auto; /* Center align the card */
+  }
+  
+  .patient-card {
+    background-color: #ffffff; /* White background for cards */
+    border-radius: 12px; /* Slightly larger border radius for softer edges */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Deeper shadow for a more elevated look */
+    width: 100%; /* Full width of the container */
+    margin-bottom: 20px; /* Space between cards */
+    transition: transform 0.3s ease; /* Smooth hover effect */
+  }
+  
+  .patient-card:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+  }
+  
+  .patient-profile-card {
+    background-color: #ffffff; /* White background for the patient profile */
+    border-radius: 12px; /* Slightly larger border radius */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Deeper shadow for elevated look */
+    width: 100%; /* Full width of the container */
+    padding: 20px; /* Padding for the profile card */
+    transition: transform 0.3s ease; /* Smooth hover effect *
+  }
+  
+  .patient-profile-card:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+  }
+  
+  .patient-profile-card h6 {
+    color: #007BFF; /* Primary color for the profile title */
+    margin-bottom: 15px; /* Space below the title */
+    font-weight: 600; /* Make the title bolder */
+    text-align: center; /* Center align title */
+  }
+  
+  .patient-card .MuiButton-root {
+    margin-top: 15px; /* Space above buttons */
+    background-color: #007BFF; /* Button background color */
+    color: white; /* Button text color */
+    border-radius: 6px; /* Rounded button edges */
+    padding: 10px 20px; /* Button padding */
+    transition: background-color 0.3s ease; /* Smooth transition for button hover */
+  }
+  
+  .patient-card .MuiButton-root:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+  }
+  
+  .patient-profile-card .MuiButton-root {
+    margin-top: 20px; /* Space above close button */
+    background-color: #f44336; /* Red color for close button */
+    color: white; /* Close button text color */
+    border-radius: 6px; /* Rounded button edges */
+    padding: 10px 20px; /* Button padding */
+    transition: background-color 0.3s ease; /* Smooth transition for button hover */
+  }
+  
+  .patient-profile-card .MuiButton-root:hover {
+    background-color: #c62828; /* Darker shade on hover */
+  }
+  
