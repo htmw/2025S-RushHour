@@ -1,135 +1,189 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Typography, Grid, TextField, Button } from '@mui/material';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { enqueueSnackbar } from 'notistack';
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  TextField,
+  Button,
+  IconButton,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { enqueueSnackbar } from "notistack";
+import "../../css/InsuranceCard.css"
 
 const InsuranceCard = () => {
   const [insuranceDetails, setInsuranceDetails] = useState({
-    providerName: '',
-    startDate: '',
-    endDate: '',
-    holderName: '',
+    providerName: "",
+    startDate: "",
+    endDate: "",
+    holderName: "",
   });
 
+  const [isEditing, setIsEditing] = useState(false); // Track edit mode
   const token = useSelector((state) => state.auth?.token);
 
-  // Fetch existing insurance details
+  // Fetch insurance details
   const fetchInsuranceDetails = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/insurance', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await axios.get("http://localhost:5000/api/insurance", {
+        headers: { Authorization: `Bearer ${token}` },
       });
+
       if (response.data.error) {
         enqueueSnackbar(response.data.message, { variant: "error" });
       } else {
-        // Set the state with data from MongoDB response
         const { providerName, startDate, endDate, holderName } = response.data;
         setInsuranceDetails({
           providerName,
-          startDate: new Date(startDate).toISOString().split('T')[0], // Format date to YYYY-MM-DD
-          endDate: new Date(endDate).toISOString().split('T')[0],     // Format date to YYYY-MM-DD
+          startDate: new Date(startDate).toISOString().split("T")[0], // Format date to YYYY-MM-DD
+          endDate: new Date(endDate).toISOString().split("T")[0],
           holderName,
         });
-        enqueueSnackbar("Insurance Details Fetched Successfully", { variant: "success" });
       }
     } catch (error) {
-      console.error('Error fetching insurance details:', error);
+      console.error("Error fetching insurance details:", error);
       enqueueSnackbar("Error fetching insurance details", { variant: "error" });
     }
   };
 
   // Handle input changes
   const handleChange = (e) => {
-    setInsuranceDetails({ ...insuranceDetails, [e.target.name]: e.target.value });
+    setInsuranceDetails({
+      ...insuranceDetails,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  // Handle form submission
+  // Save insurance details
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/insurance', insuranceDetails, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/insurance",
+        insuranceDetails,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
       if (response.data.error) {
         enqueueSnackbar(response.data.message, { variant: "error" });
       } else {
-        enqueueSnackbar('Insurance details saved successfully!', { variant: "success" });
+        enqueueSnackbar("Insurance details saved successfully!", {
+          variant: "success",
+        });
+        setIsEditing(false); // Switch back to view mode after saving
       }
     } catch (error) {
-      console.error('Error saving insurance details:', error);
+      console.error("Error saving insurance details:", error);
       enqueueSnackbar("Error saving insurance details", { variant: "error" });
     }
   };
 
-  // Fetch insurance details on component mount
+  // Fetch insurance details on mount
   useEffect(() => {
     fetchInsuranceDetails();
   }, []);
 
   return (
-    <Card sx={{ maxWidth: 400, margin: '20px auto', padding: 2 }}>
+    <Card className="insurance-card">
       <CardContent>
-        <Typography variant="h5" component="div" gutterBottom>
-          Insurance Details
-        </Typography>
-        <form onSubmit={handleSubmit}>
+        {/* Edit Icon */}
+        {!isEditing && (
+          <IconButton className="edit-icon" onClick={() => setIsEditing(true)}>
+            <EditIcon />
+          </IconButton>
+        )}
+
+        <Typography className="insurance-title">Insurance Details</Typography>
+
+        {isEditing ? (
+          // Edit Mode - Show Form
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  label="Provider Name"
+                  name="providerName"
+                  variant="outlined"
+                  fullWidth
+                  value={insuranceDetails.providerName}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Start Date"
+                  type="date"
+                  name="startDate"
+                  variant="outlined"
+                  fullWidth
+                  value={insuranceDetails.startDate}
+                  onChange={handleChange}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="End Date"
+                  type="date"
+                  name="endDate"
+                  variant="outlined"
+                  fullWidth
+                  value={insuranceDetails.endDate}
+                  onChange={handleChange}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Holder Name"
+                  name="holderName"
+                  variant="outlined"
+                  fullWidth
+                  value={insuranceDetails.holderName}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Button className="save-button" type="submit" fullWidth>
+                  <SaveIcon sx={{ mr: 1 }} /> Save Details
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+        ) : (
+          // View Mode - Show Static Data
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TextField
-                label="Provider Name"
-                name="providerName"
-                variant="outlined"
-                fullWidth
-                value={insuranceDetails.providerName}
-                onChange={handleChange}
-              />
+              <Typography className="insurance-field">
+                <strong>Provider:</strong>{" "}
+                {insuranceDetails.providerName || "N/A"}
+              </Typography>
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                label="Start Date"
-                type="date"
-                name="startDate"
-                variant="outlined"
-                fullWidth
-                value={insuranceDetails.startDate}
-                onChange={handleChange}
-                InputLabelProps={{ shrink: true }}
-              />
+              <Typography className="insurance-field">
+                <strong>Start Date:</strong>{" "}
+                {insuranceDetails.startDate || "N/A"}
+              </Typography>
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                label="End Date"
-                type="date"
-                name="endDate"
-                variant="outlined"
-                fullWidth
-                value={insuranceDetails.endDate}
-                onChange={handleChange}
-                InputLabelProps={{ shrink: true }}
-              />
+              <Typography className="insurance-field">
+                <strong>End Date:</strong> {insuranceDetails.endDate || "N/A"}
+              </Typography>
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                label="Holder Name"
-                name="holderName"
-                variant="outlined"
-                fullWidth
-                value={insuranceDetails.holderName}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button variant="contained" color="primary" type="submit" fullWidth>
-                Save Details
-              </Button>
+              <Typography className="insurance-field">
+                <strong>Holder Name:</strong>{" "}
+                {insuranceDetails.holderName || "N/A"}
+              </Typography>
             </Grid>
           </Grid>
-        </form>
+        )}
       </CardContent>
     </Card>
   );

@@ -25,7 +25,7 @@
     border: 1px solid #e0e0e0; /* Light border for the box */
     border-radius: 12px; /* Slightly larger border radius for softer edges */
     padding: 20px; /* Increased padding for better spacing */
-    width: 600px;
+    width: 800px;
     position: relative;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */

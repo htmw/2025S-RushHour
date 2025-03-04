@@ -43,16 +43,15 @@ const PatientHomePage = () => {
             Access your medical records, book appointments, and manage your
             health data with ease.
           </Typography>
-          <motion.div className="newscard">
-            <motion.div className="health-fact-box">
-              <Typography variant="h6">Health Tip of the Moment:</Typography>
-              <Typography variant="body2">{healthFact}</Typography>
-            </motion.div>
-            <InitialAssessmentCard />
-              <MedicalNews />
-            
+          <motion.div className="health-fact-box">
+            <Typography variant="h6">Health Tip of the Moment:</Typography>
+            <Typography variant="body2">{healthFact}</Typography>
           </motion.div>
-          
+          <motion.div className="newscard">
+            <InitialAssessmentCard />
+            <MedicalNews />
+          </motion.div>
+
           <OneCard />
         </motion.div>
       </motion.div>
