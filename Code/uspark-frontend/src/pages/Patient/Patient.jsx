@@ -8,6 +8,7 @@ import OneCard from "./OneCard";
 import { motion } from "framer-motion";
 import MedicalNews from "./News";
 import InitialAssessmentCard from "./InitialAssesment";
+import Chatbot from "../../components/Chatbot/Chatbox";
 
 
 const healthFacts = health;
@@ -54,7 +55,9 @@ const PatientHomePage = () => {
 
           <OneCard />
         </motion.div>
+        <Chatbot/>
       </motion.div>
+      
     </PatientLayout>
   );
 };

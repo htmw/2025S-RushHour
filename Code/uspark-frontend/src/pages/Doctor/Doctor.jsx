@@ -3,6 +3,7 @@ import { Typography } from "@mui/material";
 import DoctorLayout from "./DoctorLayout";
 import { useSelector } from "react-redux";
 
+
 const DoctorHomePage = () => {
   const { fullName } = useSelector((state) => state.auth);
   return (
@@ -14,6 +15,7 @@ const DoctorHomePage = () => {
         Here you can access your appointments, manage patient records, and view
         your schedule.
       </Typography>
+      
     </DoctorLayout>
   );
 };

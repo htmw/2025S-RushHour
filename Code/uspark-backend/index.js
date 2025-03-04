@@ -11,6 +11,7 @@ const insuranceRoutes = require("./routes/Insuranceroutes");
 const app = express();
 const PORT = process.env.PORT || 5000;
 const adminRoutes = require("./routes/admin"); //  Import Admin Routes
+const Chat = require("./routes/chat");
 
 
 
@@ -41,6 +42,7 @@ app.use("/api", dashboardRoutes);
 app.use("/api", profileImage);
 app.use("/api/admin", adminRoutes); 
 app.use("/api", insuranceRoutes);
+app.use("/api", Chat); 
 
 
 app.get("/test", (req, res) => {
