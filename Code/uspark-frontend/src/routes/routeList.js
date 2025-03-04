@@ -9,7 +9,7 @@ const PatientProfile = lazy(() => import("../components/Dashboard/PatientProfile
 const DoctorProfile = lazy(() => import("../components/Dashboard/DoctorProfile"));
 const AboutUs = lazy(() => import("../components/AboutUs"));
 const AboutUsD = lazy(() => import("../components/AboutUsD"));
-
+const AdminDashboard = lazy(() => import("../components/Dashboard/Admindashboard"));
 export const PrivateRoutes = [
   {
     path: "/",
@@ -39,6 +39,11 @@ export const PrivateRoutes = [
   {
     path: "/daboutus",
     component: AboutUsD,
+    exact: true,
+  },
+  {
+    path: "/admin",
+    component: AdminDashboard,
     exact: true,
   },
 

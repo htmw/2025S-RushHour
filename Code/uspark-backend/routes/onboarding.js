@@ -39,7 +39,7 @@ router.post("/onboarding/patient", authenticate, async (req, res) => {
   }
 });
 
-// ✅ Doctor Onboarding Route
+//  Doctor Onboarding Route
 router.post("/onboarding/doctor", authenticate, async (req, res) => {
   const { specialization, experience, certifications } = req.body;
 
@@ -55,6 +55,8 @@ router.post("/onboarding/doctor", authenticate, async (req, res) => {
       specialization,
       experience,
       certifications,
+      verificationStatus: "pending",  // Initial verification status
+      verificationDocs: [],  // Initial verification documents
     });
 
     await newDoctor.save();

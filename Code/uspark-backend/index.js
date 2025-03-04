@@ -10,6 +10,9 @@ const profileImage = require("./routes/profileimage");
 const insuranceRoutes = require("./routes/Insuranceroutes");
 const app = express();
 const PORT = process.env.PORT || 5000;
+const adminRoutes = require("./routes/admin"); //  Import Admin Routes
+
+
 
 
 
@@ -36,6 +39,7 @@ app.use("/", authRoutes);
 app.use("/api", onBoardingRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", profileImage);
+app.use("/api/admin", adminRoutes); 
 app.use("/api", insuranceRoutes);
 
 
