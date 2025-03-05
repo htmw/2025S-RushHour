@@ -1,4 +1,3 @@
-import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 import * as types from "./types";
 
 /**
@@ -49,3 +48,8 @@ export const uploadProfileImage = createAsyncActions(
   types.UPLOAD_PROFILE_IMAGE
 );
 export const setTheme = createAsyncActions(types.SET_THEME);
+export const fetchDoctors = createAsyncActions(types.FETCH_DOCTORS);
+export const verifyDoctor = createAsyncActions(types.VERIFY_DOCTOR);
+export const uploadVerificationDocs = createAsyncActions(
+  types.UPLOAD_VERIFICATION_DOCS
+);

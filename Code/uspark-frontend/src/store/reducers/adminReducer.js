@@ -1,33 +1,34 @@
 import * as types from "../actions/types";
 
 const initialState = {
-  userData: null,
+  doctors: [],
   loading: false,
   error: null,
 };
 
-const dashboardReducer = (state = initialState, action) => {
+const adminReducer = (state = initialState, action) => {
   switch (action.type) {
-    case types.FETCH_DASHBOARD_PENDING:
+    case types.FETCH_DOCTORS_PENDING:
       return { ...state, loading: true, error: null };
 
-    case types.FETCH_DASHBOARD_SUCCESS:
-      return { ...state, loading: false, userData: action.payload };
+    case types.FETCH_DOCTORS_SUCCESS:
+      return { ...state, loading: false, doctors: action.payload };
 
-    case types.FETCH_DASHBOARD_ERROR:
+    case types.FETCH_DOCTORS_ERROR:
       return { ...state, loading: false, error: action.payload };
 
-    case types.UPLOAD_VERIFICATION_DOCS_PENDING:
+    case types.VERIFY_DOCTOR_PENDING:
       return { ...state, loading: true };
 
-    case types.UPLOAD_VERIFICATION_DOCS_SUCCESS:
+    case types.VERIFY_DOCTOR_SUCCESS:
       return { ...state, loading: false };
 
-    case types.UPLOAD_VERIFICATION_DOCS_ERROR:
+    case types.VERIFY_DOCTOR_ERROR:
       return { ...state, loading: false, error: action.payload };
+
     default:
       return state;
   }
 };
 
-export default dashboardReducer;
+export default adminReducer;

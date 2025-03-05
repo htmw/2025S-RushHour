@@ -5,7 +5,8 @@ import { Provider, useSelector } from "react-redux";
 import store from "./store/store.js";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { lightTheme, darkTheme } from "./theme/theme.js";
-import SnackbarCustomizedProvider from "./components/SnackBarCustomizedProvider.jsx";
+import SnackbarCustomizedProvider from "./components/public/SnackBarCustomizedProvider.jsx";
+
 import "./App.css";
 
 const AppWrapper = () => {

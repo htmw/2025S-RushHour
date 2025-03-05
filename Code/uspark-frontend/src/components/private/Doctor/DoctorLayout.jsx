@@ -20,11 +20,13 @@ import {
   Info,
   ExitToApp,
 } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
 
 const drawerWidth = 240;
 
 const DoctorLayout = ({ children }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false); // Sidebar initially closed
 
   const toggleDrawer = () => {
@@ -32,8 +34,7 @@ const DoctorLayout = ({ children }) => {
   };
 
   const handleLogout = () => {
-    // Adjust the route as needed. Here we redirect to the login page on logout.
-    navigate("/signup");
+    dispatch(logoutUser());
   };
 
   return (

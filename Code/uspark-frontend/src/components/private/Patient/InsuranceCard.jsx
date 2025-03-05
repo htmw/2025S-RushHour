@@ -13,7 +13,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { enqueueSnackbar } from "notistack";
-import "../../css/InsuranceCard.css"
+import "../../../css/InsuranceCard.css";
 
 const InsuranceCard = () => {
   const [insuranceDetails, setInsuranceDetails] = useState({

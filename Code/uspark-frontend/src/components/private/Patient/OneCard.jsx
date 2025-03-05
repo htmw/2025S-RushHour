@@ -9,7 +9,7 @@ import {
   Button,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import "../../css/OneCard.css";
+import "../../../css/OneCard.css";
 import InsuranceCard from "./InsuranceCard";
 
 const OneCard = () => {

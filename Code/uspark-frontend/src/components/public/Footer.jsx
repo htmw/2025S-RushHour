@@ -6,6 +6,7 @@ import {
   Link,
   IconButton,
   Box,
+  Divider,
 } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -21,11 +22,9 @@ const Footer = () => {
         color: "text.primary",
         mt: 4,
         py: 4,
-        borderTopWidth: 1,
-        borderTopColor: "background.paper",
-        borderTopStyle: "solid",
       }}
     >
+      <Divider sx={{ mb: 4 }} />
       <Container maxWidth="lg">
         <Grid2 container spacing={4} justifyContent="center">
           {/* Brand Section */}
@@ -48,7 +47,7 @@ const Footer = () => {
               Quick Links
             </Typography>
             <Box sx={{ mt: 1 }}>
-              {["Home", "About Us", "Contact", "FAQ"].map((text) => (
+              {["About Us", "Contact Us"].map((text) => (
                 <Link
                   key={text}
                   href={`/${text.toLowerCase().replace(/\s+/g, "")}`}
