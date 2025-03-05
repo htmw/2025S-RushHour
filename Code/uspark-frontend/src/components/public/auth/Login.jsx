@@ -20,9 +20,9 @@ import {
   googleProvider,
   appleProvider,
   signInWithPopup,
-} from "../../firebase/firebase";
-import { login, oAuthLogin } from "../../store/actions";
-import history from "../../history";
+} from "../../../firebase/firebase";
+import { login, oAuthLogin } from "../../../store/actions";
+import history from "../../../history";
 
 const Login = () => {
   const navigate = useNavigate();

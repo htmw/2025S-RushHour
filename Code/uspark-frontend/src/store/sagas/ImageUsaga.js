@@ -20,6 +20,6 @@ function* uploadProfileImageSaga(action) {
   }
 }
 
-export function* watchUploadProfileImage() {
+export default function* watchUploadProfileImage() {
   yield takeLatest(UPLOAD_PROFILE_IMAGE, uploadProfileImageSaga);
 }

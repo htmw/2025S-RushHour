@@ -7,7 +7,7 @@ import {
   Button,
 } from "@mui/material";
 import axios from "axios";
-import "../../css/News.css";
+import "../../../css/News.css";
 
 const HealthNewsCard = () => {
   const [articles, setArticles] = useState([]);
@@ -20,7 +20,7 @@ const HealthNewsCard = () => {
         const response = await axios.get("https://newsapi.org/v2/everything", {
           params: {
             q: "health",
-            apiKey: "a9453d8149494997999a0a3747ed64c3", 
+            apiKey: "a9453d8149494997999a0a3747ed64c3",
             pageSize: 100,
           },
         });

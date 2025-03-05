@@ -14,7 +14,7 @@ import {
 import GoogleIcon from "@mui/icons-material/Google";
 import AppleIcon from "@mui/icons-material/Apple";
 import { useDispatch, useSelector } from "react-redux";
-import { oAuthSignup, signup } from "../../store/actions";
+import { oAuthSignup, signup } from "../../../store/actions";
 
 // ✅ Firebase Auth Imports
 import {
@@ -22,8 +22,8 @@ import {
   googleProvider,
   appleProvider,
   signInWithPopup,
-} from "../../firebase/firebase";
-import history from "../../history";
+} from "../../../firebase/firebase";
+import history from "../../../history";
 
 const Signup = () => {
   const navigate = useNavigate();

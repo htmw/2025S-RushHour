@@ -20,11 +20,14 @@ import {
   Info,
   ExitToApp,
 } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../../../store/actions";
 
 const drawerWidth = 240;
 
 const PatientLayout = ({ children }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false); // Sidebar initially closed
 
   const toggleDrawer = () => {
@@ -32,7 +35,7 @@ const PatientLayout = ({ children }) => {
   };
 
   const handleLogout = () => {
-    navigate("/signup"); // Redirect to signup page on logout
+    dispatch(logoutUser());
   };
 
   return (

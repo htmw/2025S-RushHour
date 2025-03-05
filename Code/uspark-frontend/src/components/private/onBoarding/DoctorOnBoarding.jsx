@@ -8,7 +8,9 @@ const DoctorQuestionnaire = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth);
-  const { loading, error, doctorData } = useSelector(
+    const userOnboarded = useSelector((state) => state.auth.isOnboarded);
+  
+  const { loading, error } = useSelector(
     (state) => state.onBoarding
   );
 
@@ -19,12 +21,6 @@ const DoctorQuestionnaire = () => {
     certifications: "",
   });
 
-  // useEffect(() => {
-  //   if (doctorData) {
-  //     history.push("/dashboard");
-  //   }
-  // }, [doctorData, navigate]);
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value }, navigate);
   };
@@ -32,6 +28,11 @@ const DoctorQuestionnaire = () => {
   const handleSubmit = () => {
     dispatch(doctorOnboarding({ formData, token: user.token }, navigate));
   };
+  useEffect(() => {
+    if (doctorData) {
+      history.push("/dashboard");
+    }
+  }, [doctorData, navigate]);
 
   return (
     <Paper elevation={3} style={{ padding: 20, marginTop: 20 }}>

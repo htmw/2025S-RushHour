@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Typography } from "@mui/material";
 import PatientLayout from "./PatLayout";
-import "../../css/PatientHomePage.css"
-import health from "../../components/Fact";
+import "../../../css/PatientHomePage.css";
+import health from "./Fact.js";
 import OneCard from "./OneCard";
 import { motion } from "framer-motion";
 import MedicalNews from "./News";
 import InitialAssessmentCard from "./InitialAssesment";
-import Chatbot from "../../components/Chatbot/Chatbox";
-
+import Chatbot from "../Chatbot/Chatbox";
 
 const healthFacts = health;
 
@@ -55,9 +54,8 @@ const PatientHomePage = () => {
 
           <OneCard />
         </motion.div>
-        <Chatbot/>
+        <Chatbot />
       </motion.div>
-      
     </PatientLayout>
   );
 };

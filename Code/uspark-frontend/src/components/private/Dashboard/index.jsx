@@ -7,13 +7,11 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDashboard } from "../../store/actions";
+import { fetchDashboard } from "../../../store/actions";
 import { useNavigate } from "react-router-dom";
-import ProfileImageUpload from "../Dashboard/Imageupload";
-import PatientProfile from "./PatientProfile";
-import DoctorProfile from "./DoctorProfile";
-import PatientHomePage from "../../pages/Patient/Patient";
-import DoctorHomePage from "../../pages/Doctor/Doctor";
+import PatientHomePage from "../Patient/Patient";
+import DoctorHomePage from "../Doctor/Doctor";
+import AdminDashboard from "./AdminDashboard";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -22,10 +20,14 @@ const Dashboard = () => {
   const { userData, loading, error } = useSelector((state) => state.dashboard);
 
   useEffect(() => {
-    if (auth.token) {
-      dispatch(fetchDashboard({ token: auth.token }, navigate));
+    if (!auth.isOnboarded) {
+      navigate("/onBoarding");
+    } else {
+      if (auth.token) {
+        dispatch(fetchDashboard({ token: auth.token }, navigate));
+      }
     }
-  }, [auth.token, dispatch, navigate]);
+  }, [auth, dispatch, navigate]);
 
   if (loading) {
     return (
@@ -59,14 +61,13 @@ const Dashboard = () => {
     <Container sx={{ mt: 5 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Grid2 container spacing={4}>
-          {/* Profile Image Upload Component */}
-
-          {/* Profile Details Section */}
           <Grid2 item size={{ xs: 12, md: 8 }}>
             {userData.role === "patient" ? (
               <PatientHomePage />
             ) : userData.role === "doctor" ? (
               <DoctorHomePage />
+            ) : userData.role === "doctor" ? (
+              <AdminDashboard />
             ) : (
               <Typography align="center">
                 No additional profile details found.

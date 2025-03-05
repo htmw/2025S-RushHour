@@ -1,18 +1,32 @@
 import { lazy } from "react";
 
-const Login = lazy(() => import("../components/auth/Login"));
-const Signup = lazy(() => import("../components/auth/Signup"));
-const Home = lazy(() => import("../components/Home"));
-const Dashboard = lazy(() => import("../components/Dashboard/Dashboard"));
-const Onboarding = lazy(() => import("../components/onBoarding"));
-const PatientProfile = lazy(() => import("../components/Dashboard/PatientProfile"));
-const DoctorProfile = lazy(() => import("../components/Dashboard/DoctorProfile"));
-const AboutUs = lazy(() => import("../components/AboutUs"));
-const AboutUsD = lazy(() => import("../components/AboutUsD"));
-const AdminDashboard = lazy(() => import("../components/Dashboard/Admindashboard"));
+// Public Routes
+const Login = lazy(() => import("../components/public/auth/Login"));
+const Signup = lazy(() => import("../components/public/auth/Signup"));
+const PublicAboutUs = lazy(() => import("../components/public/AboutUs"));
+const ContactUs = lazy(() => import("../components/public/ContactUs"));
+
+// Private Routes
+const Home = lazy(() => import("../components/private/Home"));
+const Dashboard = lazy(() => import("../components/private/Dashboard"));
+const Onboarding = lazy(() => import("../components/private/onBoarding"));
+const PatientDashboard = lazy(() =>
+  import("../components/private/Dashboard/PatientDashboard")
+);
+const DoctorDashboard = lazy(() =>
+  import("../components/private/Dashboard/DoctorDashboard")
+);
+const AdminDashboard = lazy(() =>
+  import("../components/private/Dashboard/AdminDashboard")
+);
 export const PrivateRoutes = [
   {
     path: "/",
+    component: Home,
+    exact: true,
+  },
+  {
+    path: "/onboarding",
     component: Onboarding,
     exact: true,
   },
@@ -22,34 +36,18 @@ export const PrivateRoutes = [
     exact: true,
   },
   {
+    path: "/admindashboard",
+    component: AdminDashboard,
+    exact: true,
+  },
+  {
     path: "/patprofile",
-    component: PatientProfile,
+    component: PatientDashboard,
     exact: true,
   },
   {
     path: "/docprofile",
-    component: DoctorProfile,
-    exact: true,
-  },
-  {
-    path: "/aboutus",
-    component: AboutUs,
-    exact: true,
-  },
-  {
-    path: "/daboutus",
-    component: AboutUsD,
-    exact: true,
-  },
-  {
-    path: "/admin",
-    component: AdminDashboard,
-    exact: true,
-  },
-
-  {
-    path: "/home",
-    component: Dashboard,
+    component: DoctorDashboard,
     exact: true,
   },
 ];
@@ -65,11 +63,25 @@ export const PublicRoutes = [
     component: Signup,
     exact: true,
   },
+  {
+    path: "/aboutus",
+    component: PublicAboutUs,
+    exact: true,
+  },
+  {
+    path: "/contactus",
+    component: ContactUs,
+    exact: true,
+  },
 ];
 
 export const headerRouteList = [
-  // {
-  //   path: "/home",
-  //   name: "Home",
-  // },
+  {
+    path: "/aboutus",
+    name: "About Us",
+  },
+  {
+    path: "/contactus",
+    name: "Contact Us",
+  },
 ];

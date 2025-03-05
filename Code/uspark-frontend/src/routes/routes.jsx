@@ -6,10 +6,10 @@ import {
 } from "react-router-dom";
 import { PrivateRoutes, PublicRoutes } from "./routeList";
 import { Suspense } from "react";
-import LoadingSpinner from "../components/Suspense";
+import LoadingSpinner from "../components/public/Suspense";
 import { useSelector } from "react-redux";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../components/public/Header";
+import Footer from "../components/public/Footer";
 import history from "../history";
 const PrivateRoute = ({ Component }) => {
   const token = useSelector((state) => state.auth.token);
