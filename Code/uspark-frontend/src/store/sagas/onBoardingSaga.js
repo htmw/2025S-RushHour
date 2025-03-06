@@ -5,7 +5,7 @@
 
 import { call, put, takeLatest } from "redux-saga/effects";
 import axios from "axios";
-import { doctorOnboarding, patientOnboarding } from "../actions";
+import { doctorOnboarding, login, patientOnboarding } from "../actions";
 import { enqueueSnackbar } from "notistack";
 import { DOCTOR_ONBOARDING, PATIENT_ONBOARDING } from "../actions/types";
 import history from "../../history";
@@ -61,7 +61,11 @@ function* handleDoctorOnboarding(action) {
 
     yield put(doctorOnboarding.success(formData));
     enqueueSnackbar("Doctor Onboarding Completed!", { variant: "success" });
-
+    yield put(
+      login.success({
+        isOnboarded: true,
+      })
+    );
     history.push("/dashboard");
   } catch (error) {
     const errorMsg = error.response?.data?.message || "Onboarding Failed";
@@ -92,6 +96,11 @@ function* handlePatientOnboarding(action) {
     yield call(patientOnboardingApi, formData, token);
 
     yield put(patientOnboarding.success(formData));
+    yield put(
+      login.success({
+        isOnboarded: true,
+      })
+    );
     enqueueSnackbar("Patient Onboarding Completed!", { variant: "success" });
 
     history.push("/dashboard");

@@ -4,19 +4,17 @@ const User = require("../Models/User");
 const router = express.Router();
 const { default: authenticate } = require("../Middleware/authenticate");
 
-router.get("/insurance", authenticate, async (req, res) => {
+router.get("/", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user)
       return res.status(200).json({ message: "User not found", error: true });
 
     if (user.role !== "patient") {
-      return res
-        .status(200)
-        .json({
-          message: "Only patients can have insurance details",
-          error: true,
-        });
+      return res.status(200).json({
+        message: "Only patients can have insurance details",
+        error: true,
+      });
     }
 
     const insurance = await Insurance.findOne({ userId: user._id });
@@ -33,7 +31,7 @@ router.get("/insurance", authenticate, async (req, res) => {
   }
 });
 
-router.post("/insurance", authenticate, async (req, res) => {
+router.post("/", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user) return res.status(404).json({ message: "User not found" });

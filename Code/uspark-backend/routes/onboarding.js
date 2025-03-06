@@ -5,7 +5,7 @@ const Patient = require("../Models/Patient");
 const Doctor = require("../Models/Doctor");
 const { default: authenticate } = require("../Middleware/authenticate");
 
-router.post("/onboarding/patient", authenticate, async (req, res) => {
+router.post("/patient", authenticate, async (req, res) => {
   const { age, sex, height, weight, healthIssues } = req.body;
   console.log({ age, sex, height, weight, healthIssues });
 
@@ -40,7 +40,7 @@ router.post("/onboarding/patient", authenticate, async (req, res) => {
 });
 
 //  Doctor Onboarding Route
-router.post("/onboarding/doctor", authenticate, async (req, res) => {
+router.post("/doctor", authenticate, async (req, res) => {
   const { specialization, experience, certifications } = req.body;
 
   try {
@@ -55,8 +55,8 @@ router.post("/onboarding/doctor", authenticate, async (req, res) => {
       specialization,
       experience,
       certifications,
-      verificationStatus: "pending",  // Initial verification status
-      verificationDocs: [],  // Initial verification documents
+      verificationStatus: "pending", // Initial verification status
+      verificationDocs: [], // Initial verification documents
     });
 
     await newDoctor.save();

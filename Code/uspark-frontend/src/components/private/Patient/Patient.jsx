@@ -36,7 +36,11 @@ const PatientHomePage = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <motion.div>
-          <Typography variant="h4" className="patient-home-title">
+          <Typography
+            variant="h4"
+            className="patient-home-title"
+            data-cy="dashboard-welcome"
+          >
             Welcome, {fullName}!
           </Typography>
           <Typography variant="body1" className="patient-home-subtitle">

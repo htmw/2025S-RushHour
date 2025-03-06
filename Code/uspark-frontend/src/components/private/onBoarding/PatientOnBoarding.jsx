@@ -77,6 +77,7 @@ const PatientQuestionnaire = () => {
           <TextField
             label="Name"
             name="name"
+            data-cy="onBoarding-name"
             fullWidth
             value={formData.name}
             onChange={handleChange}
@@ -85,6 +86,7 @@ const PatientQuestionnaire = () => {
             label="Age"
             name="age"
             type="number"
+            data-cy="onBoarding-age"
             fullWidth
             value={formData.age}
             onChange={handleChange}
@@ -95,6 +97,7 @@ const PatientQuestionnaire = () => {
             name="sex"
             select
             fullWidth
+            data-cy="onBoarding-sex"
             value={formData.sex}
             onChange={handleChange}
             style={{ marginTop: 16 }}
@@ -107,6 +110,7 @@ const PatientQuestionnaire = () => {
             name="height"
             type="number"
             fullWidth
+            data-cy="onBoarding-height"
             value={formData.height}
             onChange={handleChange}
             style={{ marginTop: 16 }}
@@ -115,6 +119,7 @@ const PatientQuestionnaire = () => {
             label="Weight (kg)"
             name="weight"
             type="number"
+            data-cy="onBoarding-weight"
             fullWidth
             value={formData.weight}
             onChange={handleChange}
@@ -123,6 +128,7 @@ const PatientQuestionnaire = () => {
           <TextField
             label="Health Issues"
             name="healthIssues"
+            data-cy="onBoarding-healthIssues"
             fullWidth
             multiline
             rows={3}
@@ -143,6 +149,7 @@ const PatientQuestionnaire = () => {
             onClick={handleSubmit}
             disabled={loading}
             style={{ marginTop: 20 }}
+            data-cy="onBoarding-submit"
           >
             {loading ? "Submitting..." : "Submit"}
           </Button>

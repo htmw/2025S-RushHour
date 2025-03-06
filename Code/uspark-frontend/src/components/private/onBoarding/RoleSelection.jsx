@@ -18,7 +18,12 @@ const RoleSelection = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <Typography variant="h4" align="center" gutterBottom>
+      <Typography
+        variant="h4"
+        align="center"
+        gutterBottom
+        data-cy="Choose-Your-Role"
+      >
         Choose Your Role
       </Typography>
 
@@ -37,6 +42,7 @@ const RoleSelection = () => {
             <Button
               variant="contained"
               color="primary"
+              data-cy="role-select-patient"
               onClick={() => handleRoleSelect("patient")}
             >
               Select Patient
@@ -58,6 +64,7 @@ const RoleSelection = () => {
             <Button
               variant="contained"
               color="secondary"
+              data-cy="role-select-doctor"
               onClick={() => handleRoleSelect("doctor")}
             >
               Select Doctor

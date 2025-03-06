@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const User = require("../Models/User");
 const JWT_SECRET = process.env.JWT_SECRET;
+const { v4: uuidv4 } = require("uuid");
 
 const generateToken = (user) => {
   return jwt.sign(
@@ -72,6 +73,39 @@ router.post("/auth/oauth", async (req, res) => {
     res.json({ token });
   } catch (err) {
     console.error("OAuth Auth Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+router.post("/auth/signup", async (req, res) => {
+  const { email, password, fullName } = req.body;
+
+  if (!email || !password || !fullName) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    let existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      userId: uuidv4(),
+      email,
+      fullName,
+      password: hashedPassword,
+    });
+
+    await newUser.save();
+
+    const token = generateToken(newUser);
+    res.status(201).json({ token, message: "User created successfully" });
+  } catch (err) {
+    console.error("Signup Error:", err);
     res.status(500).json({ message: "Server Error" });
   }
 });

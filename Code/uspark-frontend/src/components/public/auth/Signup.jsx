@@ -84,7 +84,7 @@ const Signup = () => {
     e.preventDefault();
     let errors = [];
 
-    if (!form.name) errors.push("Name is required");
+    if (!form.fullName) errors.push("Name is required");
     if (!form.email) errors.push("Email is required");
     if (!form.password) errors.push("Password is required");
     if (!form.confirmPassword) errors.push("Confirm Password is required");
@@ -99,7 +99,7 @@ const Signup = () => {
     dispatch(
       signup(
         {
-          name: form.name,
+          fullName: form.fullName,
           email: form.email,
           password: form.password,
         },
@@ -146,9 +146,9 @@ const Signup = () => {
           <Grid2 item size={{ xs: 12 }}>
             <TextField
               fullWidth
-              label="Name"
-              name="name"
-              value={form.name}
+              label="First Name and Last Name"
+              name="fullName"
+              value={form.fullName}
               onChange={handleChange}
               required
               data-cy="signup-name"
