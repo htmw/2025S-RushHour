@@ -6,7 +6,7 @@ require("dotenv").config();
 const router = express.Router();
 
 // ✅ Route: POST /api/chat
-router.post("/chat", authenticate, async (req, res) => {
+router.post("/", authenticate, async (req, res) => {
   try {
     const { message } = req.body;
 

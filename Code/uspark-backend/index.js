@@ -3,23 +3,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const onBoardingRoutes = require("./routes/onboarding");
 const authRoutes = require("./routes/auth");
-const dashboardRoutes = require("./routes/dashboard");
-const profileImage = require("./routes/profileimage");
-const insuranceRoutes = require("./routes/Insuranceroutes");
 const app = express();
 const PORT = process.env.PORT || 5000;
-const adminRoutes = require("./routes/admin"); //  Import Admin Routes
-const Chat = require("./routes/chat");
-
-
-
-
-
-
-
-
+const routes = require("./routes"); // Import the consolidated routes
 
 // ✅ Middleware
 app.use(cors());
@@ -37,13 +24,8 @@ mongoose
 // ✅ Generate JWT Token
 
 app.use("/", authRoutes);
-app.use("/api", onBoardingRoutes);
-app.use("/api", dashboardRoutes);
-app.use("/api", profileImage);
-app.use("/api/admin", adminRoutes); 
-app.use("/api", insuranceRoutes);
-app.use("/api", Chat); 
 
+app.use("/api", routes);
 
 app.get("/test", (req, res) => {
   res.send("Hello Tester");
