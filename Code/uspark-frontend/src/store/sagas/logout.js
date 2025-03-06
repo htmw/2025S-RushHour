@@ -1,16 +1,38 @@
+/**
+ * @fileoverview Redux-Saga for handling user logout.
+ * Clears authentication data and redirects the user to the login page.
+ */
+
 import { takeLatest } from "redux-saga/effects";
 import { LOGOUT_USER } from "../actions/types";
 import history from "../../history";
 
-// ✅ Worker Saga: Fetch Logout Data
+/**
+ * Worker saga: Handles user logout.
+ * Clears the authentication token from local storage and redirects to the login page.
+ *
+ * @generator
+ * @function handleLogout
+ * @param {Object} action - Redux action object (not used but required by saga).
+ * @yields {Generator} Saga effects for logout handling.
+ */
 function* handleLogout(action) {
   try {
-    localStorage.setItem("token", "");
-    history.push("/login");
-  } catch (error) {}
+    localStorage.setItem("token", ""); // Clear authentication token
+    history.push("/login"); // Redirect to login page
+  } catch (error) {
+    // No error handling needed as logout is local
+  }
 }
 
-// ✅ Watcher Saga
+/**
+ * Watcher saga: Listens for the LOGOUT_USER action.
+ * Triggers the worker saga when a logout action is dispatched.
+ *
+ * @generator
+ * @function watchLogout
+ * @yields {Generator} Watches for LOGOUT_USER actions.
+ */
 export default function* watchLogout() {
   yield takeLatest(LOGOUT_USER, handleLogout);
 }

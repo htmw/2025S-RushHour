@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Contact Us page component for Uspark.
+ * Provides contact options, a contact form, and frequently asked questions.
+ */
+
 import React from "react";
 import {
   Container,
@@ -13,6 +18,14 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 
+/**
+ * ContactUs Component
+ *
+ * Displays contact options, a contact form, and an FAQ section.
+ *
+ * @component
+ * @returns {JSX.Element} The Contact Us page.
+ */
 const ContactUs = () => {
   return (
     <Container maxWidth="lg" sx={{ pt: 5 }}>

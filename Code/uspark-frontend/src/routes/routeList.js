@@ -1,6 +1,12 @@
+/**
+ * @fileoverview Defines the application's route configurations.
+ * Contains both public and private routes, along with header navigation links.
+ */
+
 import { lazy } from "react";
 
 // Public Routes
+/** @constant {React.LazyExoticComponent<React.ComponentType>} */
 const Login = lazy(() => import("../components/public/auth/Login"));
 const Signup = lazy(() => import("../components/public/auth/Signup"));
 const PublicAboutUs = lazy(() => import("../components/public/AboutUs"));
@@ -10,15 +16,17 @@ const ContactUs = lazy(() => import("../components/public/ContactUs"));
 const Home = lazy(() => import("../components/private/Home"));
 const Dashboard = lazy(() => import("../components/private/Dashboard"));
 const Onboarding = lazy(() => import("../components/private/onBoarding"));
-const PatientDashboard = lazy(() =>
-  import("../components/private/Dashboard/PatientDashboard")
-);
 const DoctorDashboard = lazy(() =>
   import("../components/private/Dashboard/DoctorDashboard")
 );
 const AdminDashboard = lazy(() =>
   import("../components/private/Dashboard/AdminDashboard")
 );
+
+/**
+ * List of private routes accessible only to authenticated users.
+ * @constant {Array<{path: string, component: React.ComponentType, exact: boolean}>}
+ */
 export const PrivateRoutes = [
   {
     path: "/",
@@ -41,17 +49,16 @@ export const PrivateRoutes = [
     exact: true,
   },
   {
-    path: "/patprofile",
-    component: PatientDashboard,
-    exact: true,
-  },
-  {
     path: "/docprofile",
     component: DoctorDashboard,
     exact: true,
   },
 ];
 
+/**
+ * List of public routes accessible without authentication.
+ * @constant {Array<{path: string, component: React.ComponentType, exact: boolean}>}
+ */
 export const PublicRoutes = [
   {
     path: "/login",
@@ -75,6 +82,10 @@ export const PublicRoutes = [
   },
 ];
 
+/**
+ * Routes used in the navigation header.
+ * @constant {Array<{path: string, name: string}>}
+ */
 export const headerRouteList = [
   {
     path: "/aboutus",

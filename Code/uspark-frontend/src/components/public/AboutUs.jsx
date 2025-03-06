@@ -1,3 +1,8 @@
+/**
+ * @fileoverview About Us page for Uspark.
+ * Provides information about the organization's journey, solutions, team, vision, and contact details.
+ */
+
 import React from "react";
 import {
   Typography,
@@ -9,6 +14,15 @@ import {
   CardContent,
 } from "@mui/material";
 import { motion } from "framer-motion";
+
+/**
+ * AboutUs Component
+ *
+ * Displays the history, solutions, team, vision, and contact details of Uspark.
+ *
+ * @component
+ * @returns {JSX.Element} The About Us page.
+ */
 const AboutUs = () => {
   return (
     <Container maxWidth="lg" sx={{ pt: 5 }}>
@@ -62,6 +76,7 @@ const AboutUs = () => {
         </Typography>
       </Box>
       <Grid2 container spacing={5}>
+        {/* Uheal */}
         <Grid2 item size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
@@ -78,6 +93,8 @@ const AboutUs = () => {
             </CardContent>
           </Card>
         </Grid2>
+
+        {/* Useg */}
         <Grid2 item size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>

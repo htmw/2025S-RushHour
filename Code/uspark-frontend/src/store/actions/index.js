@@ -1,31 +1,62 @@
+/**
+ * @fileoverview Defines Redux action creators for asynchronous operations.
+ * Uses a reusable function to generate action creators for Pending, Success, and Error states.
+ */
+
 import * as types from "./types";
 
 /**
  * Reusable action creator for async actions (Pending, Success, Error).
  *
- * @param {string} baseType - The base action type (e.g., 'FETCH_DASHBOARD_DETAILS').
- * @returns {object} - Action creators for trigger, pending, success, and error states.
+ * @function createAsyncActions
+ * @param {string} baseType - The base action type (e.g., 'FETCH_DASHBOARD').
+ * @returns {Object} Action creators for trigger, pending, success, and error states.
  */
 const createAsyncActions = (baseType) => {
-  // The main function that acts as the default action
+  /**
+   * Default action creator function.
+   *
+   * @param {any} payload - The data to be passed to the action.
+   * @param {Function} [navigate] - Optional navigation function.
+   * @returns {Object} Redux action.
+   */
   const action = (payload, navigate) => ({
     type: baseType,
     payload,
-    meta: { navigate }, // Move navigate to meta
+    meta: { navigate },
   });
 
-  // Attaching methods to the function
+  /**
+   * Generates a pending action.
+   *
+   * @param {Function} [navigate] - Optional navigation function.
+   * @returns {Object} Redux action for pending state.
+   */
   action.pending = (navigate) => ({
     type: `${baseType}_PENDING`,
     meta: { navigate },
   });
 
+  /**
+   * Generates a success action.
+   *
+   * @param {any} data - The successful response data.
+   * @param {Function} [navigate] - Optional navigation function.
+   * @returns {Object} Redux action for success state.
+   */
   action.success = (data, navigate) => ({
     type: `${baseType}_SUCCESS`,
     payload: data,
     meta: { navigate },
   });
 
+  /**
+   * Generates an error action.
+   *
+   * @param {any} error - The error message or object.
+   * @param {Function} [navigate] - Optional navigation function.
+   * @returns {Object} Redux action for error state.
+   */
   action.error = (error, navigate) => ({
     type: `${baseType}_ERROR`,
     payload: error,
@@ -35,6 +66,10 @@ const createAsyncActions = (baseType) => {
   return action;
 };
 
+/**
+ * Redux action creators for various async operations.
+ * These are generated using `createAsyncActions()`.
+ */
 export const fetchDashboard = createAsyncActions(types.FETCH_DASHBOARD);
 export const login = createAsyncActions(types.LOGIN);
 export const oAuthLogin = createAsyncActions(types.OAUTH_LOGIN);

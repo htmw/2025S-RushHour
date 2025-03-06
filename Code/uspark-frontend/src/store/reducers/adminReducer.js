@@ -1,11 +1,34 @@
+/**
+ * @fileoverview Redux reducer for managing admin-related state.
+ * Handles fetching and verifying doctors.
+ */
+
 import * as types from "../actions/types";
 
+/**
+ * Initial state for the admin reducer.
+ * @constant
+ * @type {Object}
+ * @property {Array<Object>} doctors - List of doctors.
+ * @property {boolean} loading - Indicates if a request is in progress.
+ * @property {string|null} error - Stores error messages, if any.
+ */
 const initialState = {
   doctors: [],
   loading: false,
   error: null,
 };
 
+/**
+ * Admin reducer for handling doctor-related actions.
+ *
+ * @function adminReducer
+ * @param {Object} state - The current state.
+ * @param {Object} action - Redux action object.
+ * @param {string} action.type - The action type.
+ * @param {any} [action.payload] - The action payload.
+ * @returns {Object} The updated state.
+ */
 const adminReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.FETCH_DOCTORS_PENDING:
