@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Footer component for Uspark.
+ * Includes branding, quick links, social media icons, and copyright information.
+ */
+
 import React from "react";
 import {
   Container,
@@ -13,6 +18,14 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import InstagramIcon from "@mui/icons-material/Instagram";
 
+/**
+ * Footer Component
+ *
+ * Displays a footer with company branding, navigation links, social media icons, and copyright details.
+ *
+ * @component
+ * @returns {JSX.Element} The Footer component.
+ */
 const Footer = () => {
   return (
     <Box

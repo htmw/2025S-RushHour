@@ -1,5 +1,10 @@
-// src/components/Signup.jsx
-import React, { useEffect, useState } from "react";
+/**
+ * @fileoverview Signup component for Uspark.
+ * Allows users to register using email/password or OAuth providers (Google, Apple).
+ * Uses Firebase authentication and Redux for state management.
+ */
+
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -25,41 +30,66 @@ import {
 } from "../../../firebase/firebase";
 import history from "../../../history";
 
+/**
+ * Signup Component
+ *
+ * Handles user registration via email/password and OAuth providers (Google, Apple).
+ *
+ * @component
+ * @returns {JSX.Element} The signup form and authentication buttons.
+ */
 const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  /**
+   * Local state for signup form fields.
+   * @type {[{ name: string, email: string, password: string, confirmPassword: string }, Function]}
+   */
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+
+  /**
+   * Local state for storing error messages.
+   * @type {[string, Function]}
+   */
   const [error, setError] = useState("");
+
+  /**
+   * Authentication state from Redux.
+   * @type {Object}
+   * @property {boolean} loading - Indicates if signup is in progress.
+   * @property {string|null} token - Authentication token if signup is successful.
+   * @property {boolean} isOnboarded - Indicates if the user has completed onboarding.
+   */
   const { loading, token, isOnboarded } = useSelector((state) => state.auth);
 
+  /**
+   * Handles input field changes and updates local form state.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event.
+   */
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  /**
+   * Validates and submits the signup form using Redux dispatch.
+   * @param {React.FormEvent} e - Form submission event.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     let errors = [];
 
-    if (!form.name) {
-      errors.push("Name is required");
-    }
-    if (!form.email) {
-      errors.push("Email is required");
-    }
-    if (!form.password) {
-      errors.push("Password is required");
-    }
-    if (!form.confirmPassword) {
-      errors.push("Confirm Password is required");
-    }
-    if (form.password !== form.confirmPassword) {
+    if (!form.name) errors.push("Name is required");
+    if (!form.email) errors.push("Email is required");
+    if (!form.password) errors.push("Password is required");
+    if (!form.confirmPassword) errors.push("Confirm Password is required");
+    if (form.password !== form.confirmPassword)
       errors.push("Passwords do not match");
-    }
 
     if (errors.length > 0) {
       setError(errors.join("\n"));
@@ -78,7 +108,10 @@ const Signup = () => {
     );
   };
 
-  // ✅ Handle OAuth signup for Google/Apple
+  /**
+   * Handles OAuth signup via Firebase popup authentication.
+   * @param {import("firebase/auth").AuthProvider} provider - Firebase authentication provider (Google/Apple).
+   */
   const handleOAuthSignup = async (provider) => {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -100,6 +133,7 @@ const Signup = () => {
       setError("Social signup failed. Please try again.");
     }
   };
+
   return (
     <Container maxWidth="sm">
       <Paper elevation={3} style={{ padding: 20, marginTop: 50 }}>
@@ -109,7 +143,7 @@ const Signup = () => {
 
         {/* ✅ Custom Email/Password Signup */}
         <Grid2 container spacing={2}>
-          <Grid2 size={{ xs: 12 }}>
+          <Grid2 item size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="Name"
@@ -120,7 +154,7 @@ const Signup = () => {
               data-cy="signup-name"
             />
           </Grid2>
-          <Grid2 size={{ xs: 12 }}>
+          <Grid2 item size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="Email"
@@ -132,7 +166,7 @@ const Signup = () => {
               data-cy="signup-email"
             />
           </Grid2>
-          <Grid2 size={{ xs: 12 }}>
+          <Grid2 item size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="Password"
@@ -144,7 +178,7 @@ const Signup = () => {
               data-cy="signup-password"
             />
           </Grid2>
-          <Grid2 size={{ xs: 12 }}>
+          <Grid2 item size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="Confirm Password"
@@ -177,7 +211,7 @@ const Signup = () => {
 
         <Divider style={{ margin: "20px 0" }}>OR</Divider>
 
-        {/* ✅ Custom Google Signup Button */}
+        {/* ✅ Google Signup Button */}
         <Button
           fullWidth
           variant="outlined"
@@ -189,7 +223,7 @@ const Signup = () => {
           Sign up with Google
         </Button>
 
-        {/* ✅ Custom Apple Signup Button */}
+        {/* ✅ Apple Signup Button */}
         <Button
           fullWidth
           variant="outlined"

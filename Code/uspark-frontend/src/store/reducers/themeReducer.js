@@ -1,9 +1,31 @@
+/**
+ * @fileoverview Redux reducer for managing the application's theme state.
+ * Controls dark mode preference and updates local storage accordingly.
+ */
+
 import { SET_THEME_SUCCESS } from "../actions/types";
 
+/**
+ * Initial state for the theme reducer.
+ * @constant
+ * @type {Object}
+ * @property {boolean} darkMode - Determines if dark mode is enabled, based on local storage.
+ */
 const initialState = {
   darkMode: localStorage.getItem("theme") === "dark",
 };
 
+/**
+ * Theme reducer for handling theme selection and persistence.
+ *
+ * @function themeReducer
+ * @param {Object} state - The current theme state.
+ * @param {Object} action - Redux action object.
+ * @param {string} action.type - The action type.
+ * @param {Object} [action.payload] - The action payload containing theme preference.
+ * @param {boolean} action.payload.inDarkMode - Indicates if dark mode should be enabled.
+ * @returns {Object} The updated theme state.
+ */
 const themeReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_THEME_SUCCESS:

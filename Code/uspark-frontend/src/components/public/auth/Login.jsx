@@ -1,4 +1,9 @@
-// src/components/Login.jsx
+/**
+ * @fileoverview Login component for Uspark.
+ * Allows users to log in using email/password or OAuth providers (Google, Apple).
+ * Uses Firebase authentication and Redux for state management.
+ */
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -24,22 +29,57 @@ import {
 import { login, oAuthLogin } from "../../../store/actions";
 import history from "../../../history";
 
+/**
+ * Login Component
+ *
+ * Handles user authentication via email/password and OAuth providers (Google, Apple).
+ *
+ * @component
+ * @returns {JSX.Element} The login form and authentication buttons.
+ */
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const { loading, error, token } = useSelector((state) => state.auth);
-  const isOnboarded = useSelector((state) => state.auth.isOnboarded);
 
+  /**
+   * Local state for login form fields.
+   * @type {[{ email: string, password: string }, Function]}
+   */
+  const [form, setForm] = useState({ email: "", password: "" });
+
+  /**
+   * Authentication state from Redux.
+   * @type {Object}
+   * @property {boolean} loading - Indicates if login is in progress.
+   * @property {string|null} error - Holds error messages if login fails.
+   * @property {string|null} token - Authentication token if login is successful.
+   * @property {boolean} isOnboarded - Indicates if the user has completed onboarding.
+   */
+  const { loading, error, token, isOnboarded } = useSelector(
+    (state) => state.auth
+  );
+
+  /**
+   * Handles input field changes and updates local form state.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event.
+   */
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  /**
+   * Submits the login form using Redux dispatch.
+   * @param {React.FormEvent} e - Form submission event.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(login(form, navigate));
   };
 
+  /**
+   * Handles OAuth login via Firebase popup authentication.
+   * @param {import("firebase/auth").AuthProvider} provider - Firebase authentication provider (Google/Apple).
+   */
   const handleOAuthLogin = async (provider) => {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -60,6 +100,9 @@ const Login = () => {
     }
   };
 
+  /**
+   * Redirects authenticated users to the dashboard or onboarding page.
+   */
   useEffect(() => {
     if (token) {
       history.push(isOnboarded ? "/dashboard" : "/");

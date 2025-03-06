@@ -1,4 +1,8 @@
-// src/components/Header.jsx
+/**
+ * @fileoverview Header component with navigation, authentication controls,
+ * and theme switching. Supports both desktop and mobile views.
+ */
+
 import React from "react";
 import {
   AppBar,
@@ -23,6 +27,9 @@ import { logoutUser, setTheme } from "../../store/actions";
 import { Link as RouterLink } from "react-router-dom";
 import { styled } from "@mui/system";
 
+/**
+ * Custom styled theme switch component for toggling between light and dark mode.
+ */
 const ThemeSwitch = styled(Switch)(({ theme }) => ({
   width: 62,
   height: 34,
@@ -61,6 +68,9 @@ const ThemeSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
+/**
+ * Custom styled logo text component.
+ */
 const LogoText = styled(Typography)(({ theme }) => ({
   fontSize: "1.5rem",
   fontWeight: "bold",
@@ -69,6 +79,14 @@ const LogoText = styled(Typography)(({ theme }) => ({
   display: "inline-block",
 }));
 
+/**
+ * Header Component
+ *
+ * Displays the navigation bar with links, theme switcher, and authentication options.
+ *
+ * @component
+ * @returns {JSX.Element} The header component with navigation and user authentication controls.
+ */
 const Header = () => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -77,23 +95,41 @@ const Header = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const darkMode = useSelector((state) => state.theme.darkMode);
 
-  // User authentication state from Redux
+  /**
+   * Retrieves the authenticated user's email from Redux state.
+   * @type {string|null}
+   */
   const user = useSelector((state) => state.auth?.email); // Adjust based on your store
 
+  /** @type {[HTMLElement|null, Function]} */
   const [anchorEl, setAnchorEl] = React.useState(null);
 
+  /**
+   * Opens the user menu.
+   * @param {React.MouseEvent} event - The event triggering the menu open.
+   */
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
+  /**
+   * Closes the user menu.
+   */
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
+  /**
+   * Logs the user out and navigates to the login page.
+   */
   const handleLogout = () => {
     dispatch(logoutUser(navigate));
     handleMenuClose();
   };
+
+  /**
+   * Toggles between light and dark themes.
+   */
   const handleThemeToggle = () => {
     dispatch(setTheme.success({ inDarkMode: !darkMode })); // Toggle theme
   };
@@ -114,10 +150,9 @@ const Header = () => {
         {!isMobile ? (
           <Grid2 container alignItems="center" spacing={2}>
             {headerRouteList.map(({ name, path }) => (
-              <Grid2 item>
+              <Grid2 item key={path}>
                 <Link
                   component={RouterLink}
-                  key={path}
                   to={path}
                   sx={{
                     textDecoration: "none",
@@ -153,7 +188,7 @@ const Header = () => {
                       open={Boolean(anchorEl)}
                       onClose={handleMenuClose}
                     >
-                      <MenuItem component={Link} to="/profile">
+                      <MenuItem component={RouterLink} to="/profile">
                         Profile
                       </MenuItem>
                       <MenuItem onClick={handleLogout}>Logout</MenuItem>
@@ -198,19 +233,19 @@ const Header = () => {
               onClose={handleMenuClose}
             >
               {headerRouteList.map(({ name, path }) => (
-                <MenuItem key={path} component={Link} to={path}>
+                <MenuItem key={path} component={RouterLink} to={path}>
                   {name}
                 </MenuItem>
               ))}
               {user ? (
                 <>
-                  <MenuItem component={Link} to="/profile">
+                  <MenuItem component={RouterLink} to="/profile">
                     Profile
                   </MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </>
               ) : (
-                <MenuItem component={Link} to="/login">
+                <MenuItem component={RouterLink} to="/login">
                   Login
                 </MenuItem>
               )}

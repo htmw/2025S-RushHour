@@ -1,8 +1,20 @@
-import React from "react";
+/**
+ * @fileoverview A custom Snackbar provider component for handling notifications.
+ * Uses `notistack` to display dismissible snackbars.
+ */
 
+import React from "react";
 import { SnackbarProvider, closeSnackbar } from "notistack";
 import { Close } from "@mui/icons-material";
 
+/**
+ * SnackbarCustomizedProvider Component
+ *
+ * Provides a global notification system with customized settings.
+ *
+ * @component
+ * @returns {JSX.Element} A configured `SnackbarProvider` component.
+ */
 const SnackbarCustomizedProvider = () => (
   <SnackbarProvider
     dense
@@ -23,4 +35,5 @@ const SnackbarCustomizedProvider = () => (
     )}
   />
 );
+
 export default SnackbarCustomizedProvider;
