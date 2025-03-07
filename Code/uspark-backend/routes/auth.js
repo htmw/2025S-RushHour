@@ -19,8 +19,8 @@ const generateToken = (user) => {
   );
 };
 // ✅ Normal Signup/Login Route
-router.post("/auth", async (req, res) => {
-  const { email, password, fullName } = req.body;
+router.post("/auth/login", async (req, res) => {
+  const { email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ message: "Email and password required" });
@@ -28,16 +28,11 @@ router.post("/auth", async (req, res) => {
 
   try {
     let user = await User.findOne({ email });
+    console.log(user);
 
-    if (!user) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      user = new User({ email, fullName, password: hashedPassword });
-      await user.save();
-    } else {
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch)
-        return res.status(400).json({ message: "Invalid credentials" });
-    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid credentials" });
 
     const token = generateToken(user);
     res.json({ token });

@@ -19,7 +19,7 @@ import history from "../../history";
  * @returns {Promise<Object>} Response containing authentication token.
  */
 const loginApi = (credentials) =>
-  axios.post("http://localhost:5001/auth", credentials);
+  axios.post("http://localhost:5001/auth/login", credentials);
 
 /**
  * API request to log in a user using OAuth (Google, Apple, etc.).
