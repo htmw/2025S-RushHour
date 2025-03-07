@@ -12,7 +12,7 @@ import { UPLOAD_VERIFICATION_DOCS } from "../actions/types";
  * Base API URL for doctor-related verification actions.
  * @constant {string}
  */
-const API_URL = "http://localhost:5000/api/dashboard/doctor";
+const API_URL = "http://localhost:5001/api/dashboard/doctor";
 
 /**
  * API request to upload verification documents.

@@ -18,7 +18,7 @@ import history from "../../history";
  * @returns {Promise<Object>} Resolves when the onboarding request is successful.
  */
 const doctorOnboardingApi = (formData, token) =>
-  axios.post("http://localhost:5000/api/onboarding/doctor", formData, {
+  axios.post("http://localhost:5001/api/onboarding/doctor", formData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -32,7 +32,7 @@ const doctorOnboardingApi = (formData, token) =>
  * @returns {Promise<Object>} Resolves when the onboarding request is successful.
  */
 const patientOnboardingApi = (formData, token) =>
-  axios.post("http://localhost:5000/api/onboarding/patient", formData, {
+  axios.post("http://localhost:5001/api/onboarding/patient", formData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

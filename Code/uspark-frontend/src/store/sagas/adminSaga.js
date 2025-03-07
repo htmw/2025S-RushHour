@@ -12,7 +12,7 @@ import { FETCH_DOCTORS, VERIFY_DOCTOR } from "../actions/types";
  * Base API URL for admin-related operations.
  * @constant {string}
  */
-const API_URL = "http://localhost:5000/api/admin";
+const API_URL = "http://localhost:5001/api/admin";
 
 /**
  * API call to fetch doctors.

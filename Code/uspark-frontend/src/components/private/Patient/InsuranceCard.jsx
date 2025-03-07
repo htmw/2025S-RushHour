@@ -29,7 +29,7 @@ const InsuranceCard = () => {
   // Fetch insurance details
   const fetchInsuranceDetails = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/insurance", {
+      const response = await axios.get("http://localhost:5001/api/insurance", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -63,7 +63,7 @@ const InsuranceCard = () => {
     event.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/insurance",
+        "http://localhost:5001/api/insurance",
         insuranceDetails,
         {
           headers: { Authorization: `Bearer ${token}` },

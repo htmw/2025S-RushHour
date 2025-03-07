@@ -22,7 +22,7 @@ function* uploadProfileImageSaga(action) {
   try {
     const response = yield call(
       axios.post,
-      "http://localhost:5000/api/upload-profile-image",
+      "http://localhost:5001/api/upload-profile-image",
       action.payload,
       {
         headers: { "Content-Type": "multipart/form-data" },

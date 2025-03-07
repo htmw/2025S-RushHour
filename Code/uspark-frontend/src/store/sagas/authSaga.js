@@ -19,7 +19,7 @@ import history from "../../history";
  * @returns {Promise<Object>} Response containing authentication token.
  */
 const loginApi = (credentials) =>
-  axios.post("http://localhost:5000/auth", credentials);
+  axios.post("http://localhost:5001/auth", credentials);
 
 /**
  * API request to log in a user using OAuth (Google, Apple, etc.).
@@ -28,7 +28,7 @@ const loginApi = (credentials) =>
  * @returns {Promise<Object>} Response containing authentication token.
  */
 const oauthLoginApi = (providerData) =>
-  axios.post("http://localhost:5000/auth/oauth", providerData);
+  axios.post("http://localhost:5001/auth/oauth", providerData);
 
 /**
  * API request to sign up a new user.
@@ -37,7 +37,7 @@ const oauthLoginApi = (providerData) =>
  * @returns {Promise<Object>} Response containing authentication token.
  */
 const signupApi = (userData) =>
-  axios.post("http://localhost:5000/auth/signup", userData);
+  axios.post("http://localhost:5001/auth/signup", userData);
 
 /**
  * API request to sign up a new user via OAuth.
@@ -46,7 +46,7 @@ const signupApi = (userData) =>
  * @returns {Promise<Object>} Response containing authentication token.
  */
 const oAuthSignupApi = (providerData) =>
-  axios.post("http://localhost:5000/auth/oauth", providerData);
+  axios.post("http://localhost:5001/auth/oauth", providerData);
 
 /**
  * Handles user login.
