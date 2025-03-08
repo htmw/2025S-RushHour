@@ -53,6 +53,12 @@ export const PrivateRoutes = [
     component: DoctorDashboard,
     exact: true,
   },
+
+  {
+    path: "/daboutus",
+    component:PublicAboutUs,
+    exact: true,
+  },
 ];
 
 /**

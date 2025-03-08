@@ -4,10 +4,14 @@ import { TextField, Button, Typography, Paper, Grid2 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { doctorOnboarding } from "../../../store/actions";
 
+
 const DoctorQuestionnaire = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth);
+  const { doctorData } = useSelector(
+    (state) => state.onBoarding
+  );
     const userOnboarded = useSelector((state) => state.auth.isOnboarded);
   
   const { loading, error } = useSelector(

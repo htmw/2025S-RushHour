@@ -34,7 +34,7 @@ const DoctorLayout = ({ children }) => {
   };
 
   const handleLogout = () => {
-    dispatch(logoutUser());
+    navigate("/signup")
   };
 
   return (
