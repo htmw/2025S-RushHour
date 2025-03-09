@@ -3,16 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { TextField, Button, Typography, Paper, Grid2 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { doctorOnboarding } from "../../../store/actions";
-
+import history from "../../../history";
 const DoctorQuestionnaire = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth);
-    const userOnboarded = useSelector((state) => state.auth.isOnboarded);
-  
-  const { loading, error } = useSelector(
-    (state) => state.onBoarding
-  );
+  const { doctorData } = useSelector((state) => state.onBoarding);
+
+  const { loading, error } = useSelector((state) => state.onBoarding);
 
   const [formData, setFormData] = useState({
     name: user.fullName || "",
