@@ -13,11 +13,12 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.750.0",
     "aws-sdk": "^2.1692.0",
-    "axios": "^1.8.1",
+    "axios": "^1.8.2",
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "express": "^4.21.2",
+    "jsdocs": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.1",
     "multer": "^1.4.5-lts.1",
@@ -25,7 +26,6 @@
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9"
   },
-  "description": "",
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
     "babel-jest": "^29.7.0",
@@ -36,5 +36,9 @@
     "supertest": "^7.0.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "description": ""
 }
