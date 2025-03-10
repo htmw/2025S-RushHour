@@ -8,12 +8,21 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Modal, Box, Alert } from "@mui/material";
+import {
+  Typography,
+  Button,
+  Modal,
+  Box,
+  Alert,
+  Paper,
+  IconButton,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchDashboard, uploadVerificationDocs } from "../../../store/actions";
 import DoctorLayout from "../Doctor/DoctorLayout";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CloseIcon from "@mui/icons-material/Close";
 
 /**
  * Doctor Dashboard Component
@@ -40,7 +49,6 @@ const DoctorProfile = () => {
 
   /** @property {File[]} */
   const [files, setFiles] = useState([]);
-  ``;
 
   /**
    * Handles file selection for document upload.
@@ -144,22 +152,78 @@ const DoctorProfile = () => {
 
       {/* Verification Upload Modal */}
       <Modal open={showModal} onClose={() => setShowModal(false)}>
-        <Box>
-          <Typography variant="h6">Verification Required</Typography>
-          <Typography>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            borderRadius: "12px",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          {/* Modal Header */}
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography variant="h6">Verification Required</Typography>
+            <IconButton onClick={() => setShowModal(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+
+          <Typography sx={{ mt: 1, color: "gray" }}>
             Please upload supporting documents for verification.
           </Typography>
-          <input
-            type="file"
-            multiple
-            onChange={handleFileChange}
-            style={{ marginTop: 10 }}
-          />
 
-          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+          {/* File Upload Input */}
+          <Paper
+            elevation={3}
+            sx={{
+              p: 2,
+              mt: 2,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "2px dashed #ccc",
+              borderRadius: "8px",
+              textAlign: "center",
+              cursor: "pointer",
+            }}
+            onClick={() => document.getElementById("fileUpload").click()}
+          >
+            <input
+              type="file"
+              multiple
+              id="fileUpload"
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
+            <Typography variant="body1" color="textSecondary">
+              Click to upload documents
+            </Typography>
+          </Paper>
+
+          {/* Show selected files */}
+          {files.length > 0 && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="subtitle2">Selected Files:</Typography>
+              {files.map((file, index) => (
+                <Typography key={index} variant="body2" sx={{ color: "white" }}>
+                  {file.name}
+                </Typography>
+              ))}
+            </Box>
+          )}
+
+          {/* Modal Actions */}
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
             <Button
               variant="contained"
               color="error"
+              sx={{ mr: 2 }}
               onClick={() => setShowModal(false)}
             >
               Cancel

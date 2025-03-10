@@ -16,6 +16,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  TextField,
+  Box,
 } from "@mui/material";
 import { fetchDoctors, verifyDoctor } from "../../../store/actions";
 
@@ -23,15 +25,89 @@ const AdminDashboard = () => {
   const dispatch = useDispatch();
   const { doctors, loading } = useSelector((state) => state.admin);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [tab, setTab] = useState(0); // 0 = Pending, 1 = Approved, 2 = Rejected
+  const [tab, setTab] = useState(0);
+  const [accessGranted, setAccessGranted] = useState(false);
+  const [enteredCode, setEnteredCode] = useState("");
+  const [newCode, setNewCode] = useState("");
+  const [isSettingCode, setIsSettingCode] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchDoctors());
-  }, [dispatch]);
+    // Check if an admin code exists
+    if (!localStorage.getItem("adminCode")) {
+      setIsSettingCode(true); // Prompt to set a new code
+    }
+  }, []);
 
-  const handleVerification = (doctorId, decision) => {
-    dispatch(verifyDoctor({ doctorId, decision }));
+  useEffect(() => {
+    if (accessGranted) {
+      dispatch(fetchDoctors());
+    }
+  }, [dispatch, accessGranted]);
+
+  const handleSetCode = () => {
+    if (newCode.trim().length < 4) {
+      alert("Code must be at least 4 characters long.");
+      return;
+    }
+    localStorage.setItem("adminCode", newCode);
+    setIsSettingCode(false);
+    alert("Admin access code set successfully!");
   };
+
+  const handleAccessCodeSubmit = () => {
+    const storedCode = localStorage.getItem("adminCode");
+    if (enteredCode === storedCode) {
+      setAccessGranted(true);
+    } else {
+      alert("Incorrect code. Please try again.");
+    }
+  };
+
+  if (isSettingCode) {
+    return (
+      <Container sx={{ textAlign: "center", mt: 5 }}>
+        <Typography variant="h5" gutterBottom>
+          Set Admin Access Code
+        </Typography>
+        <TextField
+          label="Set Access Code"
+          type="password"
+          variant="outlined"
+          value={newCode}
+          onChange={(e) => setNewCode(e.target.value)}
+          sx={{ mt: 2, mb: 2, width: "250px" }}
+        />
+        <Box>
+          <Button variant="contained" onClick={handleSetCode}>
+            Save Code
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
+
+  if (!accessGranted) {
+    return (
+      <Container sx={{ textAlign: "center", mt: 5 }}>
+        <Typography variant="h5" gutterBottom>
+          Admin Access Required
+        </Typography>
+        <TextField
+          label="Enter Access Code"
+          type="password"
+          variant="outlined"
+          value={enteredCode}
+          onChange={(e) => setEnteredCode(e.target.value)}
+          sx={{ mt: 2, mb: 2, width: "250px" }}
+        />
+        <Box>
+          <Button variant="contained" onClick={handleAccessCodeSubmit}>
+            Submit
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
 
   const filteredDoctors = doctors.filter((doc) => {
     if (tab === 0) return doc.verificationStatus === "pending";
@@ -46,7 +122,6 @@ const AdminDashboard = () => {
         Admin Dashboard - Doctor Verification
       </Typography>
 
-      {/* Tabs for filtering doctors */}
       <Paper sx={{ mb: 2 }}>
         <Tabs value={tab} onChange={(e, newTab) => setTab(newTab)} centered>
           <Tab label="Pending Approval" />
@@ -55,7 +130,6 @@ const AdminDashboard = () => {
         </Tabs>
       </Paper>
 
-      {/* Doctor Table */}
       {loading ? (
         <Typography>Loading...</Typography>
       ) : (
@@ -89,7 +163,12 @@ const AdminDashboard = () => {
                         variant="contained"
                         color="primary"
                         onClick={() =>
-                          handleVerification(doctor._id, "approved")
+                          dispatch(
+                            verifyDoctor({
+                              doctorId: doctor._id,
+                              decision: "approved",
+                            })
+                          )
                         }
                       >
                         Approve
@@ -98,7 +177,12 @@ const AdminDashboard = () => {
                         variant="contained"
                         color="error"
                         onClick={() =>
-                          handleVerification(doctor._id, "rejected")
+                          dispatch(
+                            verifyDoctor({
+                              doctorId: doctor._id,
+                              decision: "rejected",
+                            })
+                          )
                         }
                         sx={{ ml: 1 }}
                       >
@@ -120,7 +204,6 @@ const AdminDashboard = () => {
         </Table>
       )}
 
-      {/* Doctor Details Modal */}
       {selectedDoctor && (
         <Dialog open={!!selectedDoctor} onClose={() => setSelectedDoctor(null)}>
           <DialogTitle>Doctor Details</DialogTitle>
