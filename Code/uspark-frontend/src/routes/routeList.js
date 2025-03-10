@@ -102,6 +102,11 @@ export const PublicRoutes = [
     exact: true,
   },
   {
+    path: "/daboutus",
+    component: PublicAboutUs,
+    exact: true,
+  },
+  {
     path: "/contactus",
     component: ContactUs,
     exact: true,
