@@ -20,10 +20,14 @@ const ContactUs = lazy(() => import("../components/public/ContactUs"));
 const Home = lazy(() => import("../components/private/Home"));
 const Dashboard = lazy(() => import("../components/private/Dashboard"));
 const Onboarding = lazy(() => import("../components/private/onBoarding"));
-const DoctorDashboard = lazy(() =>
-  import("../components/private/Dashboard/DoctorDashboard")
+const Doctorprofile = lazy(() =>
+  import("../components/private/Doctor/Doctorprofile")
 );
 const AdminDashboard = lazy(() =>
+  import("../components/private/Dashboard/AdminDashboard")
+);
+const Patprofile = lazy(() => import("../components/private/Patient/PatinetProfile"));
+const Admin = lazy(() =>
   import("../components/private/Dashboard/AdminDashboard")
 );
 
@@ -57,7 +61,19 @@ export const PrivateRoutes = [
   },
   {
     path: "/docprofile",
-    component: DoctorDashboard,
+    component: Doctorprofile,
+    exact: true,
+  },
+
+  {
+    path: "/patprofile",
+    component: Patprofile,
+    exact: true,
+  },
+
+  {
+    path: "/admin",
+    component: Admin,
     exact: true,
   },
 ];
