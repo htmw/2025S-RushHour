@@ -5,7 +5,48 @@ require("dotenv").config();
 
 const router = express.Router();
 
-// ✅ Route: POST /api/chat
+/**
+ * @swagger
+ * tags:
+ *   - name: Chat
+ *     description: AI-powered chatbot endpoints
+ */
+
+/**
+ * @swagger
+ * /api/chat:
+ *   post:
+ *     summary: Chat with AI Assistant
+ *     tags: [Chat]
+ *     description: Sends a message to the AI chatbot and gets a response.
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               message:
+ *                 type: string
+ *                 example: "What is the capital of France?"
+ *     responses:
+ *       200:
+ *         description: AI-generated response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 response:
+ *                   type: string
+ *                   example: "The capital of France is Paris."
+ *       400:
+ *         description: Message is required
+ *       500:
+ *         description: Failed to fetch response from OpenAI
+ */
 router.post("/", authenticate, async (req, res) => {
   try {
     const { message } = req.body;
@@ -23,7 +64,7 @@ router.post("/", authenticate, async (req, res) => {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `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`,
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // ✅ Secure API Key
         },
       }
     );

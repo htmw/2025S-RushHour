@@ -4,7 +4,46 @@ const { sendEmail } = require("../utils/emailService");
 
 const router = express.Router();
 
-//  Admin Approves or Rejects Doctor Verification
+/**
+ * @swagger
+ * tags:
+ *   - name: Admin
+ *     description: Admin-related endpoints for managing doctor verification
+ */
+
+/**
+ * @swagger
+ * /api/admin/verify-doctor/{id}:
+ *   post:
+ *     summary: Approve or reject doctor verification
+ *     tags: [Admin]
+ *     description: Allows an admin to approve or reject a doctor's verification request.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Doctor's unique ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               decision:
+ *                 type: string
+ *                 enum: [approved, rejected]
+ *                 example: "approved"
+ *     responses:
+ *       200:
+ *         description: Verification decision applied successfully
+ *       404:
+ *         description: Doctor not found
+ *       500:
+ *         description: Internal Server Error
+ */
 router.post("/verify-doctor/:id", async (req, res) => {
   const { decision } = req.body; // "approved" or "rejected"
 
@@ -36,6 +75,46 @@ router.post("/verify-doctor/:id", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+/**
+ * @swagger
+ * /api/admin/doctors:
+ *   get:
+ *     summary: Get list of all doctors
+ *     tags: [Admin]
+ *     description: Fetches a list of all doctors and their verification status.
+ *     responses:
+ *       200:
+ *         description: List of doctors retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     example: "65f4c3bdf1a3d7a9e9a4d8c2"
+ *                   userId:
+ *                     type: object
+ *                     properties:
+ *                       email:
+ *                         type: string
+ *                         example: "doctor@example.com"
+ *                       fullName:
+ *                         type: string
+ *                         example: "Dr. John Doe"
+ *                   specialization:
+ *                     type: string
+ *                     example: "Cardiology"
+ *                   verificationStatus:
+ *                     type: string
+ *                     enum: [pending, approved, rejected]
+ *                     example: "approved"
+ *       500:
+ *         description: Internal Server Error
+ */
 router.get("/doctors", async (req, res) => {
   try {
     const doctors = await Doctor.find().populate("userId");

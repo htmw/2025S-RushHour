@@ -1,6 +1,10 @@
 /**
- * @fileoverview Redux-Saga for handling user logout.
+ * @file Redux-Saga for handling user logout.
+ *
  * Clears authentication data and redirects the user to the login page.
+ *
+ * @namespace store.sagas.logout
+ * @memberof store.sagas
  */
 
 import { takeLatest } from "redux-saga/effects";
@@ -13,6 +17,7 @@ import history from "../../history";
  *
  * @generator
  * @function handleLogout
+ * @memberof store.sagas.logout
  * @param {Object} action - Redux action object (not used but required by saga).
  * @yields {Generator} Saga effects for logout handling.
  */
@@ -31,6 +36,7 @@ function* handleLogout(action) {
  *
  * @generator
  * @function watchLogout
+ * @memberof store.sagas.logout
  * @yields {Generator} Watches for LOGOUT_USER actions.
  */
 export default function* watchLogout() {

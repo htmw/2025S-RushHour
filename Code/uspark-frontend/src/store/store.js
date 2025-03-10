@@ -1,5 +1,9 @@
 /**
- * @fileoverview Configures and initializes the Redux store with Saga middleware.
+ * @file Redux Store Configuration
+ *
+ * Configures and initializes the Redux store with Saga middleware.
+ *
+ * @namespace store
  */
 
 import { configureStore } from "@reduxjs/toolkit";
@@ -9,7 +13,10 @@ import { reducer } from "./reducers";
 
 /**
  * Creates Redux Saga middleware instance.
- * @constant {SagaMiddleware}
+ *
+ * @constant
+ * @memberof store
+ * @type {Object}
  */
 const sagaMiddleware = createSagaMiddleware();
 
@@ -20,7 +27,9 @@ const sagaMiddleware = createSagaMiddleware();
  * - Disables Redux Thunk (as Saga is used instead).
  * - Configures middleware to ignore serialization checks for navigation.
  *
- * @constant {import('@reduxjs/toolkit').EnhancedStore}
+ * @constant
+ * @memberof store
+ * @type {Object}
  */
 const store = configureStore({
   reducer,
@@ -35,6 +44,9 @@ const store = configureStore({
 
 /**
  * Runs the root Saga middleware to handle side effects.
+ *
+ * @function
+ * @memberof store
  */
 sagaMiddleware.run(rootSaga);
 

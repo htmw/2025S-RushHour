@@ -1,7 +1,10 @@
 /**
- * @fileoverview Signup component for Uspark.
+ * @file Signup component for Uspark.
  * Allows users to register using email/password or OAuth providers (Google, Apple).
  * Uses Firebase authentication and Redux for state management.
+ *
+ * @namespace src.components.public.auth.Signup
+ * @memberof src.components.public.auth
  */
 
 import React, { useState } from "react";
@@ -36,6 +39,7 @@ import history from "../../../history";
  * Handles user registration via email/password and OAuth providers (Google, Apple).
  *
  * @component
+ * @memberof src.components.public.auth.Signup
  * @returns {JSX.Element} The signup form and authentication buttons.
  */
 const Signup = () => {
@@ -44,7 +48,10 @@ const Signup = () => {
 
   /**
    * Local state for signup form fields.
-   * @type {[{ name: string, email: string, password: string, confirmPassword: string }, Function]}
+   * @property {string} name - User's name.
+   * @property {string} email - User's email address.
+   * @property {string} password - User's password.
+   * @property {string} confirmPassword - User's password confirmation.
    */
   const [form, setForm] = useState({
     name: "",
@@ -55,13 +62,12 @@ const Signup = () => {
 
   /**
    * Local state for storing error messages.
-   * @type {[string, Function]}
+   * @property {string}
    */
   const [error, setError] = useState("");
 
   /**
    * Authentication state from Redux.
-   * @type {Object}
    * @property {boolean} loading - Indicates if signup is in progress.
    * @property {string|null} token - Authentication token if signup is successful.
    * @property {boolean} isOnboarded - Indicates if the user has completed onboarding.
@@ -70,7 +76,6 @@ const Signup = () => {
 
   /**
    * Handles input field changes and updates local form state.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event.
    */
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -78,7 +83,6 @@ const Signup = () => {
 
   /**
    * Validates and submits the signup form using Redux dispatch.
-   * @param {React.FormEvent} e - Form submission event.
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -110,7 +114,6 @@ const Signup = () => {
 
   /**
    * Handles OAuth signup via Firebase popup authentication.
-   * @param {import("firebase/auth").AuthProvider} provider - Firebase authentication provider (Google/Apple).
    */
   const handleOAuthSignup = async (provider) => {
     try {

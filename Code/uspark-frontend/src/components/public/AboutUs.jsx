@@ -1,6 +1,9 @@
 /**
- * @fileoverview About Us page for Uspark.
+ * @file About Us page for Uspark.
  * Provides information about the organization's journey, solutions, team, vision, and contact details.
+ *
+ * @namespace src.components.public.AboutUs
+ * @memberof src.components.public
  */
 
 import React from "react";
@@ -21,6 +24,7 @@ import { motion } from "framer-motion";
  * Displays the history, solutions, team, vision, and contact details of Uspark.
  *
  * @component
+ * @memberof src.components.public.AboutUs
  * @returns {JSX.Element} The About Us page.
  */
 const AboutUs = () => {

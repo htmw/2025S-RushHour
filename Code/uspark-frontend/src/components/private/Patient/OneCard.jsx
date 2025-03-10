@@ -1,4 +1,17 @@
-import PatientLayout from "./PatLayout";
+/**
+ * @file OneCard Component
+ *
+ *
+ * @namespace src.components.private.Patient.OneCard
+ * @memberof src.components.private.Patient
+ * This component provides a secure way for patients to access their profile
+ * information using a PIN-based authentication system. Features include:
+ * - PIN setup and storage in localStorage.
+ * - Secure unlocking of patient details using the stored PIN.
+ * - A zoom-in animation effect upon successful PIN entry.
+ * - Display of patient profile details and an insurance card.
+ */
+
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -12,16 +25,58 @@ import { motion } from "framer-motion";
 import "../../../css/OneCard.css";
 import InsuranceCard from "./InsuranceCard";
 
+/**
+
+ *
+ * @component
+ * @memberof src.components.private.Patient.OneCard
+ * @returns {JSX.Element} - The OneCard component displaying secure patient information.
+ *
+ * @example
+ * <OneCard />
+ * */
 const OneCard = () => {
+  /**
+   * State for user-entered PIN.
+   * @property {string} pin - PIN input value and setter function.
+   */
   const [pin, setPin] = useState("");
+
+  /**
+   * State for stored PIN retrieved from localStorage.
+   * @property {string} storedPin - The stored PIN value.
+   */
   const [storedPin, setStoredPin] = useState(
     localStorage.getItem("userPin") || ""
   );
+
+  /**
+   * State to control card visibility after PIN verification.
+   * @property {boolean} showCard - Determines if the patient card is displayed.
+   */
   const [showCard, setShowCard] = useState(false);
+
+  /**
+   * State to control zoom-in animation effect when unlocking.
+   * @property {boolean} isZoomed - Determines if the zoom animation is active.
+   */
   const [isZoomed, setIsZoomed] = useState(false);
+
+  /**
+   * Retrieves the patient's full name from Redux state.
+   * @property {{ fullName: string }}
+   */
   const { fullName } = useSelector((state) => state.auth);
+
+  /**
+   * Retrieves user-specific data from Redux state.
+   * @property {{ userData: Object }}
+   */
   const { userData } = useSelector((state) => state.dashboard);
 
+  /**
+   * Handles setting up a 4-digit PIN and storing it in localStorage.
+   */
   const handlePinSetup = () => {
     if (pin.length === 4) {
       localStorage.setItem("userPin", pin);
@@ -33,6 +88,9 @@ const OneCard = () => {
     }
   };
 
+  /**
+   * Handles PIN submission and unlocks the patient card if correct.
+   */
   const handlePinSubmit = () => {
     if (pin === storedPin) {
       setShowCard(true);
@@ -48,8 +106,6 @@ const OneCard = () => {
   return (
     <div className={`background-container ${showCard ? "blurred" : ""}`}>
       <motion.div className="One-Content">
-        {" "}
-        {/* Added one-card-content class */}
         {!storedPin && (
           <Card className="patient-card">
             <CardContent>

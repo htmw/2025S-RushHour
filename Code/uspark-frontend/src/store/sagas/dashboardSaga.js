@@ -1,6 +1,10 @@
 /**
- * @fileoverview Redux-Saga for handling dashboard-related API calls.
+ * @file Redux-Saga for handling dashboard-related API calls.
+ *
  * Manages fetching dashboard data securely using an authorization token.
+ *
+ * @namespace store.sagas.dashboardSaga
+ * @memberof store.sagas
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
@@ -10,7 +14,9 @@ import { FETCH_DASHBOARD } from "../actions/types";
 
 /**
  * API request to fetch dashboard data.
+ *
  * @function
+ * @memberof store.sagas.dashboardSaga
  * @param {string} token - The authentication token for API authorization.
  * @returns {Promise<Object>} Resolves with the dashboard data.
  */
@@ -21,8 +27,10 @@ const fetchDashboardApi = (token) =>
 
 /**
  * Worker saga: Handles fetching dashboard data.
+ *
  * @generator
  * @function handleFetchDashboard
+ * @memberof store.sagas.dashboardSaga
  * @param {Object} action - Redux action object containing the authentication token.
  * @param {Object} action.payload - The payload object.
  * @param {string} action.payload.token - The authentication token.
@@ -46,6 +54,7 @@ function* handleFetchDashboard(action) {
  *
  * @generator
  * @function watchDashboardSaga
+ * @memberof store.sagas.dashboardSaga
  * @yields {Generator} Watches for FETCH_DASHBOARD actions.
  */
 export default function* watchDashboardSaga() {

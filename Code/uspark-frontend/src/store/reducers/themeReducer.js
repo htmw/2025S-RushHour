@@ -1,6 +1,9 @@
 /**
- * @fileoverview Redux reducer for managing the application's theme state.
+ * @file Redux reducer for managing the application's theme state.
  * Controls dark mode preference and updates local storage accordingly.
+ *
+ * @namespace store.reducers.themeReducer
+ * @memberof store.reducers
  */
 
 import { SET_THEME_SUCCESS } from "../actions/types";
@@ -8,6 +11,7 @@ import { SET_THEME_SUCCESS } from "../actions/types";
 /**
  * Initial state for the theme reducer.
  * @constant
+ * @memberof store.reducers.themeReducer
  * @type {Object}
  * @property {boolean} darkMode - Determines if dark mode is enabled, based on local storage.
  */
@@ -18,6 +22,7 @@ const initialState = {
 /**
  * Theme reducer for handling theme selection and persistence.
  *
+ * @memberof store.reducers.themeReducer
  * @function themeReducer
  * @param {Object} state - The current theme state.
  * @param {Object} action - Redux action object.

@@ -49,6 +49,7 @@
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
     "babel-jest": "^29.7.0",
+    "clean-jsdoc-theme": "^4.3.0",
     "cypress": "^14.1.0",
     "dotenv": "^16.4.7",
     "eslint": "^9.19.0",

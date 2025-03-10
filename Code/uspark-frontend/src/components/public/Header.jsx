@@ -1,6 +1,9 @@
 /**
- * @fileoverview Header component with navigation, authentication controls,
+ * @file Header component with navigation, authentication controls,
  * and theme switching. Supports both desktop and mobile views.
+ *
+ * @namespace src.components.public.Header
+ * @memberof src.components.public
  */
 
 import React from "react";
@@ -85,6 +88,7 @@ const LogoText = styled(Typography)(({ theme }) => ({
  * Displays the navigation bar with links, theme switcher, and authentication options.
  *
  * @component
+ * @memberof src.components.public
  * @returns {JSX.Element} The header component with navigation and user authentication controls.
  */
 const Header = () => {
@@ -101,7 +105,7 @@ const Header = () => {
    */
   const user = useSelector((state) => state.auth?.email); // Adjust based on your store
 
-  /** @type {[HTMLElement|null, Function]} */
+  /** @type {HTMLElement} */
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   /**

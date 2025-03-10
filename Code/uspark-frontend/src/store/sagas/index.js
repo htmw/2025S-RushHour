@@ -1,5 +1,10 @@
 /**
- * @fileoverview Combines and initializes all Redux sagas for the application.
+ * @file Redux Sagas Index
+ *
+ * Combines and initializes all Redux sagas for the application.
+ *
+ * @namespace store.sagas
+ * @memberof store
  */
 
 import { all, fork } from "redux-saga/effects";
@@ -13,7 +18,10 @@ import doctorSaga from "./doctorSaga";
 
 /**
  * List of all saga functions used in the application.
- * @constant {Array<Function>}
+ *
+ * @constant
+ * @memberof store.sagas
+ * @type {Function[]}
  */
 const allSagas = [
   auth,
@@ -31,6 +39,7 @@ const allSagas = [
  *
  * @generator
  * @function rootSaga
+ * @memberof store.sagas
  * @yields {Generator} A Redux-Saga effect that initializes all sagas.
  */
 export default function* rootSaga() {

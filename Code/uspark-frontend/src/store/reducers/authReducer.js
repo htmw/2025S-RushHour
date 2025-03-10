@@ -1,6 +1,9 @@
 /**
- * @fileoverview Redux reducer for managing authentication state.
+ * @file Redux reducer for managing authentication state.
  * Handles user login, OAuth login, signup, and logout actions.
+ *
+ * @namespace store.reducers.authReducer
+ * @memberof store.reducers
  */
 
 import * as types from "../actions/types";
@@ -23,6 +26,7 @@ console.log({ userPayload });
 /**
  * Initial state for the authentication reducer.
  * @constant
+ * @memberof store.reducers.authReducer
  * @type {Object}
  * @property {string|null} token - The authentication token.
  * @property {string} email - The user's email.
@@ -46,6 +50,7 @@ const initialState = {
 /**
  * Authentication reducer for handling login, signup, OAuth, and logout actions.
  *
+ * @memberof store.reducers.authReducer
  * @function authReducer
  * @param {Object} state - The current authentication state.
  * @param {Object} action - Redux action object.

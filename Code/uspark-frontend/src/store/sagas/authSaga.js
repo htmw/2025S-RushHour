@@ -1,6 +1,10 @@
 /**
- * @fileoverview Handles authentication-related side effects using Redux-Saga.
+ * @file Handles authentication-related side effects using Redux-Saga.
+ *
  * Manages user login, signup, and OAuth authentication.
+ *
+ * @namespace store.sagas.authSaga
+ * @memberof store.sagas
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
@@ -10,11 +14,11 @@ import { enqueueSnackbar } from "notistack";
 import { LOGIN, OAUTH_LOGIN, OAUTH_SIGNUP, SIGNUP } from "../actions/types";
 import history from "../../history";
 
-// ✅ API Calls
-
 /**
  * API request to log in a user with credentials.
+ *
  * @function
+ * @memberof store.sagas.authSaga
  * @param {Object} credentials - The user's email and password.
  * @returns {Promise<Object>} Response containing authentication token.
  */
@@ -23,7 +27,9 @@ const loginApi = (credentials) =>
 
 /**
  * API request to log in a user using OAuth (Google, Apple, etc.).
+ *
  * @function
+ * @memberof store.sagas.authSaga
  * @param {Object} providerData - OAuth provider data.
  * @returns {Promise<Object>} Response containing authentication token.
  */
@@ -32,7 +38,9 @@ const oauthLoginApi = (providerData) =>
 
 /**
  * API request to sign up a new user.
+ *
  * @function
+ * @memberof store.sagas.authSaga
  * @param {Object} userData - User registration details.
  * @returns {Promise<Object>} Response containing authentication token.
  */
@@ -41,7 +49,9 @@ const signupApi = (userData) =>
 
 /**
  * API request to sign up a new user via OAuth.
+ *
  * @function
+ * @memberof store.sagas.authSaga
  * @param {Object} providerData - OAuth provider data.
  * @returns {Promise<Object>} Response containing authentication token.
  */
@@ -50,8 +60,10 @@ const oAuthSignupApi = (providerData) =>
 
 /**
  * Handles user login.
+ *
  * @generator
  * @function handleLogin
+ * @memberof store.sagas.authSaga
  * @param {Object} action - Redux action containing payload.
  * @yields {Generator} Calls login API and updates Redux state.
  */
@@ -83,8 +95,10 @@ function* handleLogin(action) {
 
 /**
  * Handles OAuth login (Google, Apple, etc.).
+ *
  * @generator
  * @function handleOAuthLogin
+ * @memberof store.sagas.authSaga
  * @param {Object} action - Redux action containing payload.
  * @yields {Generator} Calls OAuth login API and updates Redux state.
  */
@@ -117,8 +131,10 @@ function* handleOAuthLogin(action) {
 
 /**
  * Handles user signup.
+ *
  * @generator
  * @function handleSignup
+ * @memberof store.sagas.authSaga
  * @param {Object} action - Redux action containing payload.
  * @yields {Generator} Calls signup API and updates Redux state.
  */
@@ -151,8 +167,10 @@ function* handleSignup(action) {
 
 /**
  * Handles OAuth signup (Google, Apple, etc.).
+ *
  * @generator
  * @function handleOAuthSignup
+ * @memberof store.sagas.authSaga
  * @param {Object} action - Redux action containing payload.
  * @yields {Generator} Calls OAuth signup API and updates Redux state.
  */
@@ -185,11 +203,13 @@ function* handleOAuthSignup(action) {
 
 /**
  * Watcher saga that listens for authentication-related actions.
+ *
  * @generator
- * @function watchSignupSaga
+ * @function watchAuthSaga
+ * @memberof store.sagas.authSaga
  * @yields {Generator} Watches for authentication actions and triggers the respective worker saga.
  */
-export default function* watchSignupSaga() {
+export default function* watchAuthSaga() {
   yield takeLatest(SIGNUP, handleSignup);
   yield takeLatest(OAUTH_SIGNUP, handleOAuthSignup);
   yield takeLatest(LOGIN, handleLogin);

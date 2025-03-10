@@ -1,17 +1,45 @@
+/**
+ * @file Doctor onboarding questionnaire component.
+ *
+ * Collects doctor-specific details such as specialization, experience, and certifications.
+ *
+ * @namespace src.components.private.onBoarding.DoctorOnBoarding
+ * @memberof src.components.private.onBoarding
+ */
+
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TextField, Button, Typography, Paper, Grid2 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { doctorOnboarding } from "../../../store/actions";
 import history from "../../../history";
-const DoctorQuestionnaire = () => {
+
+/**
+ * DoctorOnBoarding Component
+ *
+ * A form to collect doctor details for onboarding.
+ *
+ * @component
+ * @memberof src.components.private.onBoarding.DoctorOnBoarding
+ * @returns {JSX.Element} The doctor onboarding form component.
+ */
+const DoctorOnBoarding = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth);
-  const { doctorData } = useSelector((state) => state.onBoarding);
+  const { doctorData, loading, error } = useSelector(
+    (state) => state.onBoarding
+  );
 
-  const { loading, error } = useSelector((state) => state.onBoarding);
-
+  /**
+   * Doctor onboarding form state.
+   *
+   * @type {Object}
+   * @property {string} name - Doctor's full name.
+   * @property {string} specialization - Doctor's area of expertise.
+   * @property {string} experience - Doctor's years of experience.
+   * @property {string} certifications - Doctor's certifications.
+   */
   const [formData, setFormData] = useState({
     name: user.fullName || "",
     specialization: "",
@@ -19,13 +47,34 @@ const DoctorQuestionnaire = () => {
     certifications: "",
   });
 
+  /**
+   * Handles input changes and updates state.
+   *
+   * @function
+   * @memberof src.components.private.onBoarding.DoctorOnBoarding
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event.
+   */
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value }, navigate);
   };
 
+  /**
+   * Handles form submission by dispatching doctor onboarding action.
+   *
+   * @function
+   * @memberof src.components.private.onBoarding.DoctorOnBoarding
+   */
   const handleSubmit = () => {
     dispatch(doctorOnboarding({ formData, token: user.token }, navigate));
   };
+
+  /**
+   * Redirects to the dashboard if onboarding is complete.
+   *
+   * @function
+   * @memberof src.components.private.onBoarding.DoctorOnBoarding
+   * @effect Runs when `doctorData` updates.
+   */
   useEffect(() => {
     if (doctorData) {
       history.push("/dashboard");
@@ -99,4 +148,4 @@ const DoctorQuestionnaire = () => {
   );
 };
 
-export default DoctorQuestionnaire;
+export default DoctorOnBoarding;

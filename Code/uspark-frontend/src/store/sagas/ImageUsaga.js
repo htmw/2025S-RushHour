@@ -1,6 +1,10 @@
 /**
- * @fileoverview Redux-Saga for handling profile image uploads.
+ * @file Redux-Saga for handling profile image uploads.
+ *
  * Manages secure file uploads and updates the user's profile image in state.
+ *
+ * @namespace store.sagas.ImageUsaga
+ * @memberof store.sagas
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
@@ -14,6 +18,7 @@ import { UPLOAD_PROFILE_IMAGE } from "../actions/types";
  *
  * @generator
  * @function uploadProfileImageSaga
+ * @memberof store.sagas.ImageUsaga
  * @param {Object} action - Redux action object.
  * @param {FormData} action.payload - The form data containing the profile image file.
  * @yields {Generator} Saga effects for uploading the profile image and updating the user state.
@@ -45,6 +50,7 @@ function* uploadProfileImageSaga(action) {
  *
  * @generator
  * @function watchUploadProfileImage
+ * @memberof store.sagas.ImageUsaga
  * @yields {Generator} Watches for UPLOAD_PROFILE_IMAGE actions.
  */
 export default function* watchUploadProfileImage() {

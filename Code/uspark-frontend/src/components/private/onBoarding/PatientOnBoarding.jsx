@@ -1,3 +1,12 @@
+/**
+ * @file Patient health questionnaire component for onboarding.
+ *
+ * Collects patient health details including age, sex, height, weight, and health issues.
+ *
+ * @namespace src.components.private.onBoarding.PatientOnBoarding
+ * @memberof src.components.private.onBoarding
+ */
+
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -23,7 +32,16 @@ import {
 } from "../../../../animations";
 import { patientOnboarding } from "../../../store/actions";
 
-const PatientQuestionnaire = () => {
+/**
+ * PatientOnBoarding Component
+ *
+ * A form to collect patient health data for onboarding.
+ *
+ * @component
+ * @memberof src.components.private.onBoarding.PatientOnBoarding
+ * @returns {JSX.Element} The patient questionnaire form component.
+ */
+const PatientOnBoarding = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth);
@@ -31,6 +49,17 @@ const PatientQuestionnaire = () => {
     (state) => state.onBoarding
   );
 
+  /**
+   * Patient questionnaire form state.
+   *
+   * @type {Object}
+   * @property {string} name - Patient's full name.
+   * @property {string} age - Patient's age.
+   * @property {string} sex - Patient's gender.
+   * @property {string} height - Patient's height in cm.
+   * @property {string} weight - Patient's weight in kg.
+   * @property {string} healthIssues - Patient's known health issues.
+   */
   const [formData, setFormData] = useState({
     name: user.fullName || "",
     age: "",
@@ -40,21 +69,34 @@ const PatientQuestionnaire = () => {
     healthIssues: "",
   });
 
-  // useEffect(() => {
-  //   if (patientData) {
-  //     history.push("/dashboard");
-  //   }
-  // }, [patientData, navigate]);
-
+  /**
+   * Handles input changes and updates state.
+   *
+   * @function
+   * @memberof src.components.private.onBoarding.PatientOnBoarding
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event.
+   */
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value }, navigate);
   };
 
+  /**
+   * Handles form submission by dispatching patient onboarding action.
+   *
+   * @function
+   * @memberof src.components.private.onBoarding.PatientOnBoarding
+   */
   const handleSubmit = () => {
     dispatch(patientOnboarding({ formData, token: user.token }, navigate));
   };
 
-  // Function to select Lottie animation
+  /**
+   * Selects the appropriate Lottie animation based on age and gender.
+   *
+   * @function
+   * @memberof src.components.private.onBoarding.PatientOnBoarding
+   * @returns {Object} The corresponding animation data.
+   */
   const getAnimation = () => {
     const age = parseInt(formData.age);
     const sex = formData.sex;
@@ -163,4 +205,4 @@ const PatientQuestionnaire = () => {
   );
 };
 
-export default PatientQuestionnaire;
+export default PatientOnBoarding;

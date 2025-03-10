@@ -1,6 +1,9 @@
 /**
- * @fileoverview Redux reducer for handling user onboarding state.
+ * @file Redux reducer for handling user onboarding state.
  * Manages doctor and patient onboarding processes, role selection, and loading states.
+ *
+ * @namespace store.reducers.onboardingReducer
+ * @memberof store.reducers
  */
 
 import * as types from "../actions/types";
@@ -8,6 +11,7 @@ import * as types from "../actions/types";
 /**
  * Initial state for the onboarding reducer.
  * @constant
+ * @memberof store.reducers.onboardingReducer
  * @type {Object}
  * @property {Object|null} doctorData - Stores the doctor's onboarding data.
  * @property {Object|null} patientData - Stores the patient's onboarding data.
@@ -26,6 +30,7 @@ const initialState = {
 /**
  * Onboarding reducer for handling doctor and patient onboarding actions.
  *
+ * @memberof store.reducers.onboardingReducer
  * @function onboardingReducer
  * @param {Object} state - The current onboarding state.
  * @param {Object} action - Redux action object.

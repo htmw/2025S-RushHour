@@ -1,7 +1,9 @@
 /**
- * @fileoverview Defines action type constants for Redux actions.
+ * @file Defines action type constants for Redux actions.
  * Includes authentication, onboarding, theme management, dashboard operations,
  * profile image uploads, and admin/doctor-specific actions.
+ * @namespace store.actions.types
+ * @memberof store.actions
  */
 
 /** Theme Management */

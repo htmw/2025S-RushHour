@@ -1,3 +1,12 @@
+/**
+ * @file Doctor dashboard layout component.
+ *
+ * Provides a layout with a sidebar, navigation, and header for doctor-specific pages.
+ *
+ * @namespace src.components.private.Doctor.DoctorLayout
+ * @memberof src.components.private.Doctor
+ */
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -21,18 +30,54 @@ import {
   ExitToApp,
 } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
+import { logoutUser } from "../../../store/actions";
 
+/**
+ * Sidebar width constant.
+ *
+ * @constant {number}
+ */
 const drawerWidth = 240;
 
+/**
+ * DoctorLayout Component
+ *
+ * Provides a responsive layout with a sidebar for doctor-related pages.
+ * Includes navigation to the dashboard, profile, about page, and a logout option.
+ *
+ * @component
+ * @memberof src.components.private.Doctor.DoctorLayout
+ * @param {Object} props - Component props.
+ * @param {React.ReactNode} props.children - Child components to render inside the layout.
+ * @returns {JSX.Element} The doctor dashboard layout.
+ */
 const DoctorLayout = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [open, setOpen] = useState(false); // Sidebar initially closed
 
+  /**
+   * Sidebar open state.
+   *
+   * @property {boolean}
+   */
+  const [open, setOpen] = useState(false);
+
+  /**
+   * Toggles the sidebar drawer.
+   *
+   * @function
+   * @memberof src.components.private.Doctor.DoctorLayout
+   */
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  /**
+   * Handles user logout by dispatching the `logoutUser` action.
+   *
+   * @function
+   * @memberof src.components.private.Doctor.DoctorLayout
+   */
   const handleLogout = () => {
     dispatch(logoutUser());
   };

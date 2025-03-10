@@ -1,7 +1,10 @@
 /**
- * @fileoverview Login component for Uspark.
+ * @file Login component for Uspark.
  * Allows users to log in using email/password or OAuth providers (Google, Apple).
  * Uses Firebase authentication and Redux for state management.
+ *
+ * @namespace src.components.public.auth.Login
+ * @memberof src.components.public.auth
  */
 
 import React, { useEffect, useState } from "react";
@@ -35,6 +38,7 @@ import history from "../../../history";
  * Handles user authentication via email/password and OAuth providers (Google, Apple).
  *
  * @component
+ * @memberof src.components.public.auth.Login
  * @returns {JSX.Element} The login form and authentication buttons.
  */
 const Login = () => {
@@ -43,13 +47,14 @@ const Login = () => {
 
   /**
    * Local state for login form fields.
-   * @type {[{ email: string, password: string }, Function]}
+   * @type {Object}
+   * @property {string} email - User's email address.
+   * @property {string} password - User's password.
    */
   const [form, setForm] = useState({ email: "", password: "" });
 
   /**
    * Authentication state from Redux.
-   * @type {Object}
    * @property {boolean} loading - Indicates if login is in progress.
    * @property {string|null} error - Holds error messages if login fails.
    * @property {string|null} token - Authentication token if login is successful.
@@ -61,7 +66,6 @@ const Login = () => {
 
   /**
    * Handles input field changes and updates local form state.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event.
    */
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -69,7 +73,6 @@ const Login = () => {
 
   /**
    * Submits the login form using Redux dispatch.
-   * @param {React.FormEvent} e - Form submission event.
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -78,7 +81,6 @@ const Login = () => {
 
   /**
    * Handles OAuth login via Firebase popup authentication.
-   * @param {import("firebase/auth").AuthProvider} provider - Firebase authentication provider (Google/Apple).
    */
   const handleOAuthLogin = async (provider) => {
     try {

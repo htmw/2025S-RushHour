@@ -1,6 +1,9 @@
 /**
- * @fileoverview Main entry point of the application.
+ * @file Main entry point of the application.
+ *
  * Provides global state management, theme switching, and routing.
+ *
+ * @module App
  */
 
 import React from "react";
@@ -18,11 +21,17 @@ import "./App.css";
  * Uses Material UI's ThemeProvider to apply light or dark mode.
  *
  * @component
+ * @memberof module:App
  * @returns {JSX.Element} The application wrapped in the appropriate theme.
+ *
+ * @example
+ * <AppWrapper />
  */
 const AppWrapper = () => {
   /**
    * Selects the current theme mode from the Redux store.
+   * @constant
+   * @memberof module:App
    * @type {boolean}
    */
   const darkMode = useSelector((state) => state.theme.darkMode);
@@ -41,7 +50,11 @@ const AppWrapper = () => {
  * Provides the Redux store and wraps the app in the AppWrapper.
  *
  * @component
+ * @memberof module:App
  * @returns {JSX.Element} The main application wrapped with Redux Provider.
+ *
+ * @example
+ * <App />
  */
 function App() {
   return (
