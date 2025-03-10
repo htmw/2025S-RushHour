@@ -61,7 +61,7 @@ const Chatbot = () => {
           <ChatIcon />
         </IconButton>
         <Typography variant="caption" sx={{ color: "#007bff", mt: 1 }}>
-          MediBot
+          Uheal
         </Typography>
       </Box>
 
@@ -92,7 +92,7 @@ const Chatbot = () => {
               padding: "8px 12px",
             }}
           >
-            <Typography variant="h6">MediBot</Typography>
+            <Typography variant="h6">Uheal</Typography>
             <IconButton onClick={toggleChat} sx={{ color: "white" }}>
               <CloseIcon />
             </IconButton>
