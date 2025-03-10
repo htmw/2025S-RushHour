@@ -30,9 +30,7 @@ const DoctorProfile = () => {
   const dispatch = useDispatch();
 
   /** @property {Object} */
-  const { doctorData, loading, error } = useSelector(
-    (state) => state.dashboard
-  );
+  const { userData, loading, error } = useSelector((state) => state.dashboard);
 
   /** @property {string} */
   const token = useSelector((state) => state.auth?.token);
@@ -104,41 +102,41 @@ const DoctorProfile = () => {
     <DoctorLayout>
       {/* Doctor Name with Verification Tick */}
       <Typography variant="h5" display="flex" alignItems="center">
-        {doctorData?.fullName}
-        {doctorData?.verificationStatus === "approved" && (
+        {userData?.fullName}
+        {userData?.verificationStatus === "approved" && (
           <CheckCircleIcon sx={{ color: "green", ml: 1 }} />
         )}
       </Typography>
 
       <Typography>
-        <strong>Specialization:</strong> {doctorData?.specialization}
+        <strong>Specialization:</strong> {userData?.specialization}
       </Typography>
       <Typography>
-        <strong>Experience:</strong> {doctorData?.experience} years
+        <strong>Experience:</strong> {userData?.experience} years
       </Typography>
       <Typography>
-        <strong>Certifications:</strong> {doctorData?.certifications || "N/A"}
+        <strong>Certifications:</strong> {userData?.certifications || "N/A"}
       </Typography>
 
       {/* Show Verification Status */}
-      {doctorData?.verificationStatus === "pending" && (
+      {userData?.verificationStatus === "pending" && (
         <Alert severity="warning">Your verification is pending approval.</Alert>
       )}
-      {doctorData?.verificationStatus === "rejected" && (
+      {userData?.verificationStatus === "rejected" && (
         <Alert severity="error">
           Your verification was rejected. Please re-upload valid documents.
         </Alert>
       )}
 
       {/* Show "Verify" or "Re-upload Documents" Button */}
-      {doctorData?.verificationStatus !== "approved" && (
+      {userData?.verificationStatus !== "approved" && (
         <Button
           variant="contained"
           color="primary"
           sx={{ mt: 2 }}
           onClick={() => setShowModal(true)}
         >
-          {doctorData?.verificationStatus === "rejected"
+          {userData?.verificationStatus === "rejected"
             ? "Re-upload Documents"
             : "Verify"}
         </Button>
