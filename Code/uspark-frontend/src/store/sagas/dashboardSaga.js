@@ -8,22 +8,9 @@
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
-import axios from "axios";
 import { fetchDashboard } from "../actions";
 import { FETCH_DASHBOARD } from "../actions/types";
-
-/**
- * API request to fetch dashboard data.
- *
- * @function
- * @memberof store.sagas.dashboardSaga
- * @param {string} token - The authentication token for API authorization.
- * @returns {Promise<Object>} Resolves with the dashboard data.
- */
-const fetchDashboardApi = (token) =>
-  axios.get("http://localhost:5001/api/dashboard", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+import { fetchDashboardApi } from "../apis";
 
 /**
  * Worker saga: Handles fetching dashboard data.
