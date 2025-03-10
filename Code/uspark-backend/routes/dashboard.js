@@ -9,7 +9,62 @@ const { ADMIN_PANEL_URL } = require("../utils/emailService");
 
 const router = express.Router();
 
-// ✅ Route: GET /api/dashboard
+/**
+ * @swagger
+ * tags:
+ *   - name: Dashboard
+ *     description: Endpoints for fetching user dashboard data and doctor verification
+ */
+
+/**
+ * @swagger
+ * /api/dashboard:
+ *   get:
+ *     summary: Get dashboard profile data
+ *     tags: [Dashboard]
+ *     description: Retrieve the profile details of the authenticated user
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 userId:
+ *                   type: string
+ *                   example: "65f4c3bdf1a3d7a9e9a4d8c2"
+ *                 fullName:
+ *                   type: string
+ *                   example: "John Doe"
+ *                 email:
+ *                   type: string
+ *                   example: "johndoe@example.com"
+ *                 role:
+ *                   type: string
+ *                   enum: [patient, doctor]
+ *                   example: "doctor"
+ *                 isOnboarded:
+ *                   type: boolean
+ *                   example: true
+ *                 specialization:
+ *                   type: string
+ *                   example: "Cardiology"
+ *                 verificationStatus:
+ *                   type: string
+ *                   enum: [pending, approved, rejected]
+ *                   example: "pending"
+ *       401:
+ *         description: Unauthorized - Invalid or missing token.
+ *       500:
+ *         description: Server error.
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 router.get("/", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
@@ -34,7 +89,7 @@ router.get("/", authenticate, async (req, res) => {
           ...profileData,
           ...doctorDetails._doc,
 
-          verificationStatus: doctorDetails.verificationStatus, //  will send verification status
+          verificationStatus: doctorDetails.verificationStatus, // Will send verification status
           verificationDocs:
             doctorDetails.verificationStatus === "pending"
               ? doctorDetails.verificationDocs
@@ -49,7 +104,39 @@ router.get("/", authenticate, async (req, res) => {
   }
 });
 
-// API for Doctors to Upload Verification Documents
+/**
+ * @swagger
+ * /api/dashboard/doctor/verify:
+ *   post:
+ *     summary: Upload verification documents for doctor approval
+ *     tags: [Dashboard]
+ *     description: Allows doctors to upload verification documents for approval.
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               documents:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 example: ["file1.pdf", "file2.jpg"]
+ *     responses:
+ *       201:
+ *         description: File uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FileUploadResponse'
+ *       500:
+ *         description: Internal server error
+ */
+
 router.post(
   "/doctor/verify",
   authenticate,

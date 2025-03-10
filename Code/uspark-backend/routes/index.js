@@ -9,6 +9,23 @@ const chatRoutes = require("./chat");
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   - name: Onboarding
+ *     description: User onboarding endpoints
+ *   - name: Dashboard
+ *     description: Dashboard-related endpoints
+ *   - name: Profile Image
+ *     description: Profile image upload endpoints
+ *   - name: Insurance
+ *     description: Insurance-related API endpoints
+ *   - name: Admin
+ *     description: Admin panel functionalities
+ *   - name: Chat
+ *     description: Chat and messaging endpoints
+ */
+
 // Register Routes
 router.use("/onboarding", onBoardingRoutes);
 router.use("/dashboard", dashboardRoutes);

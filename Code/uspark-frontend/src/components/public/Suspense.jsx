@@ -1,6 +1,10 @@
 /**
- * @fileoverview A reusable loading spinner component.
+ * @file A reusable loading spinner component.
+ *
  * Displays a centered circular progress indicator.
+ *
+ * @namespace src.components.public.Suspense
+ * @memberof src.components.public
  */
 
 import React from "react";
@@ -9,7 +13,10 @@ import { CircularProgress, Box, useTheme } from "@mui/material";
 /**
  * LoadingSpinner Component
  *
+ * A reusable spinner that displays a centered loading indicator.
+ *
  * @component
+ * @memberof src.components.public.Suspense
  * @param {Object} props - Component props.
  * @param {number} [props.size=120] - The size of the spinner.
  * @param {string} [props.containerHeight="80vh"] - The height of the container.

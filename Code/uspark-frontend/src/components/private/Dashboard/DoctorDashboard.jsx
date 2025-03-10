@@ -1,3 +1,12 @@
+/**
+ * @file Doctor Dashboard component.
+ *
+ * Displays doctor profile details, verification status, and allows document uploads.
+ *
+ * @namespace src.components.private.Doctor.DoctorDashboard
+ * @memberof src.components.private.Doctor
+ */
+
 import React, { useEffect, useState } from "react";
 import { Typography, Button, Modal, Box, Alert } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,21 +15,52 @@ import { fetchDashboard, uploadVerificationDocs } from "../../../store/actions";
 import DoctorLayout from "../Doctor/DoctorLayout";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
+/**
+ * Doctor Dashboard Component
+ *
+ * Displays doctor-specific details such as name, specialization, experience,
+ * verification status, and provides a document upload feature for verification.
+ *
+ * @component
+ * @memberof src.components.private.Doctor.DoctorDashboard
+ * @returns {JSX.Element} The doctor dashboard component.
+ */
 const DoctorDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  /** @property {Object} */
   const { doctorData, loading, error } = useSelector(
     (state) => state.dashboard
   );
-  console.log({ doctorData, loading, error });
-  const token = useSelector((state) => state.auth?.token);
-  const [showModal, setShowModal] = useState(false);
-  const [files, setFiles] = useState([]);
 
+  /** @property {string} */
+  const token = useSelector((state) => state.auth?.token);
+
+  /** @property {boolean} */
+  const [showModal, setShowModal] = useState(false);
+
+  /** @property {File[]} */
+  const [files, setFiles] = useState([]);
+  ``;
+
+  /**
+   * Handles file selection for document upload.
+   *
+   * @function
+   * @memberof src.components.private.Doctor.DoctorDashboard
+   * @param {React.ChangeEvent<HTMLInputElement>} event - The file input change event.
+   */
   const handleFileChange = (event) => {
     setFiles([...event.target.files]);
   };
 
+  /**
+   * Handles document upload for verification.
+   *
+   * @function
+   * @memberof src.components.private.Doctor.DoctorDashboard
+   */
   const handleUpload = () => {
     if (files.length === 0) {
       alert("Please select at least one document.");
@@ -34,6 +74,14 @@ const DoctorDashboard = () => {
     setShowModal(false);
   };
 
+  /**
+   * Ensures authenticated access and fetches doctor data.
+   * Redirects to login if no token is found.
+   *
+   * @function
+   * @memberof src.components.private.Doctor.DoctorDashboard
+   * @effect Runs when `token` changes.
+   */
   useEffect(() => {
     if (!token) {
       navigate("/login");
@@ -42,9 +90,12 @@ const DoctorDashboard = () => {
     }
   }, [token, dispatch]);
 
+  // Loading state
   if (loading) {
     return <div>Loading...</div>;
   }
+
+  // Error state
   if (error) {
     return <div>Error</div>;
   }

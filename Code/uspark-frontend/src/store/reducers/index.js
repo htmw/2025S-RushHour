@@ -1,5 +1,8 @@
 /**
- * @fileoverview Combines and exports all Redux reducers for the application.
+ * @file Combines and exports all Redux reducers for the application.
+ *
+ * @namespace store.reducers
+ * @memberof store
  */
 
 import authReducer from "./authReducer";
@@ -14,6 +17,7 @@ import adminReducer from "./adminReducer";
  * Used in Redux store configuration.
  *
  * @constant
+ * @memberof store.reducers
  * @type {Object}
  * @property {Function} auth - Reducer handling authentication state.
  * @property {Function} dashboard - Reducer managing dashboard data.

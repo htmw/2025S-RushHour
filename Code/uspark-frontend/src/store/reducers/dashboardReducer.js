@@ -1,6 +1,9 @@
 /**
- * @fileoverview Redux reducer for managing dashboard state.
+ * @file Redux reducer for managing dashboard state.
  * Handles fetching user dashboard data and document uploads.
+ *
+ * @namespace store.reducers.dashboardReducer
+ * @memberof store.reducers
  */
 
 import * as types from "../actions/types";
@@ -8,6 +11,7 @@ import * as types from "../actions/types";
 /**
  * Initial state for the dashboard reducer.
  * @constant
+ * @memberof store.reducers.dashboardReducer
  * @type {Object}
  * @property {Object|null} userData - The user's dashboard data.
  * @property {boolean} loading - Indicates if a dashboard-related request is in progress.
@@ -22,6 +26,7 @@ const initialState = {
 /**
  * Dashboard reducer for handling dashboard data retrieval and document uploads.
  *
+ * @memberof store.reducers.dashboardReducer
  * @function dashboardReducer
  * @param {Object} state - The current dashboard state.
  * @param {Object} action - Redux action object.

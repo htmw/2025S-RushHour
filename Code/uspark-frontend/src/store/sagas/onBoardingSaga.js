@@ -1,6 +1,10 @@
 /**
- * @fileoverview Redux-Saga for handling doctor and patient onboarding.
+ * @file Redux-Saga for handling doctor and patient onboarding.
+ *
  * Manages onboarding API calls, updates Redux state, and provides user feedback.
+ *
+ * @namespace store.sagas.onBoardingSaga
+ * @memberof store.sagas
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
@@ -13,6 +17,7 @@ import history from "../../history";
 /**
  * API request to onboard a doctor.
  * @function
+ * @memberof store.sagas.onBoardingSaga
  * @param {FormData} formData - The form data containing onboarding details.
  * @param {string} token - The authentication token for API authorization.
  * @returns {Promise<Object>} Resolves when the onboarding request is successful.
@@ -27,6 +32,7 @@ const doctorOnboardingApi = (formData, token) =>
 /**
  * API request to onboard a patient.
  * @function
+ * @memberof store.sagas.onBoardingSaga
  * @param {FormData} formData - The form data containing onboarding details.
  * @param {string} token - The authentication token for API authorization.
  * @returns {Promise<Object>} Resolves when the onboarding request is successful.
@@ -44,6 +50,7 @@ const patientOnboardingApi = (formData, token) =>
  *
  * @generator
  * @function handleDoctorOnboarding
+ * @memberof store.sagas.onBoardingSaga
  * @param {Object} action - Redux action object.
  * @param {Object} action.payload - The payload containing form data and authentication token.
  * @param {FormData} action.payload.formData - The doctor's onboarding details.
@@ -80,6 +87,7 @@ function* handleDoctorOnboarding(action) {
  *
  * @generator
  * @function handlePatientOnboarding
+ * @memberof store.sagas.onBoardingSaga
  * @param {Object} action - Redux action object.
  * @param {Object} action.payload - The payload containing form data and authentication token.
  * @param {FormData} action.payload.formData - The patient's onboarding details.
@@ -116,10 +124,11 @@ function* handlePatientOnboarding(action) {
  * Triggers the worker saga when an onboarding action is dispatched.
  *
  * @generator
- * @function watchPatientOnboardingSaga
+ * @function watchOnBoardingSaga
+ * @memberof store.sagas.onBoardingSaga
  * @yields {Generator} Watches for DOCTOR_ONBOARDING and PATIENT_ONBOARDING actions.
  */
-export default function* watchPatientOnboardingSaga() {
+export default function* watchOnBoardingSaga() {
   yield takeLatest(PATIENT_ONBOARDING, handlePatientOnboarding);
   yield takeLatest(DOCTOR_ONBOARDING, handleDoctorOnboarding);
 }

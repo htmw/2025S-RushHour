@@ -1,6 +1,10 @@
 /**
- * @fileoverview Defines the application's route configurations.
+ * @file Defines the application's route configurations.
+ *
  * Contains both public and private routes, along with header navigation links.
+ *
+ * @namespace src.routes.routeList
+ * @memberof src.routes
  */
 
 import { lazy } from "react";
@@ -25,7 +29,10 @@ const AdminDashboard = lazy(() =>
 
 /**
  * List of private routes accessible only to authenticated users.
- * @constant {Array<{path: string, component: React.ComponentType, exact: boolean}>}
+ *
+ * @constant
+ * @memberof src.routes.routeList
+ * @property {Array<{path: string, component: React.ComponentType, exact: boolean}>}
  */
 export const PrivateRoutes = [
   {
@@ -57,7 +64,10 @@ export const PrivateRoutes = [
 
 /**
  * List of public routes accessible without authentication.
- * @constant {Array<{path: string, component: React.ComponentType, exact: boolean}>}
+ *
+ * @constant
+ * @memberof src.routes.routeList
+ * @property {Array<{path: string, component: React.ComponentType, exact: boolean}>}
  */
 export const PublicRoutes = [
   {
@@ -84,7 +94,10 @@ export const PublicRoutes = [
 
 /**
  * Routes used in the navigation header.
- * @constant {Array<{path: string, name: string}>}
+ *
+ * @constant
+ * @memberof src.routes.routeList
+ * @property {Array<{path: string, name: string}>}
  */
 export const headerRouteList = [
   {

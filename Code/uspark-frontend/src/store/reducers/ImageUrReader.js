@@ -1,6 +1,9 @@
 /**
- * @fileoverview Redux reducer for managing user profile-related state.
+ * @file Redux reducer for managing user profile-related state.
  * Handles profile image uploads and error management.
+ *
+ * @namespace store.reducers.profileReducer
+ * @memberof store.reducers
  */
 
 import {
@@ -11,6 +14,7 @@ import {
 /**
  * Initial state for the profile reducer.
  * @constant
+ * @memberof store.reducers.profileReducer
  * @type {Object}
  * @property {string|null} error - Stores error messages related to profile image uploads, if any.
  */
@@ -22,6 +26,7 @@ const initialState = {
  * Profile reducer for handling profile image upload success and errors.
  *
  * @function profileReducer
+ * @memberof store.reducers.profileReducer
  * @param {Object} state - The current profile state.
  * @param {Object} action - Redux action object.
  * @param {string} action.type - The action type.

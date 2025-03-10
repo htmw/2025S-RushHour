@@ -1,6 +1,9 @@
 /**
- * @fileoverview Redux reducer for managing admin-related state.
+ * @file Redux reducer for managing admin-related state.
  * Handles fetching and verifying doctors.
+ *
+ * @namespace store.reducers.adminReducer
+ * @memberof store.reducers
  */
 
 import * as types from "../actions/types";
@@ -8,6 +11,7 @@ import * as types from "../actions/types";
 /**
  * Initial state for the admin reducer.
  * @constant
+ * @memberof store.reducers.adminReducer
  * @type {Object}
  * @property {Array<Object>} doctors - List of doctors.
  * @property {boolean} loading - Indicates if a request is in progress.
@@ -22,6 +26,7 @@ const initialState = {
 /**
  * Admin reducer for handling doctor-related actions.
  *
+ * @memberof store.reducers.adminReducer
  * @function adminReducer
  * @param {Object} state - The current state.
  * @param {Object} action - Redux action object.

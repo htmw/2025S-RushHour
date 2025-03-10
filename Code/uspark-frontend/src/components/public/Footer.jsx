@@ -1,6 +1,9 @@
 /**
- * @fileoverview Footer component for Uspark.
+ * @file Footer component for Uspark.
  * Includes branding, quick links, social media icons, and copyright information.
+ *
+ * @namespace src.components.public.Footer
+ * @memberof src.components.public
  */
 
 import React from "react";
@@ -24,6 +27,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
  * Displays a footer with company branding, navigation links, social media icons, and copyright details.
  *
  * @component
+ * @memberof src.components.public.Footer
  * @returns {JSX.Element} The Footer component.
  */
 const Footer = () => {

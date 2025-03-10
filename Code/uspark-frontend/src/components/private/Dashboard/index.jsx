@@ -1,3 +1,13 @@
+/**
+ * @file Dashboard component.
+ *
+ * Displays different dashboards based on the user's role (Patient, Doctor, or Admin).
+ * Fetches user data and ensures proper onboarding before allowing access.
+ *
+ * @namespace src.components.private.Dashboard
+ * @memberof src.components.private
+ */
+
 import React, { useEffect } from "react";
 import {
   Container,
@@ -13,22 +23,43 @@ import PatientHomePage from "../Patient/Patient";
 import DoctorHomePage from "../Doctor/Doctor";
 import AdminDashboard from "./AdminDashboard";
 
+/**
+ * Dashboard Component
+ *
+ * Manages the main dashboard view by rendering different layouts based on the user's role.
+ * Redirects non-onboarded users to the onboarding page.
+ *
+ * @component
+ * @memberof src.components.private.Dashboard
+ * @returns {JSX.Element} The dashboard component.
+ */
 const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  /** @type {Object} */
   const auth = useSelector((state) => state.auth);
+
+  /** @type {Object} */
   const { userData, loading, error } = useSelector((state) => state.dashboard);
 
+  /**
+   * Ensures only onboarded users access the dashboard.
+   * Fetches user data if authenticated.
+   *
+   * @function
+   * @memberof src.components.private.Dashboard
+   * @effect Runs when `auth` state changes.
+   */
   useEffect(() => {
     if (!auth.isOnboarded) {
       navigate("/onBoarding");
-    } else {
-      if (auth.token) {
-        dispatch(fetchDashboard({ token: auth.token }, navigate));
-      }
+    } else if (auth.token) {
+      dispatch(fetchDashboard({ token: auth.token }, navigate));
     }
   }, [auth, dispatch, navigate]);
 
+  // Loading state
   if (loading) {
     return (
       <Container>
@@ -37,6 +68,7 @@ const Dashboard = () => {
     );
   }
 
+  // Error state
   if (error) {
     return (
       <Container>
@@ -47,6 +79,7 @@ const Dashboard = () => {
     );
   }
 
+  // No user data
   if (!userData) {
     return (
       <Container>
@@ -66,7 +99,7 @@ const Dashboard = () => {
               <PatientHomePage />
             ) : userData.role === "doctor" ? (
               <DoctorHomePage />
-            ) : userData.role === "doctor" ? (
+            ) : userData.role === "admin" ? (
               <AdminDashboard />
             ) : (
               <Typography align="center">

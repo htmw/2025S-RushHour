@@ -1,4 +1,12 @@
-// src/components/Onboarding/RoleSelection.jsx
+/**
+ * @file Role selection component for onboarding.
+ *
+ * Allows users to select their role as a doctor or patient during the onboarding process.
+ *
+ * @namespace src.components.private.onBoarding.RoleSelection
+ * @memberof src.components.private.onBoarding
+ */
+
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Button, Typography, Grid2, Paper } from "@mui/material";
@@ -8,10 +16,26 @@ import patientAnimation from "../../../../animations/Patient.json";
 import { roleSelection } from "../../../store/actions";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * RoleSelection Component
+ *
+ * A selection screen for users to choose between a patient or doctor role.
+ *
+ * @component
+ * @memberof src.components.private.onBoarding.RoleSelection
+ * @returns {JSX.Element} The onboarding role selection component.
+ */
 const RoleSelection = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  /**
+   * Handles role selection and dispatches action to update state.
+   *
+   * @function
+   * @memberof src.components.private.onBoarding.RoleSelection
+   * @param {string} role - The selected user role (`"patient"` or `"doctor"`).
+   */
   const handleRoleSelect = (role) => {
     dispatch(roleSelection(role, navigate));
   };

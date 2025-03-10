@@ -1,3 +1,17 @@
+/**
+ * @file InsuranceCard Component
+ *
+ *
+ * @namespace src.components.private.Patient.InsuranceCard
+ * @memberof src.components.private.Patient
+ * This component displays and allows editing of a patient's insurance details.
+ * Features include:
+ * - Fetching insurance details from an API.
+ * - Displaying insurance information in read-only mode.
+ * - Allowing users to edit and save their insurance details.
+ * - UI feedback via notifications.
+ */
+
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -15,7 +29,24 @@ import { useSelector } from "react-redux";
 import { enqueueSnackbar } from "notistack";
 import "../../../css/InsuranceCard.css";
 
+/**
+ *
+ * @component
+ * @memberof src.components.private.Patient.InsuranceCard
+ * @returns {JSX.Element} - The InsuranceCard component displaying and editing insurance details.
+ *
+ * @example
+ * <InsuranceCard />
+ */
 const InsuranceCard = () => {
+  /**
+   * State for storing insurance details.
+   * @type {Object}
+   * @property {string} providerName - Name of the insurance provider.
+   * @property {string} startDate - Insurance start date (YYYY-MM-DD format).
+   * @property {string} endDate - Insurance end date (YYYY-MM-DD format).
+   * @property {string} holderName - Name of the insurance holder.
+   */
   const [insuranceDetails, setInsuranceDetails] = useState({
     providerName: "",
     startDate: "",
@@ -23,10 +54,22 @@ const InsuranceCard = () => {
     holderName: "",
   });
 
-  const [isEditing, setIsEditing] = useState(false); // Track edit mode
+  /**
+   * State to track whether the component is in edit mode.
+   * @type {boolean}
+   */
+  const [isEditing, setIsEditing] = useState(false);
+
+  /**
+   * Retrieves the authentication token from Redux state.
+   * @type {string}
+   */
   const token = useSelector((state) => state.auth?.token);
 
-  // Fetch insurance details
+  /**
+   * Fetches insurance details from the API.
+   * Updates `insuranceDetails` state with formatted data.
+   */
   const fetchInsuranceDetails = async () => {
     try {
       const response = await axios.get("http://localhost:5001/api/insurance", {
@@ -39,7 +82,7 @@ const InsuranceCard = () => {
         const { providerName, startDate, endDate, holderName } = response.data;
         setInsuranceDetails({
           providerName,
-          startDate: new Date(startDate).toISOString().split("T")[0], // Format date to YYYY-MM-DD
+          startDate: new Date(startDate).toISOString().split("T")[0], // Format to YYYY-MM-DD
           endDate: new Date(endDate).toISOString().split("T")[0],
           holderName,
         });
@@ -50,7 +93,10 @@ const InsuranceCard = () => {
     }
   };
 
-  // Handle input changes
+  /**
+   * Handles input changes in the form fields.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The event object from input change.
+   */
   const handleChange = (e) => {
     setInsuranceDetails({
       ...insuranceDetails,
@@ -58,7 +104,10 @@ const InsuranceCard = () => {
     });
   };
 
-  // Save insurance details
+  /**
+   * Saves updated insurance details by sending a request to the API.
+   * @param {React.FormEvent<HTMLFormElement>} event - The form submission event.
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -84,7 +133,9 @@ const InsuranceCard = () => {
     }
   };
 
-  // Fetch insurance details on mount
+  /**
+   * Fetches insurance details when the component mounts.
+   */
   useEffect(() => {
     fetchInsuranceDetails();
   }, []);

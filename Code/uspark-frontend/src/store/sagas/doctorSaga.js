@@ -1,6 +1,10 @@
 /**
- * @fileoverview Redux-Saga for handling doctor verification document uploads.
+ * @file Redux-Saga for handling doctor verification document uploads.
+ *
  * Manages secure file uploads and refreshes the dashboard upon success.
+ *
+ * @namespace store.sagas.doctorSaga
+ * @memberof store.sagas
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
@@ -10,13 +14,18 @@ import { UPLOAD_VERIFICATION_DOCS } from "../actions/types";
 
 /**
  * Base API URL for doctor-related verification actions.
- * @constant {string}
+ *
+ * @constant
+ * @memberof store.sagas.doctorSaga
+ * @type {string}
  */
 const API_URL = "http://localhost:5001/api/dashboard/doctor";
 
 /**
  * API request to upload verification documents.
+ *
  * @function
+ * @memberof store.sagas.doctorSaga
  * @param {string} token - The authentication token for API authorization.
  * @param {FormData} formData - The form data containing the verification documents.
  * @returns {Promise<Object>} Resolves when the upload is successful.
@@ -35,6 +44,7 @@ const uploadDocsApi = (token, formData) =>
  *
  * @generator
  * @function handleUploadVerificationDocs
+ * @memberof store.sagas.doctorSaga
  * @param {Object} action - Redux action object.
  * @param {Object} action.payload - The payload containing authentication details and form data.
  * @param {string} action.payload.token - The authentication token.
@@ -59,9 +69,10 @@ function* handleUploadVerificationDocs(action) {
  * Triggers the worker saga when an upload action is dispatched.
  *
  * @generator
- * @function doctorSaga
+ * @function watchDoctorSaga
+ * @memberof store.sagas.doctorSaga
  * @yields {Generator} Watches for UPLOAD_VERIFICATION_DOCS actions.
  */
-export default function* doctorSaga() {
+export default function* watchDoctorSaga() {
   yield takeLatest(UPLOAD_VERIFICATION_DOCS, handleUploadVerificationDocs);
 }

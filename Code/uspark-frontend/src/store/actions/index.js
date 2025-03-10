@@ -1,6 +1,10 @@
 /**
- * @fileoverview Defines Redux action creators for asynchronous operations.
+ * @file Defines Redux action creators for asynchronous operations.
+ *
  * Uses a reusable function to generate action creators for Pending, Success, and Error states.
+ *
+ * @namespace store.actions
+ * @memberof store
  */
 
 import * as types from "./types";
@@ -8,7 +12,8 @@ import * as types from "./types";
 /**
  * Reusable action creator for async actions (Pending, Success, Error).
  *
- * @function createAsyncActions
+ * @function
+ * @memberof store.actions
  * @param {string} baseType - The base action type (e.g., 'FETCH_DASHBOARD').
  * @returns {Object} Action creators for trigger, pending, success, and error states.
  */
@@ -16,6 +21,8 @@ const createAsyncActions = (baseType) => {
   /**
    * Default action creator function.
    *
+   * @function
+   * @memberof store.actions.createAsyncActions
    * @param {any} payload - The data to be passed to the action.
    * @param {Function} [navigate] - Optional navigation function.
    * @returns {Object} Redux action.
@@ -29,6 +36,8 @@ const createAsyncActions = (baseType) => {
   /**
    * Generates a pending action.
    *
+   * @function
+   * @memberof store.actions.createAsyncActions
    * @param {Function} [navigate] - Optional navigation function.
    * @returns {Object} Redux action for pending state.
    */
@@ -40,6 +49,8 @@ const createAsyncActions = (baseType) => {
   /**
    * Generates a success action.
    *
+   * @function
+   * @memberof store.actions.createAsyncActions
    * @param {any} data - The successful response data.
    * @param {Function} [navigate] - Optional navigation function.
    * @returns {Object} Redux action for success state.
@@ -53,6 +64,8 @@ const createAsyncActions = (baseType) => {
   /**
    * Generates an error action.
    *
+   * @function
+   * @memberof store.actions.createAsyncActions
    * @param {any} error - The error message or object.
    * @param {Function} [navigate] - Optional navigation function.
    * @returns {Object} Redux action for error state.
@@ -69,6 +82,10 @@ const createAsyncActions = (baseType) => {
 /**
  * Redux action creators for various async operations.
  * These are generated using `createAsyncActions()`.
+ *
+ * @constant
+ * @memberof store.actions
+ * @type {Object}
  */
 export const fetchDashboard = createAsyncActions(types.FETCH_DASHBOARD);
 export const login = createAsyncActions(types.LOGIN);

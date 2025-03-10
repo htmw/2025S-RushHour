@@ -1,13 +1,29 @@
 {
   "source": {
     "include": ["src"],
-    "includePattern": ".js$|.jsx$",
-    "excludePattern": "(node_modules|docs|build)"
+    "exclude": ["node_modules", "dist"],
+    "includePattern": ".jsx?$"
   },
   "opts": {
-    "destination": "./docs",
+    "destination": "docs",
     "recurse": true,
-    "readme": "./README.md"
+    "template": "node_modules/clean-jsdoc-theme"
   },
-  "plugins": ["plugins/markdown"]
+  "plugins": ["plugins/markdown"],
+  "templates": {
+    "default": {
+      "outputSourceFiles": true
+    },
+    "better-docs": {
+      "name": "Uspark Documentation",
+      "logo": "",
+      "title": "Uspark - Project API Documentation",
+      "navigation": [
+        {
+          "label": "Overview",
+          "href": "index.html"
+        }
+      ]
+    }
+  }
 }

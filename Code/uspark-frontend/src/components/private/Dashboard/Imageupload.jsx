@@ -1,24 +1,65 @@
-import React, { useState } from "react";
+/**
+ * @file Profile image upload component.
+ *
+ * Allows users to upload and preview profile images.
+ *
+ * @namespace src.components.private.Dashboard.Imageupload
+ * @memberof src.components.private.Dashboard
+ */
+
+import React, { useState, useEffect } from "react";
 import { Avatar, IconButton, Button } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { uploadProfileImage } from "../../store/actions/index"; // Adjust path as necessary
+import { uploadProfileImage } from "../../../store/actions";
 
-const ProfileImageUpload = ({ userData }) => {
+/**
+ * Imageupload Component
+ *
+ * Handles profile image selection, preview, and upload.
+ *
+ * @component
+ * @memberof src.components.private.Dashboard.Imageupload
+ * @param {Object} props - Component props.
+ * @param {Object} props.userData - The logged-in user's data.
+ * @param {string} props.userData.image - URL of the user's profile image.
+ * @param {string} props.userData.fullName - Full name of the user.
+ * @param {string} props.userData.userId - Unique user identifier.
+ * @returns {JSX.Element} The profile image upload component.
+ */
+const Imageupload = ({ userData }) => {
+  /** @property {File} */
   const [selectedImage, setSelectedImage] = useState(null);
+
+  /** @property {string} */
   const [previewImage, setPreviewImage] = useState(userData.image || null);
+
   const dispatch = useDispatch();
+
+  /** @property {string} */
   const imageUrl = useSelector((state) => state.profile?.imageUrl || null);
 
-
-  // Update preview image if imageUrl changes
-  React.useEffect(() => {
+  /**
+   * Updates the preview image when the uploaded image URL changes.
+   *
+   * @function
+   * @memberof src.components.private.Dashboard.Imageupload
+   * @effect Runs when `imageUrl` changes.
+   */
+  useEffect(() => {
     if (imageUrl) {
       setPreviewImage(imageUrl);
-      setSelectedImage(null); // Reset the selected image after successful upload
+      setSelectedImage(null); // Reset selected image after successful upload
     }
   }, [imageUrl]);
 
+  /**
+   * Handles image selection and updates the preview.
+   *
+   * @function
+   * @memberof src.components.private.Dashboard.Imageupload
+   * @param {React.ChangeEvent<HTMLInputElement>} event - The file input change event.
+   */
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -27,6 +68,12 @@ const ProfileImageUpload = ({ userData }) => {
     }
   };
 
+  /**
+   * Handles profile image upload.
+   *
+   * @function
+   * @memberof src.components.private.Dashboard.Imageupload
+   */
   const handleUpload = () => {
     if (!selectedImage) return alert("Please select an image.");
 
@@ -34,7 +81,6 @@ const ProfileImageUpload = ({ userData }) => {
     formData.append("profileImage", selectedImage);
     formData.append("userId", userData.userId);
 
-    // Dispatch the upload action
     dispatch(uploadProfileImage(formData));
   };
 
@@ -74,4 +120,4 @@ const ProfileImageUpload = ({ userData }) => {
   );
 };
 
-export default ProfileImageUpload;
+export default Imageupload;

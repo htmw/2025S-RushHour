@@ -1,3 +1,17 @@
+/**
+ * @file PatientLayout Component
+ *
+ *
+ * @namespace src.components.private.Patient.PatLayout
+ * @memberof src.components.private.Patient
+ *
+ * This component provides a layout for the patient dashboard, including:
+ * - A top navigation bar with a menu button.
+ * - A collapsible sidebar with navigation options.
+ * - A logout button to handle user sign-out.
+ * - A main content area for rendering child components.
+ */
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -25,15 +39,39 @@ import { logoutUser } from "../../../store/actions";
 
 const drawerWidth = 240;
 
+/**
+ *
+ * @component
+ * @memberof src.components.private.Patient.PatLayout
+ * @param {Object} props - Component properties.
+ * @param {React.ReactNode} props.children - The child components to render inside the layout.
+ * @returns {JSX.Element} - The PatientLayout component with sidebar navigation.
+ *
+ * @example
+ * <PatientLayout>
+ *   <Dashboard />
+ * </PatientLayout>
+ */
 const PatientLayout = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [open, setOpen] = useState(false); // Sidebar initially closed
 
+  /**
+   * State for managing sidebar visibility.
+   * @property {boolean} open - Sidebar open state and setter function.
+   */
+  const [open, setOpen] = useState(false);
+
+  /**
+   * Toggles the sidebar drawer open/closed.
+   */
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  /**
+   * Handles user logout by dispatching the logout action.
+   */
   const handleLogout = () => {
     dispatch(logoutUser());
   };

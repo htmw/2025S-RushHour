@@ -1,6 +1,9 @@
 /**
- * @fileoverview Contact Us page component for Uspark.
+ * @file Contact Us page component for Uspark.
  * Provides contact options, a contact form, and frequently asked questions.
+ *
+ * @namespace src.components.public.ContactUs
+ * @memberof src.components.public
  */
 
 import React from "react";
@@ -24,6 +27,7 @@ import { motion } from "framer-motion";
  * Displays contact options, a contact form, and an FAQ section.
  *
  * @component
+ * @memberof src.components.public.ContactUs
  * @returns {JSX.Element} The Contact Us page.
  */
 const ContactUs = () => {
