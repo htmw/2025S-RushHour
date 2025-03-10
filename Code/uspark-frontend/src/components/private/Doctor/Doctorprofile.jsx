@@ -30,9 +30,7 @@ const DoctorProfile = () => {
   const dispatch = useDispatch();
 
   /** @property {Object} */
-  const { userData, loading, error } = useSelector(
-    (state) => state.dashboard
-  );
+  const { userData, loading, error } = useSelector((state) => state.dashboard);
 
   /** @property {string} */
   const token = useSelector((state) => state.auth?.token);
