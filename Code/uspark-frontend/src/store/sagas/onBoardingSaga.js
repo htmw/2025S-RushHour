@@ -8,41 +8,11 @@
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
-import axios from "axios";
 import { doctorOnboarding, login, patientOnboarding } from "../actions";
 import { enqueueSnackbar } from "notistack";
 import { DOCTOR_ONBOARDING, PATIENT_ONBOARDING } from "../actions/types";
 import history from "../../history";
-
-/**
- * API request to onboard a doctor.
- * @function
- * @memberof store.sagas.onBoardingSaga
- * @param {FormData} formData - The form data containing onboarding details.
- * @param {string} token - The authentication token for API authorization.
- * @returns {Promise<Object>} Resolves when the onboarding request is successful.
- */
-const doctorOnboardingApi = (formData, token) =>
-  axios.post("http://localhost:5001/api/onboarding/doctor", formData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-/**
- * API request to onboard a patient.
- * @function
- * @memberof store.sagas.onBoardingSaga
- * @param {FormData} formData - The form data containing onboarding details.
- * @param {string} token - The authentication token for API authorization.
- * @returns {Promise<Object>} Resolves when the onboarding request is successful.
- */
-const patientOnboardingApi = (formData, token) =>
-  axios.post("http://localhost:5001/api/onboarding/patient", formData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+import { doctorOnboardingApi, patientOnboardingApi } from "../apis";
 
 /**
  * Worker saga: Handles doctor onboarding.

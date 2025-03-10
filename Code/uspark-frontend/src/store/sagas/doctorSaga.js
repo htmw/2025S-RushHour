@@ -8,35 +8,9 @@
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
-import axios from "axios";
 import { fetchDashboard, uploadVerificationDocs } from "../actions";
 import { UPLOAD_VERIFICATION_DOCS } from "../actions/types";
-
-/**
- * Base API URL for doctor-related verification actions.
- *
- * @constant
- * @memberof store.sagas.doctorSaga
- * @type {string}
- */
-const API_URL = "http://localhost:5001/api/dashboard/doctor";
-
-/**
- * API request to upload verification documents.
- *
- * @function
- * @memberof store.sagas.doctorSaga
- * @param {string} token - The authentication token for API authorization.
- * @param {FormData} formData - The form data containing the verification documents.
- * @returns {Promise<Object>} Resolves when the upload is successful.
- */
-const uploadDocsApi = (token, formData) =>
-  axios.post(`${API_URL}/verify`, formData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
-    },
-  });
+import { uploadDocsApi } from "../apis";
 
 /**
  * Worker saga: Handles uploading verification documents.

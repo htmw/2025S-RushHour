@@ -8,55 +8,11 @@
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
-import axios from "axios";
 import { login, oAuthLogin, signup, oAuthSignup } from "../actions";
 import { enqueueSnackbar } from "notistack";
 import { LOGIN, OAUTH_LOGIN, OAUTH_SIGNUP, SIGNUP } from "../actions/types";
 import history from "../../history";
-
-/**
- * API request to log in a user with credentials.
- *
- * @function
- * @memberof store.sagas.authSaga
- * @param {Object} credentials - The user's email and password.
- * @returns {Promise<Object>} Response containing authentication token.
- */
-const loginApi = (credentials) =>
-  axios.post("http://localhost:5001/auth/login", credentials);
-
-/**
- * API request to log in a user using OAuth (Google, Apple, etc.).
- *
- * @function
- * @memberof store.sagas.authSaga
- * @param {Object} providerData - OAuth provider data.
- * @returns {Promise<Object>} Response containing authentication token.
- */
-const oauthLoginApi = (providerData) =>
-  axios.post("http://localhost:5001/auth/oauth", providerData);
-
-/**
- * API request to sign up a new user.
- *
- * @function
- * @memberof store.sagas.authSaga
- * @param {Object} userData - User registration details.
- * @returns {Promise<Object>} Response containing authentication token.
- */
-const signupApi = (userData) =>
-  axios.post("http://localhost:5001/auth/signup", userData);
-
-/**
- * API request to sign up a new user via OAuth.
- *
- * @function
- * @memberof store.sagas.authSaga
- * @param {Object} providerData - OAuth provider data.
- * @returns {Promise<Object>} Response containing authentication token.
- */
-const oAuthSignupApi = (providerData) =>
-  axios.post("http://localhost:5001/auth/oauth", providerData);
+import { loginApi, oauthLoginApi, oAuthSignupApi, signupApi } from "../apis";
 
 /**
  * Handles user login.
