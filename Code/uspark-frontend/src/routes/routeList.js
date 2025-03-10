@@ -1,18 +1,47 @@
+/**
+ * @file Defines the application's route configurations.
+ *
+ * Contains both public and private routes, along with header navigation links.
+ *
+ * @namespace src.routes.routeList
+ * @memberof src.routes
+ */
+
 import { lazy } from "react";
 
-const Login = lazy(() => import("../components/auth/Login"));
-const Signup = lazy(() => import("../components/auth/Signup"));
-const Home = lazy(() => import("../components/Home"));
-const Dashboard = lazy(() => import("../components/Dashboard/Dashboard"));
-const Onboarding = lazy(() => import("../components/onBoarding"));
-const PatientProfile = lazy(() => import("../components/Dashboard/PatientProfile"));
-const DoctorProfile = lazy(() => import("../components/Dashboard/DoctorProfile"));
-const AboutUs = lazy(() => import("../components/AboutUs"));
-const AboutUsD = lazy(() => import("../components/AboutUsD"));
+// Public Routes
+/** @constant {React.LazyExoticComponent<React.ComponentType>} */
+const Login = lazy(() => import("../components/public/auth/Login"));
+const Signup = lazy(() => import("../components/public/auth/Signup"));
+const PublicAboutUs = lazy(() => import("../components/public/AboutUs"));
+const ContactUs = lazy(() => import("../components/public/ContactUs"));
 
+// Private Routes
+const Home = lazy(() => import("../components/private/Home"));
+const Dashboard = lazy(() => import("../components/private/Dashboard"));
+const Onboarding = lazy(() => import("../components/private/onBoarding"));
+const DoctorDashboard = lazy(() =>
+  import("../components/private/Dashboard/DoctorDashboard")
+);
+const AdminDashboard = lazy(() =>
+  import("../components/private/Dashboard/AdminDashboard")
+);
+
+/**
+ * List of private routes accessible only to authenticated users.
+ *
+ * @constant
+ * @memberof src.routes.routeList
+ * @property {Array<{path: string, component: React.ComponentType, exact: boolean}>}
+ */
 export const PrivateRoutes = [
   {
     path: "/",
+    component: Home,
+    exact: true,
+  },
+  {
+    path: "/onboarding",
     component: Onboarding,
     exact: true,
   },
@@ -22,29 +51,24 @@ export const PrivateRoutes = [
     exact: true,
   },
   {
-    path: "/patprofile",
-    component: PatientProfile,
+    path: "/admindashboard",
+    component: AdminDashboard,
     exact: true,
   },
   {
     path: "/docprofile",
-    component: DoctorProfile,
+    component: DoctorDashboard,
     exact: true,
   },
-  {
-    path: "/aboutus",
-    component: AboutUs,
-    exact: true,
-  },
-  {
-    path: "/daboutus",
-    component: AboutUsD,
-    exact: true,
-  },
-
-
 ];
 
+/**
+ * List of public routes accessible without authentication.
+ *
+ * @constant
+ * @memberof src.routes.routeList
+ * @property {Array<{path: string, component: React.ComponentType, exact: boolean}>}
+ */
 export const PublicRoutes = [
   {
     path: "/login",
@@ -56,11 +80,32 @@ export const PublicRoutes = [
     component: Signup,
     exact: true,
   },
+  {
+    path: "/aboutus",
+    component: PublicAboutUs,
+    exact: true,
+  },
+  {
+    path: "/contactus",
+    component: ContactUs,
+    exact: true,
+  },
 ];
 
+/**
+ * Routes used in the navigation header.
+ *
+ * @constant
+ * @memberof src.routes.routeList
+ * @property {Array<{path: string, name: string}>}
+ */
 export const headerRouteList = [
-  // {
-  //   path: "/home",
-  //   name: "Home",
-  // },
+  {
+    path: "/aboutus",
+    name: "About Us",
+  },
+  {
+    path: "/contactus",
+    name: "Contact Us",
+  },
 ];

@@ -1,3 +1,12 @@
+/**
+ * @file Handles authentication-related side effects using Redux-Saga.
+ *
+ * Manages user login, signup, and OAuth authentication.
+ *
+ * @namespace store.sagas.authSaga
+ * @memberof store.sagas
+ */
+
 import { call, put, takeLatest } from "redux-saga/effects";
 import axios from "axios";
 import { login, oAuthLogin, signup, oAuthSignup } from "../actions";
@@ -5,16 +14,59 @@ import { enqueueSnackbar } from "notistack";
 import { LOGIN, OAUTH_LOGIN, OAUTH_SIGNUP, SIGNUP } from "../actions/types";
 import history from "../../history";
 
-// ✅ API Calls
+/**
+ * API request to log in a user with credentials.
+ *
+ * @function
+ * @memberof store.sagas.authSaga
+ * @param {Object} credentials - The user's email and password.
+ * @returns {Promise<Object>} Response containing authentication token.
+ */
 const loginApi = (credentials) =>
-  axios.post("http://localhost:5000/auth", credentials);
-const oauthLoginApi = (providerData) =>
-  axios.post("http://localhost:5000/auth/oauth", providerData);
-const signupApi = (userData) =>
-  axios.post("http://localhost:5000/auth/signup", userData);
-const oAuthSignupApi = (providerData) =>
-  axios.post("http://localhost:5000/auth/oauth", providerData);
+  axios.post("http://localhost:5001/auth/login", credentials);
 
+/**
+ * API request to log in a user using OAuth (Google, Apple, etc.).
+ *
+ * @function
+ * @memberof store.sagas.authSaga
+ * @param {Object} providerData - OAuth provider data.
+ * @returns {Promise<Object>} Response containing authentication token.
+ */
+const oauthLoginApi = (providerData) =>
+  axios.post("http://localhost:5001/auth/oauth", providerData);
+
+/**
+ * API request to sign up a new user.
+ *
+ * @function
+ * @memberof store.sagas.authSaga
+ * @param {Object} userData - User registration details.
+ * @returns {Promise<Object>} Response containing authentication token.
+ */
+const signupApi = (userData) =>
+  axios.post("http://localhost:5001/auth/signup", userData);
+
+/**
+ * API request to sign up a new user via OAuth.
+ *
+ * @function
+ * @memberof store.sagas.authSaga
+ * @param {Object} providerData - OAuth provider data.
+ * @returns {Promise<Object>} Response containing authentication token.
+ */
+const oAuthSignupApi = (providerData) =>
+  axios.post("http://localhost:5001/auth/oauth", providerData);
+
+/**
+ * Handles user login.
+ *
+ * @generator
+ * @function handleLogin
+ * @memberof store.sagas.authSaga
+ * @param {Object} action - Redux action containing payload.
+ * @yields {Generator} Calls login API and updates Redux state.
+ */
 function* handleLogin(action) {
   const { navigate } = action.meta || {};
   try {
@@ -32,11 +84,8 @@ function* handleLogin(action) {
     );
     localStorage.setItem("token", token);
     enqueueSnackbar("Login Successful!", { variant: "success" });
-    if (userPayload.isOnboarded) {
-      history.push("/dashboard");
-    } else {
-      history.push("/onboarding");
-    }
+
+    history.push(userPayload.isOnboarded ? "/dashboard" : "/onboarding");
   } catch (error) {
     const errorMsg = error.response?.data?.message || "Login Failed";
     yield put(login.error(errorMsg));
@@ -44,7 +93,15 @@ function* handleLogin(action) {
   }
 }
 
-// ✅ Worker Saga: OAuth Login
+/**
+ * Handles OAuth login (Google, Apple, etc.).
+ *
+ * @generator
+ * @function handleOAuthLogin
+ * @memberof store.sagas.authSaga
+ * @param {Object} action - Redux action containing payload.
+ * @yields {Generator} Calls OAuth login API and updates Redux state.
+ */
 function* handleOAuthLogin(action) {
   const { navigate } = action.meta || {};
 
@@ -62,13 +119,9 @@ function* handleOAuthLogin(action) {
       })
     );
     localStorage.setItem("token", token);
-
     enqueueSnackbar("OAuth Login Successful!", { variant: "success" });
-    if (userPayload.isOnboarded) {
-      history.push("/dashboard");
-    } else {
-      history.push("/onboarding");
-    }
+
+    history.push(userPayload.isOnboarded ? "/dashboard" : "/onboarding");
   } catch (error) {
     const errorMsg = error.response?.data?.message || "OAuth Login Failed";
     yield put(oAuthLogin.error(errorMsg));
@@ -76,6 +129,15 @@ function* handleOAuthLogin(action) {
   }
 }
 
+/**
+ * Handles user signup.
+ *
+ * @generator
+ * @function handleSignup
+ * @memberof store.sagas.authSaga
+ * @param {Object} action - Redux action containing payload.
+ * @yields {Generator} Calls signup API and updates Redux state.
+ */
 function* handleSignup(action) {
   const { navigate } = action.meta || {};
 
@@ -93,13 +155,9 @@ function* handleSignup(action) {
       })
     );
     localStorage.setItem("token", token);
-
     enqueueSnackbar("Signup Successful!", { variant: "success" });
-    if (userPayload.isOnboarded) {
-      history.push("/dashboard");
-    } else {
-      history.push("/onboarding");
-    }
+
+    history.push(userPayload.isOnboarded ? "/dashboard" : "/onboarding");
   } catch (error) {
     const errorMsg = error.response?.data?.message || "Signup Failed";
     yield put(signup.error(errorMsg));
@@ -107,7 +165,15 @@ function* handleSignup(action) {
   }
 }
 
-// ✅ Worker Saga: OAuth Signup (Google/Apple)
+/**
+ * Handles OAuth signup (Google, Apple, etc.).
+ *
+ * @generator
+ * @function handleOAuthSignup
+ * @memberof store.sagas.authSaga
+ * @param {Object} action - Redux action containing payload.
+ * @yields {Generator} Calls OAuth signup API and updates Redux state.
+ */
 function* handleOAuthSignup(action) {
   const { navigate } = action.meta || {};
 
@@ -125,13 +191,9 @@ function* handleOAuthSignup(action) {
       })
     );
     localStorage.setItem("token", token);
-
     enqueueSnackbar("OAuth Signup Successful!", { variant: "success" });
-    if (userPayload.isOnboarded) {
-      history.push("/dashboard");
-    } else {
-      history.push("/onboarding");
-    }
+
+    history.push(userPayload.isOnboarded ? "/dashboard" : "/onboarding");
   } catch (error) {
     const errorMsg = error.response?.data?.message || "OAuth Signup Failed";
     yield put(oAuthSignup.error(errorMsg));
@@ -139,7 +201,15 @@ function* handleOAuthSignup(action) {
   }
 }
 
-export default function* watchSignupSaga() {
+/**
+ * Watcher saga that listens for authentication-related actions.
+ *
+ * @generator
+ * @function watchAuthSaga
+ * @memberof store.sagas.authSaga
+ * @yields {Generator} Watches for authentication actions and triggers the respective worker saga.
+ */
+export default function* watchAuthSaga() {
   yield takeLatest(SIGNUP, handleSignup);
   yield takeLatest(OAUTH_SIGNUP, handleOAuthSignup);
   yield takeLatest(LOGIN, handleLogin);

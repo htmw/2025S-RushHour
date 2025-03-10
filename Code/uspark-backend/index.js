@@ -3,12 +3,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const onBoardingRoutes = require("./routes/onboarding");
 const authRoutes = require("./routes/auth");
-const dashboardRoutes = require("./routes/dashboard");
-const profileImage = require("./routes/profileimage");
+const routes = require("./routes"); // Import the consolidated routes
+const { swaggerUi, swaggerSpec } = require("./swagger"); // Import Swagger setup
+
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // ✅ Middleware
 app.use(cors());
@@ -23,16 +23,17 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB Error:", err));
 
-// ✅ Generate JWT Token
+// ✅ Serve API Documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// ✅ Routes
 app.use("/", authRoutes);
-app.use("/api", onBoardingRoutes);
-app.use("/api", dashboardRoutes);
-app.use("/api", profileImage);
+app.use("/api", routes);
 
 app.get("/test", (req, res) => {
   res.send("Hello Tester");
 });
+
 // ✅ Start Server
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)

@@ -9,8 +9,14 @@ const DoctorSchema = new mongoose.Schema(
       unique: true,
     },
     specialization: { type: String, required: true },
-    experience: { type: Number, required: true }, // Years of experience
-    certifications: { type: String }, // Can be expanded to array if needed
+    experience: { type: Number, required: true },
+    certifications: { type: String },
+    verificationStatus: { 
+      type: String, 
+      enum: ["pending", "approved", "rejected"], 
+      default: "pending" 
+    },
+    verificationDocs: [{ type: String }],
   },
   { timestamps: true }
 );

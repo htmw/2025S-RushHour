@@ -24,19 +24,18 @@ jobs:
       - name: Run Frontend Tests
         working-directory: ./Code/uspark-frontend
         run: npm run test
-
-  # test-backend:
-  #   name: Test Backend
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Set up Node.js for backend
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: "22"
-  #     - name: Install Backend Dependencies
-  #       working-directory: ./Code/uspark-backend
-  #       run: npm install
-  #     - name: Run Backend Tests
-  #       working-directory: ./Code/uspark-backend
-  #       run: npm test
+  test-backend:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js for backend
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+      - name: Install Backend Dependencies
+        working-directory: ./Code/uspark-backend
+        run: npm install
+      - name: Run Backend Tests
+        working-directory: ./Code/uspark-backend
+        run: npm test

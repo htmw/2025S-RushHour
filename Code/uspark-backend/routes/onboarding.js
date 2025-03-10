@@ -5,7 +5,58 @@ const Patient = require("../Models/Patient");
 const Doctor = require("../Models/Doctor");
 const { default: authenticate } = require("../Middleware/authenticate");
 
-router.post("/onboarding/patient", authenticate, async (req, res) => {
+/**
+ * @swagger
+ * tags:
+ *   - name: Onboarding
+ *     description: User onboarding endpoints for patients and doctors
+ */
+
+/**
+ * @swagger
+ * /api/onboarding/patient:
+ *   post:
+ *     summary: Patient Onboarding
+ *     tags: [Onboarding]
+ *     description: Create a patient profile and update user role
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               age:
+ *                 type: integer
+ *                 example: 30
+ *               sex:
+ *                 type: string
+ *                 enum: [male, female, other]
+ *                 example: "male"
+ *               height:
+ *                 type: number
+ *                 example: 175
+ *               weight:
+ *                 type: number
+ *                 example: 70
+ *               healthIssues:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["Diabetes", "High blood pressure"]
+ *     responses:
+ *       201:
+ *         description: Patient onboarding completed successfully
+ *       400:
+ *         description: User already onboarded
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router.post("/patient", authenticate, async (req, res) => {
   const { age, sex, height, weight, healthIssues } = req.body;
   console.log({ age, sex, height, weight, healthIssues });
 
@@ -39,8 +90,44 @@ router.post("/onboarding/patient", authenticate, async (req, res) => {
   }
 });
 
-// ✅ Doctor Onboarding Route
-router.post("/onboarding/doctor", authenticate, async (req, res) => {
+/**
+ * @swagger
+ * /api/onboarding/doctor:
+ *   post:
+ *     summary: Doctor Onboarding
+ *     tags: [Onboarding]
+ *     description: Create a doctor profile and update user role
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               specialization:
+ *                 type: string
+ *                 example: "Cardiology"
+ *               experience:
+ *                 type: integer
+ *                 example: 5
+ *               certifications:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["MBBS", "MD"]
+ *     responses:
+ *       201:
+ *         description: Doctor onboarding completed successfully
+ *       400:
+ *         description: User already onboarded
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router.post("/doctor", authenticate, async (req, res) => {
   const { specialization, experience, certifications } = req.body;
 
   try {
@@ -55,6 +142,8 @@ router.post("/onboarding/doctor", authenticate, async (req, res) => {
       specialization,
       experience,
       certifications,
+      verificationStatus: "pending", // Initial verification status
+      verificationDocs: [], // Initial verification documents
     });
 
     await newDoctor.save();
