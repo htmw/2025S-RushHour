@@ -20,7 +20,6 @@ beforeAll(async () => {
 // Cleanup after tests
 afterAll(async () => {
   if (mongoose.connection.readyState !== 0) {
-    await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
   }
   await mongoServer.stop();
