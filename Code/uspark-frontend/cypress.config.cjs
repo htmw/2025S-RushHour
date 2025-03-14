@@ -10,7 +10,7 @@ const envConfig = {
   local: {
     baseUrl: "http://localhost:5173",
   },
-  dev: {
+  staging: {
     baseUrl: "https://uspark-frontend.vercel.app",
   },
   prod: {
