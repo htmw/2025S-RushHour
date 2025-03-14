@@ -27,21 +27,23 @@ jobs:
         working-directory: ./Code/uspark-frontend
         run: npm run cy:run
 
-  # test-backend:
-  #   name: Test Backend (Staging)
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Set up Node.js
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: "22"
-  #     - name: Install Backend Dependencies
-  #       working-directory: ./Code/uspark-backend
-  #       run: npm install
-  #     - name: Run Backend Tests
-  #       working-directory: ./Code/uspark-backend
-  #       run: npm test
+  test-backend:
+    name: Test Backend (Staging)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+      - name: Install Backend Dependencies
+        working-directory: ./Code/uspark-backend
+        run: |
+          npm install
+          echo "BASE_URL=https://two025s-rushhour.onrender.com" > .env
+      - name: Run Backend Tests
+        working-directory: ./Code/uspark-backend
+        run: npm test
 
   deploy-staging:
     name: Deploy to Staging
