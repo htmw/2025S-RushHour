@@ -34,7 +34,11 @@ app.get("/test", (req, res) => {
   res.send("Hello Tester");
 });
 
+app.get("/health", (req, res) => {
+  res.status(200).send("Backend is healthy!");
+});
+
 // ✅ Start Server
-app.listen(PORT, () =>
+app.listen(PORT, "0.0.0.0", () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
