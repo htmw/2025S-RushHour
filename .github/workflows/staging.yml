@@ -54,6 +54,7 @@ jobs:
       - name: Deploy Frontend to Vercel
         working-directory: ./Code/uspark-frontend
         run: |
+          npm install
           npm install -g vercel
           npm run stage  # Builds the frontend in the 'staging' folder
           vercel deploy --prod --confirm --token E1QGaNoYU3MapRGikZvu6jKW ./staging
