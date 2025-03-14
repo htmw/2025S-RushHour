@@ -11,7 +11,15 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // ✅ Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "*", // Allow all origins
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+app.options("*", cors());
+
 app.use(bodyParser.json());
 
 // ✅ MongoDB Connection
@@ -39,6 +47,6 @@ app.get("/health", (req, res) => {
 });
 
 // ✅ Start Server
-app.listen(PORT, "0.0.0.0", () =>
+app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
