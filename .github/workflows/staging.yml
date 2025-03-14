@@ -55,9 +55,8 @@ jobs:
         working-directory: ./Code/uspark-frontend
         run: |
           npm install -g vercel
-          vercel login --token E1QGaNoYU3MapRGikZvu6jKW
           npm run stage  # Builds the frontend in the 'staging' folder
-          vercel deploy --prod --confirm ./staging
+          vercel deploy --prod --confirm --token E1QGaNoYU3MapRGikZvu6jKW ./staging
 
       # 🚀 Deploy Backend to Render
       - name: Deploy Backend to Render
