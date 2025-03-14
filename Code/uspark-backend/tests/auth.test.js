@@ -2,7 +2,7 @@ require("dotenv").config();
 const request = require("supertest");
 const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
-const app = require("../index.js"); // Import your Express app
+const app = require("../index.js"); // ✅ Import Express app
 const User = require("../Models/User");
 
 let mongoServer;
@@ -12,22 +12,24 @@ beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const mongoUri = mongoServer.getUri();
 
-  await mongoose.connect(mongoUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(mongoUri);
+  }
 });
 
 // Cleanup after tests
 afterAll(async () => {
-  await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.close();
+  }
   await mongoServer.stop();
 });
 
 describe("Auth Routes", () => {
   it("should sign up a new user", async () => {
-    const res = await request(app).post("/api/auth/signup").send({
+    console.log({ app });
+    const res = await request(app).post("/auth/signup").send({
       email: "testuser@example.com",
       password: "testpassword",
       fullName: "Test User",
@@ -39,7 +41,7 @@ describe("Auth Routes", () => {
   });
 
   it("should not allow duplicate user registration", async () => {
-    const res = await request(app).post("/api/auth/signup").send({
+    const res = await request(app).post("/auth/signup").send({
       email: "testuser@example.com",
       password: "testpassword",
       fullName: "Test User",
@@ -50,7 +52,7 @@ describe("Auth Routes", () => {
   });
 
   it("should authenticate an existing user", async () => {
-    const res = await request(app).post("/api/auth").send({
+    const res = await request(app).post("/auth/login").send({
       email: "testuser@example.com",
       password: "testpassword",
     });
@@ -60,7 +62,7 @@ describe("Auth Routes", () => {
   });
 
   it("should reject login with wrong password", async () => {
-    const res = await request(app).post("/api/auth").send({
+    const res = await request(app).post("/auth/login").send({
       email: "testuser@example.com",
       password: "wrongpassword",
     });
@@ -70,11 +72,11 @@ describe("Auth Routes", () => {
   });
 
   it("should handle OAuth login", async () => {
-    const res = await request(app).post("/api/auth/oauth").send({
+    const res = await request(app).post("/auth/oauth").send({
       email: "oauthuser@example.com",
       userId: "oauth-test-id",
       fullName: "OAuth User",
-      provider: "google",
+      provider: "google.com",
     });
 
     expect(res.statusCode).toBe(200);

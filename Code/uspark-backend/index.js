@@ -46,7 +46,10 @@ app.get("/health", (req, res) => {
   res.status(200).send("Backend is healthy!");
 });
 
-// ✅ Start Server
-app.listen(PORT, () =>
-  console.log(`Server running on http://localhost:${PORT}`)
-);
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
