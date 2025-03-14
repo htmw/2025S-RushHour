@@ -25,7 +25,7 @@ jobs:
         run: npm install
       - name: Run Cypress Tests
         working-directory: ./Code/uspark-frontend
-        run: npm run test:cypress
+        run: npm run cy:run
 
   # test-backend:
   #   name: Test Backend (Staging)
@@ -55,9 +55,9 @@ jobs:
         working-directory: ./Code/uspark-frontend
         run: |
           npm install -g vercel
-          vercel pull --yes --environment=staging --token E1QGaNoYU3MapRGikZvu6jKW
-          vercel build --prod
-          vercel deploy --prod
+          vercel login --token E1QGaNoYU3MapRGikZvu6jKW
+          npm run stage  # Builds the frontend in the 'staging' folder
+          vercel deploy --prod --confirm ./staging
 
       # 🚀 Deploy Backend to Render
       - name: Deploy Backend to Render
