@@ -11,7 +11,7 @@ const envConfig = {
     baseUrl: "http://localhost:5173",
   },
   dev: {
-    baseUrl: "https://staging.example.com",
+    baseUrl: "https://uspark-frontend.vercel.app",
   },
   prod: {
     baseUrl: "https://example.com",

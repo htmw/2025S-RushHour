@@ -1,0 +1,61 @@
+name: Staging CI/CD
+
+on:
+  pull_request:
+    branches:
+      - staging
+  push:
+    branches:
+      - staging
+
+jobs:
+  test-frontend:
+    name: Test Frontend (Staging)
+    runs-on: ubuntu-latest
+    env:
+      CYPRESS_ENV: staging
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+      - name: Install Frontend Dependencies
+        working-directory: ./Code/uspark-frontend
+        run: npm install
+      - name: Create .env File
+        working-directory: ./Code/uspark-frontend
+        run: echo "CYPRESS_ENV=staging" > .env.staging
+      - name: Run Cypress Tests
+        working-directory: ./Code/uspark-frontend
+        run: npm run test:cypress
+
+  test-backend:
+    name: Test Backend (Staging)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+      - name: Install Backend Dependencies
+        working-directory: ./Code/uspark-backend
+        run: npm install
+      - name: Run Backend Tests
+        working-directory: ./Code/uspark-backend
+        run: npm test
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: [test-frontend, test-backend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy Frontend to Vercel
+        run: |
+          npm install -g vercel
+          vercel --token ${{ secrets.VERCEL_TOKEN }} --prod --confirm
+      - name: Deploy Backend to Render
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}

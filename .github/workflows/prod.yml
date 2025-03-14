@@ -1,0 +1,44 @@
+name: Production CI/CD
+
+on:
+  push:
+    branches:
+      - prod
+  pull_request:
+    branches:
+      - prod
+jobs:
+  test-frontend:
+    name: Test Frontend (Prod)
+    runs-on: ubuntu-latest
+    env:
+      CYPRESS_ENV: prod
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+      - name: Install Frontend Dependencies
+        working-directory: ./Code/uspark-frontend
+        run: npm install
+      - name: Create .env File
+        working-directory: ./Code/uspark-frontend
+        run: echo "CYPRESS_ENV=prod" > .env.prod
+      - name: Run Cypress Tests
+        working-directory: ./Code/uspark-frontend
+        run: npm run test:cypress
+
+  deploy-production:
+    name: Deploy to Production
+    needs: [test-frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy Frontend to Vercel
+        run: |
+          npm install -g vercel
+          vercel --token ${{ secrets.VERCEL_TOKEN }} --prod --confirm
+      - name: Deploy Backend to Render
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
