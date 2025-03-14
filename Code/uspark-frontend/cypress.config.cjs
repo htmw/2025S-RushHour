@@ -27,6 +27,7 @@ console.log(`🌍 Base URL: ${selectedBaseUrl}`);
 module.exports = defineConfig({
   e2e: {
     baseUrl: selectedBaseUrl,
+    chromeWebSecurity: false,
     env: {
       ENVIRONMENT: environment,
     },
