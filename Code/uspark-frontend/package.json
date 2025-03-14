@@ -11,8 +11,8 @@
     "test:jest": "jest",
     "test:cypress": "cypress run",
     "test": "npm run test:jest && npm run test:cypress",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
     "start": "npm run dev",
     "docs": "jsdoc -c jsdoc.json"
   },

@@ -11,7 +11,15 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // ✅ Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "*", // Allow all origins
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+app.options("*", cors());
+
 app.use(bodyParser.json());
 
 // ✅ MongoDB Connection
@@ -34,7 +42,14 @@ app.get("/test", (req, res) => {
   res.send("Hello Tester");
 });
 
-// ✅ Start Server
-app.listen(PORT, () =>
-  console.log(`Server running on http://localhost:${PORT}`)
-);
+app.get("/health", (req, res) => {
+  res.status(200).send("Backend is healthy!");
+});
+
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

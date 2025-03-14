@@ -1,11 +1,10 @@
 import axios from "axios";
-
+import config from "../../../config";
 /**
  * Base API URL from environment variables.
  * Defaults to localhost if not set.
  */
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
+const API_BASE_URL = config.API_BASE_URL || "http://localhost:5001";
 
 /**
  * Axios instance with predefined base URL.

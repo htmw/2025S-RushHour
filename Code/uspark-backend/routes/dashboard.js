@@ -58,8 +58,6 @@ const router = express.Router();
  *                   example: "pending"
  *       401:
  *         description: Unauthorized - Invalid or missing token.
- *       500:
- *         description: Server error.
  *       404:
  *         description: User not found
  *       500:

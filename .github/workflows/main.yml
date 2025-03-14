@@ -1,0 +1,96 @@
+name: Main CI (Local Testing)
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  test-local:
+    name: Run Tests Locally
+    runs-on: ubuntu-latest
+    env:
+      CYPRESS_ENV: local
+    steps:
+      - uses: actions/checkout@v3
+
+      # 🛠️ Setup Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+
+      # 🚀 Install Backend Dependencies
+      - name: Install Backend Dependencies
+        working-directory: ./Code/uspark-backend
+        run: npm install
+
+      # 📝 Create .env File for Backend (Without GitHub Secrets)
+      - name: Inject Backend Environment Variables
+        working-directory: ./Code/uspark-backend
+        run: |
+          echo "PORT=5001" > .env
+          echo "MONGO_URI=mongodb+srv://Uspark:RHNEG7YVxQRdbFSm@uspark.azl7t.mongodb.net/Uspark?retryWrites=true&w=majority" >> .env
+          echo "JWT_SECRET=UsparkWork" >> .env
+          echo "AWS_ACCESS_KEY_ID=AKIAUBKFCORW7RLJKMZZ" >> .env
+          echo "AWS_SECRET_ACCESS_KEY=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" >> .env
+          echo "AWS_REGION=us-east-2" >> .env
+          echo "AWS_BUCKET_NAME=rush-hour-uploads" >> .env
+          echo "ADMIN_EMAIL=avinashmanchala123@gmail.com" >> .env
+          echo "ADMIN_PASSWORD=vixi bfrv yccn mvev" >> .env
+          echo "OPENAI_API_KEY=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" >> .env
+          echo "HEALTH_API=a9453d8149494997999a0a3747ed64c3" >> .env
+
+      # 🔄 Start Backend Server
+      - name: Start Backend Server
+        working-directory: ./Code/uspark-backend
+        run: npm start &
+
+      # ⏳ Wait for Backend to Be Ready
+      - name: Wait for Backend to Be Ready
+        run: |
+          until curl -sSf http://localhost:5001/health > /dev/null; do
+            echo "Waiting for backend to start..."
+            sleep 5
+          done
+          echo "✅ Backend is up and running!"
+
+      # 🚀 Install Frontend Dependencies
+      - name: Install Frontend Dependencies
+        working-directory: ./Code/uspark-frontend
+        run: npm install
+
+      # 📝 Create .env File for Frontend (Without GitHub Secrets)
+      - name: Inject Frontend Environment Variables
+        working-directory: ./Code/uspark-frontend
+        run: |
+          echo "VITE_ENV=local" > .env
+          echo "CYPRESS_ENV=local" >> .env
+          echo "VITE_API_BASE_URL=http://localhost:5001" >> .env
+
+      # 🔄 Start Frontend Server
+      - name: Start Frontend Server
+        working-directory: ./Code/uspark-frontend
+        run: npm run dev &
+
+      # ⏳ Wait for Frontend to Be Ready
+      - name: Wait for Frontend to Be Ready
+        run: |
+          until curl -sSf http://localhost:5173 > /dev/null; do
+            echo "Waiting for frontend to start..."
+            sleep 5
+          done
+          echo "✅ Frontend is up and running!"
+
+      # 🧪 Run Cypress Tests
+      - name: Run Cypress Tests
+        working-directory: ./Code/uspark-frontend
+        run: npm run cy:run
+
+      # 🧪 Run Backend Tests
+      - name: Run Backend Tests
+        working-directory: ./Code/uspark-backend
+        run: npm test

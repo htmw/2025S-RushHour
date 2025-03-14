@@ -11,7 +11,7 @@ import {
   Typography,
   Box,
   Container,
-  Grid2,
+  Grid,
   Divider,
   Card,
   CardContent,
@@ -47,8 +47,8 @@ const AboutUs = () => {
       </Box>
 
       {/* Journey Section */}
-      <Grid2 container spacing={5} alignItems="center">
-        <Grid2 item size={{ xs: 12, md: 6 }}>
+      <Grid container spacing={5} alignItems="center">
+        <Grid item xs={12} md={6}>
           <Typography variant="h4" fontWeight={600}>
             Our Journey
           </Typography>
@@ -60,16 +60,22 @@ const AboutUs = () => {
             solutions that enhance patient experiences and optimize healthcare
             operations.
           </Typography>
-        </Grid2>
-        <Grid2 item size={{ xs: 12, md: 6 }}>
+        </Grid>
+        <Grid item xs={12} md={6}>
           <img
-            src="/journey-image.jpg"
+            src="./animations/1.jpg"
             alt="Our Journey"
-            width="100%"
-            style={{ borderRadius: "12px" }}
+            style={{
+              width: "80%", // Adjust width as needed
+              height: "auto", // Maintain aspect ratio
+              maxWidth: "400px", // Limit max size
+              borderRadius: "12px",
+              display: "block",
+              margin: "auto",
+            }}
           />
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
 
       <Divider sx={{ my: 5 }} />
 
@@ -79,9 +85,9 @@ const AboutUs = () => {
           Our Solutions
         </Typography>
       </Box>
-      <Grid2 container spacing={5}>
+      <Grid container spacing={5}>
         {/* Uheal */}
-        <Grid2 item size={{ xs: 12, md: 6 }}>
+        <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
               <Typography variant="h5" fontWeight={600}>
@@ -96,10 +102,10 @@ const AboutUs = () => {
               </Typography>
             </CardContent>
           </Card>
-        </Grid2>
+        </Grid>
 
         {/* Useg */}
-        <Grid2 item size={{ xs: 12, md: 6 }}>
+        <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
               <Typography variant="h5" fontWeight={600}>
@@ -113,8 +119,8 @@ const AboutUs = () => {
               </Typography>
             </CardContent>
           </Card>
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
 
       <Divider sx={{ my: 5 }} />
 
@@ -124,7 +130,7 @@ const AboutUs = () => {
           Meet Our Team
         </Typography>
       </Box>
-      <Grid2 container spacing={3} justifyContent="center">
+      <Grid container spacing={3} justifyContent="center">
         {[
           {
             name: "Rathan Jayanath Singavarapu",
@@ -151,11 +157,11 @@ const AboutUs = () => {
             name: "Sairam Maddela",
             role: "Full Stack Testing Engineer",
           },
-          { name: "Sujit Suprabhat Tubki", role: "Full Stack Developer" },
+          { name: "Sujit Suprabhat Tubki", role: "Full Stack Tester" },
         ].map((member, index) => (
-          <Grid2 item xs={12} sm={6} md={3} key={index}>
+          <Grid item xs={12} sm={6} md={3} key={index}>
             <Card>
-              <CardContent textAlign="center">
+              <CardContent style={{ textAlign: "center" }}>
                 <Typography variant="h6" fontWeight={500}>
                   {member.name}
                 </Typography>
@@ -164,9 +170,9 @@ const AboutUs = () => {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid2>
+          </Grid>
         ))}
-      </Grid2>
+      </Grid>
 
       <Divider sx={{ my: 5 }} />
 

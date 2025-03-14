@@ -1,37 +1,17 @@
 require("dotenv").config();
 const request = require("supertest");
-const mongoose = require("mongoose");
-const { MongoMemoryServer } = require("mongodb-memory-server");
-const app = require("../index.js"); // Import your Express app
-const User = require("../Models/User");
 
-let mongoServer;
-
-// Setup an in-memory MongoDB server before running tests
-beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const mongoUri = mongoServer.getUri();
-
-  await mongoose.connect(mongoUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-});
-
-// Cleanup after tests
-afterAll(async () => {
-  await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
-  await mongoServer.stop();
-});
-
+const BASE_URL = process.env.BASE_URL || "http://localhost:5001"; // Use staging URL if set
+console.log(`🌍 Base URL: ${BASE_URL}`);
 describe("Auth Routes", () => {
   it("should sign up a new user", async () => {
-    const res = await request(app).post("/api/auth/signup").send({
-      email: "testuser@example.com",
-      password: "testpassword",
-      fullName: "Test User",
-    });
+    const res = await request(BASE_URL)
+      .post("/auth/signup")
+      .send({
+        email: `testuser_${Date.now()}@example.com`,
+        password: "testpassword",
+        fullName: "Test User",
+      });
 
     expect(res.statusCode).toBe(201);
     expect(res.body).toHaveProperty("token");
@@ -39,7 +19,7 @@ describe("Auth Routes", () => {
   });
 
   it("should not allow duplicate user registration", async () => {
-    const res = await request(app).post("/api/auth/signup").send({
+    const res = await request(BASE_URL).post("/auth/signup").send({
       email: "testuser@example.com",
       password: "testpassword",
       fullName: "Test User",
@@ -50,7 +30,7 @@ describe("Auth Routes", () => {
   });
 
   it("should authenticate an existing user", async () => {
-    const res = await request(app).post("/api/auth").send({
+    const res = await request(BASE_URL).post("/auth/login").send({
       email: "testuser@example.com",
       password: "testpassword",
     });
@@ -60,7 +40,7 @@ describe("Auth Routes", () => {
   });
 
   it("should reject login with wrong password", async () => {
-    const res = await request(app).post("/api/auth").send({
+    const res = await request(BASE_URL).post("/auth/login").send({
       email: "testuser@example.com",
       password: "wrongpassword",
     });
@@ -70,11 +50,11 @@ describe("Auth Routes", () => {
   });
 
   it("should handle OAuth login", async () => {
-    const res = await request(app).post("/api/auth/oauth").send({
+    const res = await request(BASE_URL).post("/auth/oauth").send({
       email: "oauthuser@example.com",
       userId: "oauth-test-id",
       fullName: "OAuth User",
-      provider: "google",
+      provider: "google.com",
     });
 
     expect(res.statusCode).toBe(200);

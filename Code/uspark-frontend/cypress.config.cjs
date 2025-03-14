@@ -10,8 +10,8 @@ const envConfig = {
   local: {
     baseUrl: "http://localhost:5173",
   },
-  dev: {
-    baseUrl: "https://staging.example.com",
+  staging: {
+    baseUrl: "https://staging-lac.vercel.app",
   },
   prod: {
     baseUrl: "https://example.com",
@@ -27,6 +27,7 @@ console.log(`🌍 Base URL: ${selectedBaseUrl}`);
 module.exports = defineConfig({
   e2e: {
     baseUrl: selectedBaseUrl,
+    chromeWebSecurity: false,
     env: {
       ENVIRONMENT: environment,
     },

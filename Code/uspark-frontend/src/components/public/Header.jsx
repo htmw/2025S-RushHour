@@ -12,7 +12,7 @@ import {
   Toolbar,
   Typography,
   IconButton,
-  Menu,
+  Menu, 
   MenuItem,
   Avatar,
   useMediaQuery,
@@ -192,9 +192,7 @@ const Header = () => {
                       open={Boolean(anchorEl)}
                       onClose={handleMenuClose}
                     >
-                      <MenuItem component={RouterLink} to="/profile">
-                        Profile
-                      </MenuItem>
+                      
                       <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </Menu>
                   </Grid2>

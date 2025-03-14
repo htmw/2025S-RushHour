@@ -1,200 +1,235 @@
-/**
- * @file Chatbot component for MediBot.
- *
- * Provides a floating chat interface where users can send messages and receive AI-generated responses.
- * Integrates with a chatbot API to fetch responses.
- *
- * @namespace src.components.private.Chatbot
- * @memberof src.components.private.Chatbot
- */
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  Box,
-  IconButton,
-  TextField,
+  Container,
+  Typography,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
   Button,
   Paper,
-  Typography,
+  Tabs,
+  Tab,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Box,
 } from "@mui/material";
-import ChatIcon from "@mui/icons-material/Chat";
-import CloseIcon from "@mui/icons-material/Close";
-import SendIcon from "@mui/icons-material/Send";
-import axios from "axios";
+import { fetchDoctors, verifyDoctor } from "../../../store/actions";
 
-/**
- * Chatbot Component
- *
- * A floating chatbot interface that allows users to interact with an AI-powered assistant.
- * Users can open the chat, send messages, and receive responses.
- *
- * @component
- * @memberof src.components.private.Chatbot
- * @returns {JSX.Element} The chatbot UI.
- */
-const Chatbot = () => {
-  /** @property {boolean} */
-  const [open, setOpen] = useState(false);
+const AdminDashboard = () => {
+  const dispatch = useDispatch();
+  const { doctors, loading } = useSelector((state) => state.admin);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [tab, setTab] = useState(0);
+  const [accessGranted, setAccessGranted] = useState(false);
+  const [enteredCode, setEnteredCode] = useState("");
+  const [newCode, setNewCode] = useState("");
+  const [isSettingCode, setIsSettingCode] = useState(false);
 
-  /** @property {Object[]} */
-  const [messages, setMessages] = useState([]);
+  useEffect(() => {
+    // Check if an admin code exists
+    if (!localStorage.getItem("adminCode")) {
+      setIsSettingCode(true); // Prompt to set a new code
+    }
+  }, []);
 
-  /** @property {string} */
-  const [input, setInput] = useState("");
+  useEffect(() => {
+    if (accessGranted) {
+      dispatch(fetchDoctors());
+    }
+  }, [dispatch, accessGranted]);
 
-  /**
-   * Toggles the chat window visibility.
-   *
-   * @function
-   * @memberof src.components.private.Chatbot
-   */
-  const toggleChat = () => {
-    setOpen(!open);
+  const handleSetCode = () => {
+    if (newCode.trim().length < 4) {
+      alert("Code must be at least 4 characters long.");
+      return;
+    }
+    localStorage.setItem("adminCode", newCode);
+    setIsSettingCode(false);
+    alert("Admin access code set successfully!");
   };
 
-  /**
-   * Handles sending a message to the chatbot API.
-   * Updates the UI with user input and bot response.
-   *
-   * @async
-   * @function
-   * @memberof src.components.private.Chatbot
-   */
-  const handleSend = async () => {
-    if (input.trim()) {
-      const userMessage = { text: input, sender: "user" };
-      setMessages([...messages, userMessage]);
-      setInput("");
-
-      try {
-        const response = await axios.post("http://localhost:5001/api/chat", {
-          message: input,
-        });
-
-        const botMessage = { text: response.data.response, sender: "bot" };
-        setMessages((prev) => [...prev, botMessage]);
-      } catch (error) {
-        console.error("Chatbot Error:", error);
-        setMessages((prev) => [
-          ...prev,
-          { text: "Sorry, I couldn't get a response.", sender: "bot" },
-        ]);
-      }
+  const handleAccessCodeSubmit = () => {
+    const storedCode = localStorage.getItem("adminCode");
+    if (enteredCode === storedCode) {
+      setAccessGranted(true);
+    } else {
+      alert("Incorrect code. Please try again.");
     }
   };
 
-  return (
-    <>
-      {/* Floating Chat Button */}
-      <Box
-        sx={{ position: "fixed", bottom: 20, right: 20, textAlign: "center" }}
-      >
-        <IconButton
-          sx={{
-            backgroundColor: "#007bff",
-            color: "white",
-            "&:hover": { backgroundColor: "#0056b3" },
-          }}
-          onClick={toggleChat}
-        >
-          <ChatIcon />
-        </IconButton>
-        <Typography variant="caption" sx={{ color: "#007bff", mt: 1 }}>
-          MediBot
+  if (isSettingCode) {
+    return (
+      <Container sx={{ textAlign: "center", mt: 5 }}>
+        <Typography variant="h5" gutterBottom>
+          Set Admin Access Code
         </Typography>
-      </Box>
+        <TextField
+          label="Set Access Code"
+          type="password"
+          variant="outlined"
+          value={newCode}
+          onChange={(e) => setNewCode(e.target.value)}
+          sx={{ mt: 2, mb: 2, width: "250px" }}
+        />
+        <Box>
+          <Button variant="contained" onClick={handleSetCode}>
+            Save Code
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
 
-      {/* Chatbox */}
-      {open && (
-        <Paper
-          sx={{
-            position: "fixed",
-            bottom: 80,
-            right: 20,
-            width: 300,
-            height: 400,
-            display: "flex",
-            flexDirection: "column",
-            boxShadow: 3,
-            borderRadius: 2,
-            overflow: "hidden",
-          }}
-        >
-          {/* Chat Header */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              backgroundColor: "#007bff",
-              color: "white",
-              padding: "8px 12px",
-            }}
-          >
-            <Typography variant="h6">MediBot</Typography>
-            <IconButton onClick={toggleChat} sx={{ color: "white" }}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
+  if (!accessGranted) {
+    return (
+      <Container sx={{ textAlign: "center", mt: 5 }}>
+        <Typography variant="h5" gutterBottom>
+          Admin Access Required
+        </Typography>
+        <TextField
+          label="Enter Access Code"
+          type="password"
+          variant="outlined"
+          value={enteredCode}
+          onChange={(e) => setEnteredCode(e.target.value)}
+          sx={{ mt: 2, mb: 2, width: "250px" }}
+        />
+        <Box>
+          <Button variant="contained" onClick={handleAccessCodeSubmit}>
+            Submit
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
 
-          {/* Chat Messages */}
-          <Box
-            sx={{
-              flex: 1,
-              padding: 2,
-              overflowY: "auto",
-              display: "flex",
-              flexDirection: "column",
-              gap: 1,
-            }}
-          >
-            {messages.map((msg, index) => (
-              <Typography
-                key={index}
-                sx={{
-                  alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
-                  backgroundColor:
-                    msg.sender === "user" ? "#007bff" : "#e0e0e0",
-                  color: msg.sender === "user" ? "white" : "black",
-                  padding: "8px 12px",
-                  borderRadius: "12px",
-                  maxWidth: "70%",
-                }}
-              >
-                {msg.text}
-              </Typography>
+  const filteredDoctors = doctors.filter((doc) => {
+    if (tab === 0) return doc.verificationStatus === "pending";
+    if (tab === 1) return doc.verificationStatus === "approved";
+    if (tab === 2) return doc.verificationStatus === "rejected";
+    return true;
+  });
+
+  return (
+    <Container>
+      <Typography variant="h4" gutterBottom>
+        Admin Dashboard - Doctor Verification
+      </Typography>
+
+      <Paper sx={{ mb: 2 }}>
+        <Tabs value={tab} onChange={(e, newTab) => setTab(newTab)} centered>
+          <Tab label="Pending Approval" />
+          <Tab label="Approved Doctors" />
+          <Tab label="Rejected Doctors" />
+        </Tabs>
+      </Paper>
+
+      {loading ? (
+        <Typography>Loading...</Typography>
+      ) : (
+        <Table component={Paper}>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <strong>Name</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Specialization</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Experience</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Actions</strong>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredDoctors.map((doctor) => (
+              <TableRow key={doctor._id}>
+                <TableCell>{doctor.userId.fullName}</TableCell>
+                <TableCell>{doctor.specialization}</TableCell>
+                <TableCell>{doctor.experience} years</TableCell>
+                <TableCell>
+                  {tab === 0 && (
+                    <>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() =>
+                          dispatch(
+                            verifyDoctor({
+                              doctorId: doctor._id,
+                              decision: "approved",
+                            })
+                          )
+                        }
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() =>
+                          dispatch(
+                            verifyDoctor({
+                              doctorId: doctor._id,
+                              decision: "rejected",
+                            })
+                          )
+                        }
+                        sx={{ ml: 1 }}
+                      >
+                        Reject
+                      </Button>
+                    </>
+                  )}
+                  <Button
+                    variant="outlined"
+                    sx={{ ml: 1 }}
+                    onClick={() => setSelectedDoctor(doctor)}
+                  >
+                    View Details
+                  </Button>
+                </TableCell>
+              </TableRow>
             ))}
-          </Box>
-
-          {/* Input Field */}
-          <Box
-            sx={{
-              display: "flex",
-              padding: "8px",
-              borderTop: "1px solid #ddd",
-            }}
-          >
-            <TextField
-              fullWidth
-              variant="outlined"
-              size="small"
-              placeholder="Type a message..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSend}
-              sx={{ ml: 1 }}
-            >
-              <SendIcon />
-            </Button>
-          </Box>
-        </Paper>
+          </TableBody>
+        </Table>
       )}
-    </>
+
+      {selectedDoctor && (
+        <Dialog open={!!selectedDoctor} onClose={() => setSelectedDoctor(null)}>
+          <DialogTitle>Doctor Details</DialogTitle>
+          <DialogContent>
+            <Typography>
+              <strong>Name:</strong> {selectedDoctor.userId.fullName}
+            </Typography>
+            <Typography>
+              <strong>Email:</strong> {selectedDoctor.userId.email}
+            </Typography>
+            <Typography>
+              <strong>Specialization:</strong> {selectedDoctor.specialization}
+            </Typography>
+            <Typography>
+              <strong>Experience:</strong> {selectedDoctor.experience} years
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setSelectedDoctor(null)} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+    </Container>
   );
 };
 
-export default Chatbot;
+export default AdminDashboard;

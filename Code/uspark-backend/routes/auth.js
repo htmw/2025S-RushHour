@@ -61,7 +61,7 @@ const { v4: uuidv4 } = require("uuid");
  */
 router.post("/auth/login", async (req, res) => {
   const { email, password } = req.body;
-
+  console.log(email, password);
   if (!email || !password) {
     return res.status(400).json({ message: "Email and password required" });
   }
@@ -133,7 +133,6 @@ router.post("/auth/oauth", async (req, res) => {
 
   try {
     let user = await User.findOne({ email });
-
     if (!user) {
       user = new User({
         userId,
@@ -147,7 +146,13 @@ router.post("/auth/oauth", async (req, res) => {
     const token = generateToken(user);
     res.json({ token });
   } catch (err) {
-    console.error("OAuth Auth Error:", err);
+    if (err.code === 11000) {
+      // ✅ Handle duplicate key error
+      console.error("OAuth Auth Error: Duplicate User", err);
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    console.error("OAuth Auth Error:", err.message, err.stack);
     res.status(500).json({ message: "Server Error" });
   }
 });
