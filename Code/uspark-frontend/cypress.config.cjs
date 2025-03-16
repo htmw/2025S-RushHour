@@ -28,5 +28,7 @@ module.exports = defineConfig({
     env: {
       ENVIRONMENT: environment,
     },
+    video: true,
+    screenshotOnRunFailure: true,
   },
 });
