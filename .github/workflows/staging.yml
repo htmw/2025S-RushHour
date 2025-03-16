@@ -30,8 +30,8 @@ jobs:
         if: failure() # Only run if tests fail
         run: |
           TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
-          aws s3 cp ./Code/uspark-frontend/cypress/screenshots s3://rush-hour-uploads/staging/cypress/$TIMESTAMP/screenshots --recursive
-          aws s3 cp ./Code/uspark-frontend/cypress/videos s3://rush-hour-uploads/staging/cypress/$TIMESTAMP/videos --recursive
+          aws s3 cp ./Code/uspark-frontend/cypress/screenshots s3://cypress/staging/$TIMESTAMP/screenshots --recursive
+          aws s3 cp ./Code/uspark-frontend/cypress/videos s3://cypress/staging/$TIMESTAMP/videos --recursive
         env:
           AWS_ACCESS_KEY_ID: AKIAUBKFCORW7RLJKMZZ
           AWS_SECRET_ACCESS_KEY: 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
