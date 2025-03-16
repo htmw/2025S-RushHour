@@ -70,7 +70,7 @@ jobs:
           npm install -g vercel
           echo "VITE_ENV=staging" > .env
           echo "CYPRESS_ENV=staging" >> .env
-          echo "VITE_API_BASE_URL_STAGE: 'https://two025s-rushhour.onrender.com" >> .env
+          echo "VITE_API_BASE_URL_STAGE: https://two025s-rushhour.onrender.com" >> .env
           npm run stage  # Builds the frontend in the 'staging' folder
           vercel deploy --prod --confirm --token E1QGaNoYU3MapRGikZvu6jKW ./staging
 
