@@ -21,7 +21,7 @@ describe("Login Page", () => {
     cy.get("[data-cy=login-button]").click();
     cy.wait(500);
     // Ensure successful login and redirection
-    cy.url().should("include", "/onBoardings");
+    cy.url().should("include", "/onBoarding");
     cy.get("[data-cy=Choose-Your-Role]").should("be.visible");
   });
 });
