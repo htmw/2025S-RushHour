@@ -47,7 +47,7 @@ jobs:
 
   deploy-staging:
     name: Deploy to Staging
-    needs: [test-frontend]
+    needs: [test-frontend, test-backend]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
