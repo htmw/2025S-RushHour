@@ -11,6 +11,6 @@ const config = {
     API_BASE_URL: import.meta.env.VITE_API_BASE_URL_PROD,
   },
 };
-
+console.log(config[ENV]);
 // Export the correct config based on the environment
 export default config[ENV];

@@ -5,7 +5,7 @@ import config from "../../../config";
  * Defaults to localhost if not set.
  */
 const API_BASE_URL = config.API_BASE_URL || "http://localhost:5001";
-
+console.log({ API_BASE_URL });
 /**
  * Axios instance with predefined base URL.
  */

@@ -1,9 +1,6 @@
 const { defineConfig } = require("cypress");
 const dotenv = require("dotenv");
-
-// Load environment variables from the correct `.env` file
-dotenv.config({ path: `.env.${process.env.CYPRESS_ENV || "local"}` });
-
+dotenv.config();
 const environment = process.env.CYPRESS_ENV || "local";
 
 const envConfig = {
@@ -31,5 +28,7 @@ module.exports = defineConfig({
     env: {
       ENVIRONMENT: environment,
     },
+    video: true,
+    screenshotOnRunFailure: true,
   },
 });
