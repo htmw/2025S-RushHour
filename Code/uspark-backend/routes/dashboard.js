@@ -1,7 +1,7 @@
 const express = require("express");
 const User = require("../Models/User");
-const Patient = require("../Models/Patient");
-const Doctor = require("../Models/Doctor");
+const Patient = require("../Models/onBoarding/Patient");
+const Doctor = require("../Models/onBoarding/Doctor");
 const { default: authenticate } = require("../Middleware/authenticate");
 const { sendEmail, ADMIN_EMAIL } = require("../utils/emailService");
 const upload = require("../Middleware/upload"); // Ensure this exists
