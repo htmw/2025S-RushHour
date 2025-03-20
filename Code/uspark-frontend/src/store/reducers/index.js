@@ -11,6 +11,8 @@ import onboardingReducer from "./onBoardingReducer";
 import imgReducer from "./ImageUrReader";
 import themeReducer from "./themeReducer";
 import adminReducer from "./adminReducer";
+import healthIssuesReducer from "./healthIssuesReducer";
+import forgotPasswordReducer from "./forgotPasswordReducer";
 
 /**
  * Root reducer object containing all application reducers.
@@ -25,6 +27,8 @@ import adminReducer from "./adminReducer";
  * @property {Function} img - Reducer handling image uploads.
  * @property {Function} theme - Reducer managing theme settings.
  * @property {Function} admin - Reducer managing admin-related actions.
+ * @property {Function} healthIssues - Reducer handling health issues.
+ * @property {Function} forgotPassword - Reducer handling forgot password actions.
  */
 export const reducer = {
   auth: authReducer,
@@ -33,4 +37,6 @@ export const reducer = {
   img: imgReducer,
   theme: themeReducer,
   admin: adminReducer,
+  healthIssues: healthIssuesReducer,
+  forgotPassword: forgotPasswordReducer,
 };

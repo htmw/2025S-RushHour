@@ -7,7 +7,7 @@
  * @memberof src.components.private.onBoarding
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   TextField,
@@ -16,6 +16,7 @@ import {
   Typography,
   MenuItem,
   Paper,
+  Autocomplete,
 } from "@mui/material";
 import Lottie from "lottie-react";
 import { useNavigate } from "react-router-dom";
@@ -30,7 +31,12 @@ import {
   elderlyFemale,
   neutral,
 } from "../../../../animations";
-import { patientOnboarding } from "../../../store/actions";
+import {
+  addHealthIssue,
+  fetchHealthIssues,
+  patientOnboarding,
+} from "../../../store/actions";
+import { debounce } from "lodash";
 
 /**
  * PatientOnBoarding Component
@@ -45,6 +51,10 @@ const PatientOnBoarding = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth);
+  const { healthIssues, loading: healthIssuesLoading } = useSelector(
+    (state) => state.healthIssues
+  );
+
   const { loading, error, patientData } = useSelector(
     (state) => state.onBoarding
   );
@@ -58,7 +68,7 @@ const PatientOnBoarding = () => {
    * @property {string} sex - Patient's gender.
    * @property {string} height - Patient's height in cm.
    * @property {string} weight - Patient's weight in kg.
-   * @property {string} healthIssues - Patient's known health issues.
+   * @property {string[]} healthIssues - Patient's health issues.
    */
   const [formData, setFormData] = useState({
     name: user.fullName || "",
@@ -66,8 +76,45 @@ const PatientOnBoarding = () => {
     sex: "",
     height: "",
     weight: "",
-    healthIssues: "",
+    healthIssues: [],
   });
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Debounced function to fetch health issues
+  const fetchIssuesDebounced = useCallback(
+    debounce((query) => {
+      if (query.length >= 3) {
+        dispatch(fetchHealthIssues({ query, token: user.token }));
+      }
+    }, 300),
+    []
+  );
+
+  /**
+   * Handles search input changes and fetches health issues matching the query.
+   *
+   * @function
+   * @memberof src.components.private.onBoarding.PatientOnBoarding
+   * @param {React.ChangeEvent<HTMLInputElement>} event - The input change event.
+   * @param {string} value - The search query input value.
+   * @returns {void}
+   */
+  const handleSearchChange = (event, value) => {
+    setSearchTerm(value);
+    fetchIssuesDebounced(value);
+  };
+
+  // Handle selection of a health issue
+  const handleHealthIssueSelect = (event, value) => {
+    const newIssue = value[value.length - 1];
+
+    if (!healthIssues.includes(newIssue)) {
+      dispatch(addHealthIssue({ newIssue, token: user.token }));
+    }
+
+    setFormData({ ...formData, healthIssues: value });
+  };
 
   /**
    * Handles input changes and updates state.
@@ -87,7 +134,7 @@ const PatientOnBoarding = () => {
    * @memberof src.components.private.onBoarding.PatientOnBoarding
    */
   const handleSubmit = () => {
-    dispatch(patientOnboarding({ formData, token: user.token }, navigate));
+    dispatch(patientOnboarding({ formData, token: user.token }));
   };
 
   /**
@@ -167,16 +214,23 @@ const PatientOnBoarding = () => {
             onChange={handleChange}
             style={{ marginTop: 16 }}
           />
-          <TextField
-            label="Health Issues"
-            name="healthIssues"
-            data-cy="onBoarding-healthIssues"
-            fullWidth
-            multiline
-            rows={3}
-            value={formData.healthIssues}
-            onChange={handleChange}
+          <Autocomplete
+            multiple
             style={{ marginTop: 16 }}
+            freeSolo
+            loading={healthIssuesLoading}
+            options={healthIssues.map((issue) => issue.health_issue)}
+            value={formData.healthIssues}
+            onChange={handleHealthIssueSelect}
+            onInputChange={handleSearchChange}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => (
+                <Chip key={index} label={option} {...getTagProps({ index })} />
+              ))
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Health Issues" />
+            )}
           />
 
           {error && (

@@ -1,5 +1,5 @@
 const express = require("express");
-const Doctor = require("../Models/Doctor");
+const Doctor = require("../Models/onBoarding/Doctor");
 const { sendEmail } = require("../utils/emailService");
 
 const router = express.Router();

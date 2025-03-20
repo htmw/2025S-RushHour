@@ -162,6 +162,17 @@ const Login = () => {
           {loading ? <CircularProgress size={24} /> : "Login"}
         </Button>
 
+        {/* Forgot Password Link */}
+        <Typography
+          variant="body2"
+          align="center"
+          color="primary"
+          style={{ marginTop: 10, cursor: "pointer" }}
+          onClick={() => navigate("/forgot-password")}
+        >
+          Forgot Password?
+        </Typography>
+
         <Divider style={{ margin: "20px 0" }}>OR</Divider>
 
         <Button

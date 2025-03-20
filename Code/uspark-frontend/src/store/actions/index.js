@@ -105,3 +105,6 @@ export const verifyDoctor = createAsyncActions(types.VERIFY_DOCTOR);
 export const uploadVerificationDocs = createAsyncActions(
   types.UPLOAD_VERIFICATION_DOCS
 );
+export const fetchHealthIssues = createAsyncActions(types.FETCH_HEALTH_ISSUES);
+export const addHealthIssue = createAsyncActions(types.ADD_HEALTH_ISSUE);
+export const forgotPassword = createAsyncActions(types.FORGOT_PASSWORD);

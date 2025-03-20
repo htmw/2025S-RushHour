@@ -43,7 +43,8 @@ jobs:
           echo "ADMIN_PASSWORD=vixi bfrv yccn mvev" >> .env
           echo "OPENAI_API_KEY=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" >> .env
           echo "HEALTH_API=a9453d8149494997999a0a3747ed64c3" >> .env
-
+          echo "FRONTEND_URL=http://localhost:5173" >> .env
+          echo "NODE_ENV="local"" >> .env
       # 🔄 Start Backend Server
       - name: Start Backend Server
         working-directory: ./Code/uspark-backend

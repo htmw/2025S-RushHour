@@ -15,6 +15,8 @@ import logout from "./logout";
 import uploadProfileImage from "./ImageUsaga";
 import adminSaga from "./adminSaga";
 import doctorSaga from "./doctorSaga";
+import healthIssuesSaga from "./healthIssuesSaga";
+import forgotPasswordSaga from "./forgotPasswordSaga";
 
 /**
  * List of all saga functions used in the application.
@@ -31,6 +33,8 @@ const allSagas = [
   uploadProfileImage,
   adminSaga,
   doctorSaga,
+  healthIssuesSaga,
+  forgotPasswordSaga,
 ];
 
 /**

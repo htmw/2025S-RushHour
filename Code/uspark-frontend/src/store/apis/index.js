@@ -114,3 +114,37 @@ export const patientOnboardingApi = (formData, token) =>
   api.post("/api/onboarding/patient", formData, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+/**
+ * API request to add a new health issue.
+ *
+ * @param {Object} healthIssue - The health issue details.
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves when the health issue is added successfully.
+ */
+export const addHealthIssuesApi = ({ health_issue: healthIssue }, token) =>
+  api.post(
+    `/api/onboarding/health-issues`,
+    { health_issue: healthIssue },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+
+/**
+ * API request to fetch health issues.
+ *
+ * @param {string} query - The search query for health issues.
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves with the list of health issues.
+ */
+export const fetchHealthIssuesApi = (query, token) =>
+  api.get(`/api/onboarding/health-issues?search=${query}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const forgotPasswordApi = (email) =>
+  api.post("/auth/forgot-password", { email });
+
+export const resetPasswordApi = (email, token, newPassword) =>
+  api.post("/auth/reset-password", { email, token, newPassword });

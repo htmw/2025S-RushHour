@@ -12,6 +12,12 @@ import { lazy } from "react";
 // Public Routes
 /** @constant {React.LazyExoticComponent<React.ComponentType>} */
 const Login = lazy(() => import("../components/public/auth/Login"));
+const ForgotPassword = lazy(() =>
+  import("../components/public/auth/ForgotPassword")
+);
+const ResetPassword = lazy(() =>
+  import("../components/public/auth/ResetPassword")
+);
 const Signup = lazy(() => import("../components/public/auth/Signup"));
 const PublicAboutUs = lazy(() => import("../components/public/AboutUs"));
 const ContactUs = lazy(() => import("../components/public/ContactUs"));
@@ -26,7 +32,9 @@ const Doctorprofile = lazy(() =>
 const AdminDashboard = lazy(() =>
   import("../components/private/Dashboard/AdminDashboard")
 );
-const Patprofile = lazy(() => import("../components/private/Patient/PatinetProfile"));
+const Patprofile = lazy(() =>
+  import("../components/private/Patient/PatinetProfile")
+);
 const Admin = lazy(() =>
   import("../components/private/Dashboard/AdminDashboard")
 );
@@ -94,6 +102,16 @@ export const PublicRoutes = [
   {
     path: "/signup",
     component: Signup,
+    exact: true,
+  },
+  {
+    path: "/forgot-password",
+    component: ForgotPassword,
+    exact: true,
+  },
+  {
+    path: "/reset-password",
+    component: ResetPassword,
     exact: true,
   },
   {
