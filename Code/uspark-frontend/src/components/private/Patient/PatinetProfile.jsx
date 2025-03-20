@@ -26,7 +26,7 @@ const PatientProfile = () => {
       </PatientLayout>
     );
   }
-
+  console.log(userData.healthIssues?.join(","));
   return (
     <PatientLayout>
       <Typography variant="h5">Patient Profile</Typography>
@@ -34,7 +34,9 @@ const PatientProfile = () => {
       <Typography>Sex: {userData.sex}</Typography>
       <Typography>Height: {userData.height} cm</Typography>
       <Typography>Weight: {userData.weight} kg</Typography>
-      <Typography>Health Issues: {userData.healthIssues || "N/A"}</Typography>
+      <Typography>
+        Health Issues: {userData.healthIssues?.join(", ") || "N/A"}
+      </Typography>
     </PatientLayout>
   );
 };

@@ -186,18 +186,19 @@ router.post("/doctor", authenticate, async (req, res) => {
 router.get("/health-issues", authenticate, async (req, res) => {
   try {
     const { search } = req.query;
-    console.log({ search });
-    // Fetch only if at least 3 characters are entered
+    console.log("Search Query:", search);
+
+    // Return empty array if search term is less than 3 characters
     if (!search || search.length < 3) {
       return res.status(200).json([]);
     }
 
+    // Use MongoDB regex for case-insensitive search
     const issues = await HealthIssue.find({
       health_issue: { $regex: search, $options: "i" },
     });
 
-    console.log({ issues });
-
+    console.log("Filtered Issues:", issues);
     res.status(200).json(issues);
   } catch (err) {
     console.error("Error fetching health issues:", err);

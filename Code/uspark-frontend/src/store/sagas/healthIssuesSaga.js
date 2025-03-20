@@ -16,7 +16,8 @@ function* fetchHealthIssuesSaga(action) {
     const { query, token } = action.payload;
     console.log({ query, token });
     const response = yield call(fetchHealthIssuesApi, query, token);
-    yield put(fetchHealthIssues.success(response.data));
+    console.log({ response });
+    yield put(fetchHealthIssues.success(response));
   } catch (error) {
     yield put(
       fetchHealthIssues.error(
@@ -36,8 +37,8 @@ function* fetchHealthIssuesSaga(action) {
  */
 function* addHealthIssueSaga(action) {
   try {
-    const { healthIssue, token } = action.payload;
-    const response = yield call(addHealthIssuesApi, { healthIssue }, token);
+    const { health_issue, token } = action.payload;
+    const response = yield call(addHealthIssuesApi, { health_issue }, token);
     yield put(addHealthIssue.success(response.data));
   } catch (error) {
     yield put(

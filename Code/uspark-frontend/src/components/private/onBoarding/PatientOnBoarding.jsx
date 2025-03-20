@@ -17,6 +17,7 @@ import {
   MenuItem,
   Paper,
   Autocomplete,
+  Chip,
 } from "@mui/material";
 import Lottie from "lottie-react";
 import { useNavigate } from "react-router-dom";
@@ -55,9 +56,7 @@ const PatientOnBoarding = () => {
     (state) => state.healthIssues
   );
 
-  const { loading, error, patientData } = useSelector(
-    (state) => state.onBoarding
-  );
+  const { loading, error } = useSelector((state) => state.onBoarding);
 
   /**
    * Patient questionnaire form state.
@@ -109,8 +108,15 @@ const PatientOnBoarding = () => {
   const handleHealthIssueSelect = (event, value) => {
     const newIssue = value[value.length - 1];
 
-    if (!healthIssues.includes(newIssue)) {
-      dispatch(addHealthIssue({ newIssue, token: user.token }));
+    // Check if the newIssue already exists in the healthIssues array
+    const isAlreadyAdded = healthIssues.some(
+      (issue) => issue.health_issue === newIssue
+    );
+
+    console.log({ newIssue, healthIssues, isAlreadyAdded });
+
+    if (!isAlreadyAdded) {
+      dispatch(addHealthIssue({ health_issue: newIssue, token: user.token }));
     }
 
     setFormData({ ...formData, healthIssues: value });
@@ -225,11 +231,20 @@ const PatientOnBoarding = () => {
             onInputChange={handleSearchChange}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => (
-                <Chip key={index} label={option} {...getTagProps({ index })} />
+                <Chip
+                  key={index}
+                  data-cy={`onBoarding-healthIssues-${option}`}
+                  label={option}
+                  {...getTagProps({ index })}
+                />
               ))
             }
             renderInput={(params) => (
-              <TextField {...params} label="Health Issues" />
+              <TextField
+                {...params}
+                label="Health Issues"
+                data-cy="onBoarding-healthIssues"
+              />
             )}
           />
 

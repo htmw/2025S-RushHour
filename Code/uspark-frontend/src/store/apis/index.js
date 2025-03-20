@@ -139,9 +139,11 @@ export const addHealthIssuesApi = ({ health_issue: healthIssue }, token) =>
  * @returns {Promise<Object>} Resolves with the list of health issues.
  */
 export const fetchHealthIssuesApi = (query, token) =>
-  api.get(`/api/onboarding/health-issues?search=${query}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  api
+    .get(`/api/onboarding/health-issues?search=${query}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => response.data);
 
 export const forgotPasswordApi = (email) =>
   api.post("/auth/forgot-password", { email });

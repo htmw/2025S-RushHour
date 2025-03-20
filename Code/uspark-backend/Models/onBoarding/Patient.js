@@ -12,7 +12,7 @@ const PatientSchema = new mongoose.Schema(
     sex: { type: String, enum: ["male", "female"], required: true },
     height: { type: Number, required: true },
     weight: { type: Number, required: true },
-    healthIssues: { type: String },
+    healthIssues: { type: [String], default: [] }, // Changed from String to Array of Strings
   },
   { timestamps: true }
 );
