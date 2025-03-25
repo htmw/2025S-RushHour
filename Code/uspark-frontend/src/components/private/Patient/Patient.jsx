@@ -15,7 +15,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Typography } from "@mui/material";
-import PatientLayout from "./PatLayout";
 import "../../../css/PatientHomePage.css";
 import health from "./Fact.js";
 import OneCard from "./OneCard";
@@ -71,39 +70,37 @@ const PatientHomePage = () => {
   }, []);
 
   return (
-    <PatientLayout>
-      <motion.div
-        className="patient-home-container"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
-        <motion.div>
-          <Typography
-            variant="h4"
-            className="patient-home-title"
-            data-cy="dashboard-welcome"
-          >
-            Welcome, {fullName}!
-          </Typography>
-          <Typography variant="body1" className="patient-home-subtitle">
-            Access your medical records, book appointments, and manage your
-            health data with ease.
-          </Typography>
-          <motion.div className="health-fact-box">
-            <Typography variant="h6">Health Tip of the Moment:</Typography>
-            <Typography variant="body2">{healthFact}</Typography>
-          </motion.div>
-          <motion.div className="newscard">
-            <InitialAssessmentCard />
-            <MedicalNews />
-          </motion.div>
-
-          <OneCard />
+    <motion.div
+      className="patient-home-container"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      <motion.div>
+        <Typography
+          variant="h4"
+          className="patient-home-title"
+          data-cy="dashboard-welcome"
+        >
+          Welcome, {fullName}!
+        </Typography>
+        <Typography variant="body1" className="patient-home-subtitle">
+          Access your medical records, book appointments, and manage your health
+          data with ease.
+        </Typography>
+        <motion.div className="health-fact-box">
+          <Typography variant="h6">Health Tip of the Moment:</Typography>
+          <Typography variant="body2">{healthFact}</Typography>
         </motion.div>
-        <Chatbot />
+        <motion.div className="newscard">
+          <InitialAssessmentCard />
+          <MedicalNews />
+        </motion.div>
+
+        <OneCard />
       </motion.div>
-    </PatientLayout>
+      <Chatbot />
+    </motion.div>
   );
 };
 

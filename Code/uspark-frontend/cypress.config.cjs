@@ -6,12 +6,15 @@ const environment = process.env.CYPRESS_ENV || "local";
 const envConfig = {
   local: {
     baseUrl: "http://localhost:5173",
+    backendUrl: "http://localhost:5001",
   },
   staging: {
     baseUrl: "https://staging-lac.vercel.app",
+    backendUrl: "https://two025s-rushhour.onrender.com",
   },
   prod: {
     baseUrl: "https://example.com",
+    backendUrl: "https://two025s-rushhour.onrender.com",
   },
 };
 
