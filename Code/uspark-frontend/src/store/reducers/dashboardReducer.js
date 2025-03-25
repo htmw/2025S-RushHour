@@ -54,6 +54,8 @@ const dashboardReducer = (state = initialState, action) => {
     case types.UPLOAD_VERIFICATION_DOCS_ERROR:
       return { ...state, loading: false, error: action.payload };
 
+    case types.LOGOUT_USER:
+      return { ...state, userData: null };
     default:
       return state;
   }

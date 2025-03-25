@@ -6,13 +6,13 @@
  * @memberof src.components.public
  */
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   AppBar,
   Toolbar,
   Typography,
   IconButton,
-  Menu, 
+  Menu,
   MenuItem,
   Avatar,
   useMediaQuery,
@@ -25,10 +25,15 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { headerRouteList } from "../../routes/routeList";
+import {
+  publicHeaderRouteList,
+  patientRouteList,
+  doctorRouteList,
+} from "../../routes/routeList";
 import { logoutUser, setTheme } from "../../store/actions";
 import { Link as RouterLink } from "react-router-dom";
 import { styled } from "@mui/system";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 /**
  * Custom styled theme switch component for toggling between light and dark mode.
@@ -98,6 +103,8 @@ const Header = () => {
   const dispatch = useDispatch();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const darkMode = useSelector((state) => state.theme.darkMode);
+  const role = useSelector((state) => state.dashboard?.userData?.role || null);
+  const [routeList, setRouteList] = React.useState(publicHeaderRouteList);
 
   /**
    * Retrieves the authenticated user's email from Redux state.
@@ -138,6 +145,16 @@ const Header = () => {
     dispatch(setTheme.success({ inDarkMode: !darkMode })); // Toggle theme
   };
 
+  useEffect(() => {
+    const routeList =
+      role === "patient"
+        ? patientRouteList
+        : role === "doctor"
+        ? doctorRouteList
+        : publicHeaderRouteList;
+    setRouteList(routeList);
+  }, [role]);
+
   return (
     <AppBar position="static" color="primary">
       <Toolbar>
@@ -153,7 +170,7 @@ const Header = () => {
 
         {!isMobile ? (
           <Grid2 container alignItems="center" spacing={2}>
-            {headerRouteList.map(({ name, path }) => (
+            {routeList.map(({ name, path }) => (
               <Grid2 item key={path}>
                 <Link
                   component={RouterLink}
@@ -177,27 +194,37 @@ const Header = () => {
                 </Link>
               </Grid2>
             ))}
+            {user && (
+              <Grid2 item>
+                <IconButton color="inherit">
+                  <NotificationsIcon />
+                </IconButton>
+              </Grid2>
+            )}
             <Grid2 item>
               <ThemeSwitch checked={darkMode} onChange={handleThemeToggle} />
             </Grid2>
-            <Grid2 item>
-              {user ? (
-                <Grid2 container direction="row" alignItems="center">
-                  <Grid2>
-                    <IconButton onClick={handleMenuOpen} color="inherit">
-                      <Avatar alt={user.fullName} src={user.avatarUrl || ""} />
-                    </IconButton>
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={Boolean(anchorEl)}
-                      onClose={handleMenuClose}
-                    >
-                      
-                      <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                    </Menu>
-                  </Grid2>
-                </Grid2>
-              ) : (
+            {user && (
+              <Grid2 item>
+                <IconButton onClick={handleMenuOpen} color="inherit">
+                  <Avatar
+                    alt={user.fullName}
+                    src={user.avatarUrl || ""}
+                    width={30}
+                    height={30}
+                  />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                >
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
+              </Grid2>
+            )}
+            {!user && (
+              <Grid2 item>
                 <Grid2 container alignItems="center" spacing={2}>
                   <Grid2 item>
                     <Button
@@ -221,8 +248,8 @@ const Header = () => {
                     </Button>
                   </Grid2>
                 </Grid2>
-              )}
-            </Grid2>
+              </Grid2>
+            )}
           </Grid2>
         ) : (
           <>
@@ -234,22 +261,48 @@ const Header = () => {
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
             >
-              {headerRouteList.map(({ name, path }) => (
-                <MenuItem key={path} component={RouterLink} to={path}>
+              {routeList.map(({ name, path }) => (
+                <MenuItem
+                  key={path}
+                  component={RouterLink}
+                  to={path}
+                  onClick={handleMenuClose}
+                >
                   {name}
                 </MenuItem>
               ))}
-              {user ? (
+              {user && (
                 <>
-                  <MenuItem component={RouterLink} to="/profile">
-                    Profile
+                  <MenuItem disabled>
+                    <NotificationsIcon /> &nbsp; Notifications
+                  </MenuItem>
+                  <MenuItem>
+                    <ThemeSwitch
+                      checked={darkMode}
+                      onChange={handleThemeToggle}
+                      sx={{ ml: 1 }}
+                    />
                   </MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </>
-              ) : (
-                <MenuItem component={RouterLink} to="/login">
-                  Login
-                </MenuItem>
+              )}
+              {!user && (
+                <>
+                  <MenuItem
+                    component={RouterLink}
+                    to="/login"
+                    onClick={handleMenuClose}
+                  >
+                    Login
+                  </MenuItem>
+                  <MenuItem
+                    component={RouterLink}
+                    to="/signup"
+                    onClick={handleMenuClose}
+                  >
+                    Sign Up
+                  </MenuItem>
+                </>
               )}
             </Menu>
           </>
