@@ -18,6 +18,7 @@ const ForgotPassword = lazy(() =>
 const ResetPassword = lazy(() =>
   import("../components/public/auth/ResetPassword")
 );
+const Appointments = lazy(() => import("../components/private/Patient/Appointments"));
 const Signup = lazy(() => import("../components/public/auth/Signup"));
 const PublicAboutUs = lazy(() => import("../components/public/AboutUs"));
 const ContactUs = lazy(() => import("../components/public/ContactUs"));
@@ -82,6 +83,12 @@ export const PrivateRoutes = [
   {
     path: "/admin",
     component: Admin,
+    exact: true,
+  },
+
+  {
+    path: "/appointments",
+    component: Appointments,
     exact: true,
   },
 ];

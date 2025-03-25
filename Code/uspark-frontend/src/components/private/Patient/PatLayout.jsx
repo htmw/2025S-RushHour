@@ -33,6 +33,7 @@ import {
   Person,
   Info,
   ExitToApp,
+  Event,
 } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../../../store/actions";
@@ -128,6 +129,17 @@ const PatientLayout = ({ children }) => {
               <Person />
             </ListItemIcon>
             <ListItemText primary="Profile" />
+          </ListItem>
+
+          <ListItem
+            button
+            onClick={() => navigate("/appointments")}
+            sx={{ cursor: "pointer" }}
+          >
+            <ListItemIcon sx={{ cursor: "pointer" }}>
+              <Event />
+            </ListItemIcon>
+            <ListItemText primary="Appointments" />
           </ListItem>
 
           <ListItem
