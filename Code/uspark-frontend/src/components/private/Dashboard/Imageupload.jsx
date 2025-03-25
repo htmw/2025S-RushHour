@@ -32,7 +32,7 @@ const Imageupload = ({ userData }) => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   /** @property {string} */
-  const [previewImage, setPreviewImage] = useState(userData.image || null);
+  const [previewImage, setPreviewImage] = useState(userData?.image || null);
 
   const dispatch = useDispatch();
 

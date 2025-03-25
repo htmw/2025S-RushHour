@@ -26,14 +26,9 @@ const ContactUs = lazy(() => import("../components/public/ContactUs"));
 const Home = lazy(() => import("../components/private/Home"));
 const Dashboard = lazy(() => import("../components/private/Dashboard"));
 const Onboarding = lazy(() => import("../components/private/onBoarding"));
-const Doctorprofile = lazy(() =>
-  import("../components/private/Doctor/Doctorprofile")
-);
+const ProfilePage = lazy(() => import("../components/private/Profile"));
 const AdminDashboard = lazy(() =>
   import("../components/private/Dashboard/AdminDashboard")
-);
-const Patprofile = lazy(() =>
-  import("../components/private/Patient/PatinetProfile")
 );
 const Admin = lazy(() =>
   import("../components/private/Dashboard/AdminDashboard")
@@ -68,17 +63,10 @@ export const PrivateRoutes = [
     exact: true,
   },
   {
-    path: "/docprofile",
-    component: Doctorprofile,
+    path: "/profile",
+    component: ProfilePage,
     exact: true,
   },
-
-  {
-    path: "/patprofile",
-    component: Patprofile,
-    exact: true,
-  },
-
   {
     path: "/admin",
     component: Admin,
@@ -138,7 +126,7 @@ export const PublicRoutes = [
  * @memberof src.routes.routeList
  * @property {Array<{path: string, name: string}>}
  */
-export const headerRouteList = [
+export const publicHeaderRouteList = [
   {
     path: "/aboutus",
     name: "About Us",
@@ -146,5 +134,45 @@ export const headerRouteList = [
   {
     path: "/contactus",
     name: "Contact Us",
+  },
+];
+
+/**
+ * Routes used in the navigation header.
+ *
+ * @constant
+ * @memberof src.routes.routeList
+ * @property {Array<{path: string, name: string}>}
+ */
+export const patientRouteList = [
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+  },
+  {
+    path: "/assessment",
+    name: "Assessment",
+  },
+];
+
+/**
+ * Routes used in the navigation header.
+ *
+ * @constant
+ * @memberof src.routes.routeList
+ * @property {Array<{path: string, name: string}>}
+ */
+export const doctorRouteList = [
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+  },
+  {
+    path: "/profile",
+    name: "Profile",
   },
 ];

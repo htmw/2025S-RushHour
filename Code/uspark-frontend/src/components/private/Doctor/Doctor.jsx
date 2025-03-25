@@ -10,7 +10,6 @@
 
 import React from "react";
 import { Typography } from "@mui/material";
-import DoctorLayout from "./DoctorLayout";
 import { useSelector } from "react-redux";
 
 /**
@@ -27,7 +26,7 @@ const Doctor = () => {
   const { fullName } = useSelector((state) => state.auth);
 
   return (
-    <DoctorLayout>
+    <>
       <Typography variant="h4" className="doctor-home-title">
         Welcome, {fullName}!
       </Typography>
@@ -35,7 +34,7 @@ const Doctor = () => {
         Here you can access your appointments, manage patient records, and view
         your schedule.
       </Typography>
-    </DoctorLayout>
+    </>
   );
 };
 
