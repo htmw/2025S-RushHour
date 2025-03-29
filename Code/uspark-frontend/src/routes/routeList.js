@@ -66,6 +66,7 @@ export const PrivateRoutes = [
     component: AdminDashboard,
     exact: true,
   },
+
   {
     path: "/profile",
     component: ProfilePage,

@@ -2,8 +2,20 @@ import React, { useState } from "react";
 import { hospitalsApi } from "../../../store/apis"; // Ensure you have this API set up
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons"; // Import the icon you want to use
-import "../../../css/MakeAppointments.css"; // Import the CSS file for styling
+import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  TextField,
+  Button,
+  Typography,
+  Container,
+  Paper,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
+import "../../../css/MakeAppointments.css";
 
 const MakeAppointments = () => {
   const [hospitals, setHospitals] = useState([]); // List of hospitals
@@ -14,10 +26,11 @@ const MakeAppointments = () => {
     name: "",
     date: "",
     reason: "",
-    email: "", // Add email to the appointment details
+    email: "",
   }); // Appointment details
+  const [submitting, setSubmitting] = useState(false); // State for submission loading
 
-  // Fetch hospitals based on latitude and longitude
+  // Fetch hospitals based on user's location
   const fetchHospitals = async (latitude, longitude) => {
     setLoading(true);
     setError("");
@@ -27,14 +40,14 @@ const MakeAppointments = () => {
       setHospitals(response.data.results);
     } catch (error) {
       console.error("Fetch error:", error);
-      setError("Failed to fetch hospitals.");
+      setError("Failed to fetch hospitals. Try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle finding doctors by getting user's location
-  const handleFindDoctors = () => {
+  // Handle finding hospitals near user
+  const handleFindHospitals = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -58,108 +71,173 @@ const MakeAppointments = () => {
       !appointmentDetails.name ||
       !appointmentDetails.date ||
       !appointmentDetails.reason ||
-      !appointmentDetails.email || // Check for email
+      !appointmentDetails.email ||
       !selectedHospital
     ) {
       setError("Please fill all fields and select a hospital.");
       return;
     }
 
+    setSubmitting(true);
     try {
-      await axios.post("http://localhost:5001/api/appointments", {
-        hospitalName: selectedHospital.name,
-        hospitalAddress: selectedHospital.vicinity,
-        ...appointmentDetails,
-      });
-      alert("Appointment booked successfully!");
+      const response = await axios.post(
+        "http://localhost:5001/api/appointments",
+        {
+          hospitalName: selectedHospital.name,
+          hospitalAddress: selectedHospital.vicinity,
+          ...appointmentDetails,
+        }
+      );
+
+      alert(response.data.message); // Show success message
       setSelectedHospital(null);
-      setAppointmentDetails({ name: "", date: "", reason: "", email: "" }); // Reset all fields
+      setAppointmentDetails({ name: "", date: "", reason: "", email: "" });
     } catch (err) {
       setError("Failed to book appointment. Try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="make-appointments-container">
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <h2>Available Hospitals</h2>
-      <ul>
-        {hospitals.length > 0 ? (
-          hospitals.map((hospital, index) => (
-            <li key={index}>
-              <strong>{hospital.name}</strong> - {hospital.vicinity}
-              <button onClick={() => handleBookAppointment(hospital)}>
-                Book Appointment
-              </button>
-            </li>
-          ))
-        ) : (
-          <p>No hospitals found.</p>
-        )}
-      </ul>
+    <Container
+      component={Paper}
+      elevation={3}
+      sx={{ p: 3, maxWidth: 600, mt: 5 }}
+    >
+      <Typography variant="h5" gutterBottom>
+        Book an Appointment
+      </Typography>
 
-      {/* Appointment Modal */}
-      {selectedHospital && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Book Appointment at {selectedHospital.name}</h2>
-            <input
-              type="text"
-              placeholder="Your Name"
-              value={appointmentDetails.name}
-              onChange={(e) =>
-                setAppointmentDetails({
-                  ...appointmentDetails,
-                  name: e.target.value,
-                })
-              }
-            />
-            <input
-              type="email"
-              placeholder="Your Email"
-              value={appointmentDetails.email}
-              onChange={(e) =>
-                setAppointmentDetails({
-                  ...appointmentDetails,
-                  email: e.target.value,
-                })
-              }
-            />
-            <input
-              type="date"
-              value={appointmentDetails.date}
-              onChange={(e) =>
-                setAppointmentDetails({
-                  ...appointmentDetails,
-                  date: e.target.value,
-                })
-              }
-            />
-            <textarea
-              placeholder="Reason for Appointment"
-              value={appointmentDetails.reason}
-              onChange={(e) =>
-                setAppointmentDetails({
-                  ...appointmentDetails,
-                  reason: e.target.value,
-                })
-              }
-            />
-            <div className="modal-buttons">
-              <button onClick={handleSubmitAppointment}>
-                Confirm Appointment
-              </button>
-              <button onClick={() => setSelectedHospital(null)}>Cancel</button>
-            </div>
-          </div>
-        </div>
+      {error && (
+        <Typography color="error" sx={{ mb: 2 }}>
+          {error}
+        </Typography>
       )}
 
-      {/* Floating Chatbot-Like Button with Icon */}
-      <button className="chatbot-button" onClick={handleFindDoctors}>
-        <FontAwesomeIcon icon={faMapMarkerAlt} size="lg" /> Find Doctors Near Me
-      </button>
-    </div>
+      <Button
+        variant="contained"
+        color="primary"
+        fullWidth
+        startIcon={<FontAwesomeIcon icon={faMapMarkerAlt} />}
+        onClick={handleFindHospitals}
+      >
+        Find Hospitals Near Me
+      </Button>
+
+      {loading && (
+        <CircularProgress sx={{ display: "block", mx: "auto", my: 2 }} />
+      )}
+
+      <Typography variant="h6" sx={{ mt: 3 }}>
+        Available Hospitals
+      </Typography>
+
+      {hospitals.length > 0 ? (
+        <ul className="hospital-list">
+          {hospitals.map((hospital, index) => (
+            <li key={index} className="hospital-item">
+              <strong>{hospital.name}</strong> - {hospital.vicinity}
+              <Button
+                variant="outlined"
+                color="secondary"
+                sx={{ ml: 2 }}
+                onClick={() => handleBookAppointment(hospital)}
+              >
+                Book Appointment
+              </Button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        !loading && <Typography>No hospitals found.</Typography>
+      )}
+
+      {/* Appointment Modal */}
+      <Dialog
+        open={Boolean(selectedHospital)}
+        onClose={() => setSelectedHospital(null)}
+        fullWidth
+      >
+        <DialogTitle>Book Appointment at {selectedHospital?.name}</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="Your Name"
+            variant="outlined"
+            margin="normal"
+            value={appointmentDetails.name}
+            onChange={(e) =>
+              setAppointmentDetails({
+                ...appointmentDetails,
+                name: e.target.value,
+              })
+            }
+          />
+          <TextField
+            fullWidth
+            label="Your Email"
+            type="email"
+            variant="outlined"
+            margin="normal"
+            value={appointmentDetails.email}
+            onChange={(e) =>
+              setAppointmentDetails({
+                ...appointmentDetails,
+                email: e.target.value,
+              })
+            }
+          />
+          <TextField
+            fullWidth
+            label="Date"
+            type="date"
+            variant="outlined"
+            margin="normal"
+            InputLabelProps={{ shrink: true }}
+            value={appointmentDetails.date}
+            onChange={(e) =>
+              setAppointmentDetails({
+                ...appointmentDetails,
+                date: e.target.value,
+              })
+            }
+          />
+          <TextField
+            fullWidth
+            label="Reason for Appointment"
+            variant="outlined"
+            margin="normal"
+            multiline
+            rows={2}
+            value={appointmentDetails.reason}
+            onChange={(e) =>
+              setAppointmentDetails({
+                ...appointmentDetails,
+                reason: e.target.value,
+              })
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSelectedHospital(null)} color="secondary">
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmitAppointment}
+            disabled={submitting}
+          >
+            {submitting ? (
+              <CircularProgress size={24} />
+            ) : (
+              "Confirm Appointment"
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Container>
   );
 };
 
