@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
     return res
       .status(400)
       .json({ error: "Latitude and Longitude are required" });
-  }
+  } 
 
   const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${long}&radius=5000&type=hospital&key=${process.env.GOOGLE_PLACES_API_KEY}`;
 

@@ -9,6 +9,8 @@
 
 import { lazy } from "react";
 
+
+
 // Public Routes
 /** @constant {React.LazyExoticComponent<React.ComponentType>} */
 const Login = lazy(() => import("../components/public/auth/Login"));
@@ -34,6 +36,7 @@ const AdminDashboard = lazy(() =>
 const Admin = lazy(() =>
   import("../components/private/Dashboard/AdminDashboard")
 );
+const MakeAppointments = lazy(() => import ("../components/private/Patient/MakeAppointments"));
 
 /**
  * List of private routes accessible only to authenticated users.
@@ -73,10 +76,15 @@ export const PrivateRoutes = [
     component: Admin,
     exact: true,
   },
-
   {
     path: "/appointments",
     component: Appointments,
+    exact: true,
+  },
+
+  {
+    path: "/findahosp",
+    component: MakeAppointments,
     exact: true,
   },
 ];
@@ -161,8 +169,8 @@ export const patientRouteList = [
     name: "Profile",
   },
   {
-    path: "/assessment",
-    name: "Assessment",
+    path: "/appointments",
+    name: "Appointments",
   },
 ];
 

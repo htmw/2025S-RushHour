@@ -8,7 +8,6 @@ const adminRoutes = require("./admin");
 const chatRoutes = require("./chat");
 const hospitalsRoutes = require("./hospitals")
 const appointmentRoutes = require("./appointments");
-
 const router = express.Router();
 
 /**
