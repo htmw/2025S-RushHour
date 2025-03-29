@@ -150,3 +150,11 @@ export const forgotPasswordApi = (email) =>
 
 export const resetPasswordApi = (email, token, newPassword) =>
   api.post("/auth/reset-password", { email, token, newPassword });
+
+
+export const hospitalsApi = (latitude, longitude) => 
+  api.get(`/api/hospitals?lat=${latitude}&long=${longitude}`);
+
+export const appointmentsApi = () => 
+  api.post("/api/appointments")
+

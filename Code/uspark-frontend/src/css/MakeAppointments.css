@@ -1,0 +1,136 @@
+.make-appointments-container {
+  max-width: 1000px;
+  margin: 0 auto; /* Center the container */
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4; /* Light gray background for the container */
+  border-radius: 10px; /* Rounded corners for container */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Shadow for container */
+}
+
+h2 {
+  text-align: center; /* Center align the heading */
+  color: #007bff; /* Heading color */
+}
+
+ul {
+  list-style-type: none; /* Remove bullet points */
+  padding: 0; /* Remove padding */
+}
+
+li {
+  display: flex; /* Flexbox for layout */
+  justify-content: space-between; /* Space between name and button */
+  margin-bottom: 10px; /* Spacing between items */
+  padding: 10px;
+  border: 1px solid #ccc; /* Border for the list items */
+  border-radius: 5px; /* Rounded corners */
+  background-color: #f9f9f9; /* Light background */
+}
+
+button {
+  background-color: #007bff; /* Button color */
+  color: white; /* Text color */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 15px; /* Padding */
+  cursor: pointer; /* Pointer cursor */
+  margin-left: 10px; /* Space between buttons */
+  transition: background-color 0.3s, transform 0.2s; /* Transition effect */
+}
+
+button:hover {
+  background-color: #0056b3; /* Darker color on hover */
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.modal {
+  position: fixed; /* Fixed position to cover entire viewport */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex; /* Flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  z-index: 1000; /* Ensure modal is above other content */
+}
+
+.modal-content {
+  background-color: white; /* White background for modal */
+  padding: 30px; /* Increased padding for better spacing */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Shadow for the modal */
+  width: 90%; /* Responsive width for smaller screens */
+  max-width: 400px; /* Set a max width for the modal */
+  animation: fadeIn 0.5s ease; /* Fade-in animation */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0; /* Start invisible */
+    transform: translateY(-20px); /* Slide in from the top */
+  }
+  to {
+    opacity: 1; /* Fully visible */
+    transform: translateY(0); /* Move to original position */
+  }
+}
+
+/* Form Field Styles */
+input[type="text"],
+input[type="email"],
+input[type="date"],
+textarea {
+  width: 100%; /* Full width */
+  padding: 10px; /* Padding for input fields */
+  margin-top: 10px; /* Space above input fields */
+  margin-bottom: 15px; /* Space below input fields */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 16px; /* Increased font size */
+  transition: border-color 0.3s; /* Smooth transition */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+  border-color: #007bff; /* Change border color on focus */
+  outline: none; /* Remove default outline */
+}
+
+textarea {
+  resize: none; /* Prevent resizing of textarea */
+  height: 100px; /* Fixed height for the textarea */
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between; /* Space between buttons */
+  margin-top: 15px; /* Space above buttons */
+}
+
+.chatbot-button {
+  background-color: #28a745; /* Green color for the button */
+  padding: 10px 20px; /* Padding */
+  color: white; /* Text color */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s, transform 0.2s; /* Transition effect */
+  font-size: 16px; /* Increased font size */
+}
+
+.chatbot-button:hover {
+  background-color: #218838; /* Darker green on hover */
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%; /* Responsive width for smaller screens */
+  }
+}
