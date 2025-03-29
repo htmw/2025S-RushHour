@@ -1,89 +1,136 @@
-.appointments-container {
-  max-width: 1000px; /* Maximum width for the container */
+.make-appointments-container {
+  max-width: 1000px;
   margin: 0 auto; /* Center the container */
   padding: 20px;
   font-family: Arial, sans-serif;
-  background: linear-gradient(to right, #e2e2e2, #ffffff); /* Gradient background */
+  background: #f4f4f4; /* Light gray background for the container */
   border-radius: 10px; /* Rounded corners for container */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Shadow for container */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Shadow for container */
 }
 
 h2 {
   text-align: center; /* Center align the heading */
   color: #007bff; /* Heading color */
-  margin-bottom: 20px; /* Space below the heading */
-  font-size: 32px; /* Increase font size */
-  text-transform: uppercase; /* Uppercase heading */
 }
 
-.error-message {
-  color: red; /* Error message color */
-  text-align: center; /* Center align error message */
-  margin-bottom: 20px; /* Space below error message */
+ul {
+  list-style-type: none; /* Remove bullet points */
+  padding: 0; /* Remove padding */
 }
 
-.appointments-grid {
-  display: grid; /* Use CSS grid for layout */
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
-  gap: 20px; /* Space between cards */
+li {
+  display: flex; /* Flexbox for layout */
+  justify-content: space-between; /* Space between name and button */
+  margin-bottom: 10px; /* Spacing between items */
+  padding: 10px;
+  border: 1px solid #ccc; /* Border for the list items */
+  border-radius: 5px; /* Rounded corners */
+  background-color: #f9f9f9; /* Light background */
 }
 
-.appointment-card {
-  background: white; /* White background for appointment card */
-  border-radius: 10px; /* Rounded corners for appointment card */
-  padding: 20px; /* Padding inside the appointment card */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Shadow for appointment cards */
-  transition: transform 0.3s, box-shadow 0.3s; /* Transition effect */
+button {
+  background-color: #007bff; /* Button color */
+  color: white; /* Text color */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 15px; /* Padding */
+  cursor: pointer; /* Pointer cursor */
+  margin-left: 10px; /* Space between buttons */
+  transition: background-color 0.3s, transform 0.2s; /* Transition effect */
 }
 
-.appointment-card:hover {
-  transform: translateY(-5px); /* Lift effect on hover */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Darker shadow on hover */
+button:hover {
+  background-color: #0056b3; /* Darker color on hover */
+  transform: scale(1.05); /* Slight zoom effect on hover */
 }
 
-.appointment-card h3 {
-  margin: 0 0 10px 0; /* Margin below heading */
-  font-size: 20px; /* Font size for appointment name */
-  color: #333; /* Darker color for appointment name */
+.modal {
+  position: fixed; /* Fixed position to cover entire viewport */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex; /* Flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  z-index: 1000; /* Ensure modal is above other content */
 }
 
-.appointment-date,
-.hospital-name,
-.hospital-address,
-.appointment-reason {
-  display: block; /* Each element on a new line */
-  color: #555; /* Dark gray color for text */
-  font-size: 16px; /* Consistent font size */
-  margin-bottom: 5px; /* Space between details */
+.modal-content {
+  background-color: white; /* White background for modal */
+  padding: 30px; /* Increased padding for better spacing */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Shadow for the modal */
+  width: 90%; /* Responsive width for smaller screens */
+  max-width: 400px; /* Set a max width for the modal */
+  animation: fadeIn 0.5s ease; /* Fade-in animation */
 }
 
-.appointment-date {
-  font-weight: bold; /* Bold text for the date */
+@keyframes fadeIn {
+  from {
+    opacity: 0; /* Start invisible */
+    transform: translateY(-20px); /* Slide in from the top */
+  }
+  to {
+    opacity: 1; /* Fully visible */
+    transform: translateY(0); /* Move to original position */
+  }
 }
 
-.hospital-name {
-  font-style: italic; /* Italic style for the hospital name */
+/* Form Field Styles */
+input[type="text"],
+input[type="email"],
+input[type="date"],
+textarea {
+  width: 100%; /* Full width */
+  padding: 10px; /* Padding for input fields */
+  margin-top: 10px; /* Space above input fields */
+  margin-bottom: 15px; /* Space below input fields */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 16px; /* Increased font size */
+  transition: border-color 0.3s; /* Smooth transition */
 }
 
-.hospital-address {
-  color: #333; /* Darker color for the address */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+  border-color: #007bff; /* Change border color on focus */
+  outline: none; /* Remove default outline */
 }
 
-.appointment-reason {
-  color: #777; /* Lighter gray for the reason text */
+textarea {
+  resize: none; /* Prevent resizing of textarea */
+  height: 100px; /* Fixed height for the textarea */
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between; /* Space between buttons */
+  margin-top: 15px; /* Space above buttons */
+}
+
+.chatbot-button {
+  background-color: #28a745; /* Green color for the button */
+  padding: 10px 20px; /* Padding */
+  color: white; /* Text color */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s, transform 0.2s; /* Transition effect */
+  font-size: 16px; /* Increased font size */
+}
+
+.chatbot-button:hover {
+  background-color: #218838; /* Darker green on hover */
+  transform: scale(1.05); /* Slight zoom effect on hover */
 }
 
 /* Media Queries for Responsive Design */
 @media (max-width: 768px) {
-  .appointments-container {
-    padding: 15px; /* Reduce padding on smaller screens */
-  }
-
-  h2 {
-    font-size: 28px; /* Adjust heading size */
-  }
-
-  .appointment-card {
-    padding: 15px; /* Reduce padding in appointment cards */
+  .modal-content {
+    width: 90%; /* Responsive width for smaller screens */
   }
 }
