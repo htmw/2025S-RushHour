@@ -22,6 +22,7 @@ import { motion } from "framer-motion";
 import MedicalNews from "./News";
 import InitialAssessmentCard from "./InitialAssesment";
 import Chatbot from "../Chatbot/Chatbox";
+import HospitalLocator from "./HospitalLocator.jsx";
 
 /**
  * Array of health facts imported from Fact.js
@@ -100,6 +101,7 @@ const PatientHomePage = () => {
         <OneCard />
       </motion.div>
       <Chatbot />
+      <HospitalLocator/>
     </motion.div>
   );
 };

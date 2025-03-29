@@ -48,7 +48,7 @@ const Chatbot = () => {
     <>
       {/* Floating Chat Button */}
       <Box
-        sx={{ position: "fixed", bottom: 20, right: 20, textAlign: "center" }}
+        sx={{ position: "fixed", bottom: 20, right: 100, textAlign: "center" }}
       >
         <IconButton
           sx={{
@@ -61,7 +61,7 @@ const Chatbot = () => {
           <ChatIcon />
         </IconButton>
         <Typography variant="caption" sx={{ color: "#007bff", mt: 1 }}>
-          Uheal
+          <p></p>Uheal
         </Typography>
       </Box>
 

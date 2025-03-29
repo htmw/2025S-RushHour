@@ -1,0 +1,26 @@
+/* HospitalLocator.css */
+
+/* Style for the chatbot button */
+.chatbot-button {
+  position: fixed; /* Fix the button to the viewport */
+  bottom: 20px; /* Position from the bottom */
+  right: 20px; /* Position from the right */
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text */
+  border: none; /* No border */
+  border-radius: 50%; /* Round shape */
+  width: 60px; /* Button width */
+  height: 60px; /* Button height */
+  font-size: 16px; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+  transition: background-color 0.3s; /* Smooth background transition */
+  display: flex; /* Center the icon */
+  align-items: center; /* Align items vertically */
+  justify-content: center; /* Align items horizontally */
+}
+
+/* Hover effect */
+.chatbot-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
