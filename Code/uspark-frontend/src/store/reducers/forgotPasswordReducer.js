@@ -10,6 +10,7 @@ import * as types from "../actions/types";
 const initialState = {
   loading: false,
   error: null,
+  message: null,
 };
 
 /**
@@ -25,13 +26,13 @@ const initialState = {
 const forgotPassword = (state = initialState, action) => {
   switch (action.type) {
     case types.FORGOT_PASSWORD_PENDING:
-      return { ...state, loading: true, error: null };
+      return { ...state, loading: true, error: null, message: null };
 
     case types.FORGOT_PASSWORD_SUCCESS:
-      return { ...state, loading: false };
+      return { ...state, loading: false, message: action.payload.message };
 
     case types.FORGOT_PASSWORD_ERROR:
-      return { ...state, loading: false, error: action.payload };
+      return { ...state, loading: false, error: action.payload, message: null };
 
     default:
       return state;

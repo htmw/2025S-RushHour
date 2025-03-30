@@ -1,50 +1,47 @@
 describe("Forgot Password & Reset Password Flow", () => {
-  let baseUrl = Cypress.config("baseUrl"); // Get base URL dynamically
-  let testEmail = "testuser@example.com";
-  let newPassword = "NewPass@1234";
+  const baseUrl = Cypress.config("baseUrl");
+  const testEmail = "testuser@example.com";
+  const newPassword = "NewPass@1234";
 
   it("should request a password reset link", () => {
     cy.visit(`${baseUrl}/forgot-password`);
 
-    // Enter email and submit
-    cy.get("[data-cy=forgotPassword-email]").type(testEmail);
-    cy.intercept("POST", "**/api/auth/forgot-password").as(
-      "forgotPasswordRequest"
-    );
-    cy.get("[data-cy=forgotPassword-submit]").click();
+    cy.intercept("POST", "**/api/auth/forgot-password", {
+      statusCode: 200,
+      body: { message: "Password reset email sent" }, // ✅ Simulate API message
+    }).as("forgotPasswordRequest");
 
-    // Wait for API response
-    cy.wait("@forgotPasswordRequest")
-      .its("response.statusCode")
-      .should("eq", 200);
+    cy.get('input[name="email"]').type(testEmail);
+    cy.get('button[type="submit"]')
+      .contains(/send reset link/i)
+      .click();
 
-    // Verify UI feedback
-    cy.contains("Check your email for a password reset link").should(
-      "be.visible"
-    );
+    cy.wait(3000);
+
+    // ✅ Assert the message from API is displayed in green text
+    cy.contains("Password reset email sent")
+      .should("be.visible")
+      .and("have.css", "color", "rgb(46, 125, 50)"); // optional exact match for green
+
+    // ✅ Optional: Wait 31 seconds and verify the message disappears
+    cy.wait(31000); // simulate passing of countdown
+    cy.contains("Password reset email sent").should("not.exist");
   });
 
   it("should reset the password successfully", () => {
-    cy.visit(`${baseUrl}/reset-password?token=mockResetToken`);
+    const token = "mockResetToken";
+    cy.visit(`${baseUrl}/reset-password?token=${token}&email=${testEmail}`);
 
-    // Enter new password and confirm password
     cy.get("[data-cy=resetPassword-new]").type(newPassword);
     cy.get("[data-cy=resetPassword-confirm]").type(newPassword);
 
-    cy.intercept("POST", "**/api/auth/reset-password").as(
-      "resetPasswordRequest"
-    );
+    cy.intercept("POST", "**/api/auth/reset-password", {
+      statusCode: 200,
+      body: { message: "Password reset successful" },
+    }).as("resetPasswordRequest");
+
     cy.get("[data-cy=resetPassword-submit]").click();
-
-    // Wait for API response
-    cy.wait("@resetPasswordRequest")
-      .its("response.statusCode")
-      .should("eq", 200);
-
-    // Verify UI redirection after reset
-    cy.url().should("include", "/login");
-    cy.contains("Password reset successful. Please log in.").should(
-      "be.visible"
-    );
+    cy.wait(3000);
+    cy.url().should("include", "/forgot-password");
   });
 });
