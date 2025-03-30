@@ -64,6 +64,7 @@ const ResetPassword = () => {
 
             <Box sx={{ mt: 2 }}>
               <TextField
+                data-cy="resetPassword-new"
                 label="New Password"
                 type="password"
                 fullWidth
@@ -75,6 +76,7 @@ const ResetPassword = () => {
               />
               <TextField
                 label="Confirm Password"
+                data-cy="resetPassword-confirm"
                 type="password"
                 fullWidth
                 required
@@ -86,6 +88,7 @@ const ResetPassword = () => {
             </Box>
 
             <Button
+              data-cy="resetPassword-submit"
               type="submit"
               fullWidth
               variant="contained"
