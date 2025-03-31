@@ -3,7 +3,7 @@ const express = require("express");
 const onBoardingRoutes = require("./onboarding");
 const dashboardRoutes = require("./dashboard");
 const profileImageRoutes = require("./profileimage");
-const insuranceRoutes = require("./insurance");
+const insuranceRoutes = require("./Insurances");
 const adminRoutes = require("./admin");
 const chatRoutes = require("./chat");
 const hospitalsRoutes = require("./hospitals");
@@ -30,7 +30,6 @@ const router = express.Router();
 // Register Routes
 router.use("/onboarding", onBoardingRoutes);
 router.use("/dashboard", dashboardRoutes);
-
 router.use("/profile-image", profileImageRoutes);
 router.use("/insurance", insuranceRoutes);
 router.use("/admin", adminRoutes);
