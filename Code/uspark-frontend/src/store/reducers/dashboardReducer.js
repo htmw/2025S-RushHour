@@ -37,6 +37,8 @@ const initialState = {
 const dashboardReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.FETCH_DASHBOARD_PENDING:
+    case types.UPDATE_PATIENT_PROFILE_PENDING:
+    case types.UPDATE_DOCTOR_PROFILE_PENDING:
       return { ...state, loading: true, error: null };
 
     case types.FETCH_DASHBOARD_SUCCESS:
@@ -56,6 +58,30 @@ const dashboardReducer = (state = initialState, action) => {
 
     case types.LOGOUT_USER:
       return { ...state, userData: null };
+
+    case types.UPDATE_PATIENT_PROFILE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        userData: {
+          ...state.userData,
+          ...action.payload,
+        },
+      };
+
+    case types.UPDATE_DOCTOR_PROFILE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        userData: {
+          ...state.userData,
+          ...action.payload.doctor,
+        },
+      };
+
+    case types.UPDATE_PATIENT_PROFILE_ERROR:
+    case types.UPDATE_DOCTOR_PROFILE_ERROR:
+      return { ...state, loading: false, error: action.payload };
     default:
       return state;
   }

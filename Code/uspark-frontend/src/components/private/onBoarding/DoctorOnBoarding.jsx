@@ -95,6 +95,7 @@ const DoctorOnBoarding = () => {
             fullWidth
             value={formData.name}
             onChange={handleChange}
+            data-cy="onBoarding-name"
           />
         </Grid2>
         <Grid2 size={{ xs: 12 }}>
@@ -104,6 +105,7 @@ const DoctorOnBoarding = () => {
             fullWidth
             value={formData.specialization}
             onChange={handleChange}
+            data-cy="onBoarding-specialization"
           />
         </Grid2>
         <Grid2 size={{ xs: 12 }}>
@@ -114,6 +116,7 @@ const DoctorOnBoarding = () => {
             fullWidth
             value={formData.experience}
             onChange={handleChange}
+            data-cy="onBoarding-experience"
           />
         </Grid2>
         <Grid2 size={{ xs: 12 }}>
@@ -125,6 +128,7 @@ const DoctorOnBoarding = () => {
             rows={3}
             value={formData.certifications}
             onChange={handleChange}
+            data-cy="onBoarding-certifications"
           />
         </Grid2>
       </Grid2>
@@ -141,6 +145,7 @@ const DoctorOnBoarding = () => {
         onClick={handleSubmit}
         disabled={loading}
         style={{ marginTop: 20 }}
+        data-cy="onBoarding-submit"
       >
         {loading ? "Submitting..." : "Submit"}
       </Button>

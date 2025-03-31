@@ -32,7 +32,7 @@ const ProfilePage = () => {
   const role = userData.role;
 
   return role === "doctor" ? (
-    <DoctorProfileView userData={userData} token={token} />
+    <DoctorProfileView token={token} />
   ) : (
     <PatientProfileView userData={userData} />
   );

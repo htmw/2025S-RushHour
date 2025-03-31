@@ -99,6 +99,8 @@ export const roleSelection = createAsyncActions(types.ROLE_SELECION);
 export const uploadProfileImage = createAsyncActions(
   types.UPLOAD_PROFILE_IMAGE
 );
+export const fetchProfileImage = createAsyncActions(types.FETCH_PROFILE_IMAGE);
+
 export const setTheme = createAsyncActions(types.SET_THEME);
 export const fetchDoctors = createAsyncActions(types.FETCH_DOCTORS);
 export const verifyDoctor = createAsyncActions(types.VERIFY_DOCTOR);
@@ -108,5 +110,12 @@ export const uploadVerificationDocs = createAsyncActions(
 export const fetchHealthIssues = createAsyncActions(types.FETCH_HEALTH_ISSUES);
 export const addHealthIssue = createAsyncActions(types.ADD_HEALTH_ISSUE);
 export const forgotPassword = createAsyncActions(types.FORGOT_PASSWORD);
+export const createInsurance = createAsyncActions(types.CREATE_INSURANCE);
+export const fetchInsurance = createAsyncActions(types.FETCH_INSURANCE);
+export const updatePatientProfile = createAsyncActions(
+  types.UPDATE_PATIENT_PROFILE
+);
 
-
+export const updateDoctorProfile = createAsyncActions(
+  types.UPDATE_DOCTOR_PROFILE
+);

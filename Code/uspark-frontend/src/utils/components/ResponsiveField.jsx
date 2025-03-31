@@ -2,7 +2,14 @@ import React from "react";
 import { TextField, Typography, useMediaQuery, Grid2 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-const ResponsiveField = ({ label, name, value, onChange, type = "text" }) => {
+const ResponsiveField = ({
+  label,
+  name,
+  value,
+  onChange,
+  type = "text",
+  ...rest
+}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -25,6 +32,7 @@ const ResponsiveField = ({ label, name, value, onChange, type = "text" }) => {
           size="small"
           value={value}
           onChange={onChange}
+          {...rest}
         />
       </Grid2>
     </Grid2>

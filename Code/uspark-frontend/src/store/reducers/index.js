@@ -8,11 +8,12 @@
 import authReducer from "./authReducer";
 import dashboardReducer from "./dashboardReducer";
 import onboardingReducer from "./onBoardingReducer";
-import imgReducer from "./ImageUrReader";
+import profileReducer from "./profileReducer";
 import themeReducer from "./themeReducer";
 import adminReducer from "./adminReducer";
 import healthIssuesReducer from "./healthIssuesReducer";
 import forgotPasswordReducer from "./forgotPasswordReducer";
+import insuranceReducer from "./insuranceReducer";
 
 /**
  * Root reducer object containing all application reducers.
@@ -24,19 +25,21 @@ import forgotPasswordReducer from "./forgotPasswordReducer";
  * @property {Function} auth - Reducer handling authentication state.
  * @property {Function} dashboard - Reducer managing dashboard data.
  * @property {Function} onBoarding - Reducer handling user onboarding state.
- * @property {Function} img - Reducer handling image uploads.
+ * @property {Function} profileReducer - Reducer handling image uploads.
  * @property {Function} theme - Reducer managing theme settings.
  * @property {Function} admin - Reducer managing admin-related actions.
  * @property {Function} healthIssues - Reducer handling health issues.
  * @property {Function} forgotPassword - Reducer handling forgot password actions.
+ * @property {Function} insurance - Reducer handling insurance data.
  */
 export const reducer = {
   auth: authReducer,
   dashboard: dashboardReducer,
   onBoarding: onboardingReducer,
-  img: imgReducer,
+  profile: profileReducer,
   theme: themeReducer,
   admin: adminReducer,
   healthIssues: healthIssuesReducer,
   forgotPassword: forgotPasswordReducer,
+  insurance: insuranceReducer,
 };

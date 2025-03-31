@@ -13,6 +13,13 @@ const config = {
     FRONTEND_URL: process.env.PROD_FRONTEND_URL,
   },
 };
-console.log(config[ENV]);
+const finalConfig = config[ENV];
+finalConfig.AWS_BUCKET_RUSH_HOUR_UPLOADS =
+  process.env.AWS_BUCKET_RUSH_HOUR_UPLOADS;
+
+finalConfig.AWS_BUCKET_PUBLIC_USPARK_DOCS =
+  process.env.AWS_BUCKET_PUBLIC_USPARK_DOCS;
+
+console.log(finalConfig);
 // Export the correct config based on the environment
 module.exports = config[ENV];

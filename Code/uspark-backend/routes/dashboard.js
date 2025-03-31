@@ -4,10 +4,15 @@ const Patient = require("../Models/onBoarding/Patient");
 const Doctor = require("../Models/onBoarding/Doctor");
 const { default: authenticate } = require("../Middleware/authenticate");
 const { sendEmail, ADMIN_EMAIL } = require("../utils/emailService");
-const upload = require("../Middleware/upload"); // Ensure this exists
+const createUploadMiddleware = require("../Middleware/upload");
 const { ADMIN_PANEL_URL } = require("../utils/emailService");
+const { AWS_BUCKET_RUSH_HOUR_UPLOADS } = require("../config.js");
 
 const router = express.Router();
+const upload = createUploadMiddleware(
+  "verification-docs",
+  AWS_BUCKET_RUSH_HOUR_UPLOADS
+);
 
 /**
  * @swagger
@@ -144,23 +149,18 @@ router.post(
       const doctor = await Doctor.findOne({ userId: req.user.userId });
       if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
-      // Save uploaded document URLs
       doctor.verificationDocs = req.files.map((file) => file.location);
-      doctor.verificationStatus = "pending"; // Set status to pending
+      doctor.verificationStatus = "pending";
       await doctor.save();
 
-      //  Send Email to Admin
       const adminMessage = `
-      <h2>New Doctor Verification Request</h2>
-      <p>A doctor has submitted verification documents.</p>
-      <p><strong>Doctor ID:</strong> ${doctor._id}</p>
-      <p><strong>Specialization:</strong> ${doctor.specialization}</p>
-      <p>Click below to review:</p>
-      <a href="${ADMIN_PANEL_URL}">Go to Admin Portal</a>
-    `;
+        <h2>New Doctor Verification Request</h2>
+        <p><strong>Doctor ID:</strong> ${doctor._id}</p>
+        <p><strong>Specialization:</strong> ${doctor.specialization}</p>
+        <a href="${ADMIN_PANEL_URL}">Review in Admin Portal</a>
+      `;
 
       sendEmail(ADMIN_EMAIL, "Doctor Verification Request", adminMessage);
-
       res
         .status(201)
         .json({ message: "Verification request submitted successfully." });
@@ -170,5 +170,54 @@ router.post(
     }
   }
 );
+
+router.post("/patient", authenticate, async (req, res) => {
+  try {
+    const { age, sex, height, weight, healthIssues } = req.body;
+
+    let patient = await Patient.findOne({ userId: req.user.userId });
+    if (!patient) patient = new Patient({ userId: req.user.userId });
+
+    Object.assign(patient, { age, sex, height, weight, healthIssues });
+    await patient.save();
+
+    res.status(200).json({ message: "Patient profile updated", patient });
+  } catch (error) {
+    console.error("Error updating patient profile:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.post("/doctor/update", authenticate, async (req, res) => {
+  try {
+    const doctor = await Doctor.findOne({ userId: req.user.userId });
+    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+
+    const { fullName, specialization, experience, certifications } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.userId,
+      { fullName },
+      { new: true }
+    );
+
+    doctor.specialization = specialization || doctor.specialization;
+    doctor.experience = experience || doctor.experience;
+    doctor.certifications = certifications || doctor.certifications;
+
+    await doctor.save();
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      doctor: {
+        fullName: user.fullName,
+        ...doctor._doc,
+      },
+    });
+  } catch (error) {
+    console.error("Update doctor profile error:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+});
 
 module.exports = router;
