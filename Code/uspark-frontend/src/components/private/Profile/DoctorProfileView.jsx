@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Button,
@@ -12,15 +12,19 @@ import {
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
-import { useDispatch } from "react-redux";
-import { uploadVerificationDocs } from "../../../store/actions";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  updateDoctorProfile,
+  uploadVerificationDocs,
+} from "../../../store/actions";
 import ImageUpload from "../Dashboard/Imageupload";
 import ResponsiveField from "../../../utils/components/ResponsiveField.jsx";
 
-const DoctorProfileView = ({ userData, token }) => {
+const DoctorProfileView = ({ token }) => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [files, setFiles] = useState([]);
+  const { userData } = useSelector((state) => state.dashboard);
 
   // Editable fields
   const [formData, setFormData] = useState({
@@ -47,8 +51,20 @@ const DoctorProfileView = ({ userData, token }) => {
 
   const handleSave = () => {
     console.log("Saving doctor profile:", formData);
-    // Dispatch update action here if needed
+    dispatch(updateDoctorProfile(formData));
   };
+
+  console.log("Updating form data1:", userData);
+  useEffect(() => {
+    console.log("Updating form data:", userData);
+
+    setFormData({
+      fullName: userData.fullName || "",
+      specialization: userData.specialization || "",
+      experience: userData.experience || "",
+      certifications: userData.certifications || "",
+    });
+  }, [userData]);
 
   return (
     <Paper elevation={3} sx={{ p: 3, mt: "10px", width: "99%" }}>
@@ -60,12 +76,14 @@ const DoctorProfileView = ({ userData, token }) => {
           name="fullName"
           value={formData.fullName}
           onChange={handleChange}
+          inputProps={{ "data-cy": "doctor-fullName" }}
         />
         <ResponsiveField
           label="Specialization"
           name="specialization"
           value={formData.specialization}
           onChange={handleChange}
+          inputProps={{ "data-cy": "doctor-specialization" }}
         />
         <ResponsiveField
           label="Experience (years)"
@@ -73,12 +91,14 @@ const DoctorProfileView = ({ userData, token }) => {
           type="number"
           value={formData.experience}
           onChange={handleChange}
+          inputProps={{ "data-cy": "doctor-experience" }}
         />
         <ResponsiveField
           label="Certifications"
           name="certifications"
           value={formData.certifications}
           onChange={handleChange}
+          inputProps={{ "data-cy": "doctor-certifications" }}
         />
       </Stack>
 
@@ -107,6 +127,7 @@ const DoctorProfileView = ({ userData, token }) => {
           color="primary"
           sx={{ mt: 2 }}
           onClick={() => setShowModal(true)}
+          data-cy="doctor-verify-button"
         >
           {userData.verificationStatus === "rejected"
             ? "Re-upload Documents"
@@ -119,6 +140,7 @@ const DoctorProfileView = ({ userData, token }) => {
         color="success"
         sx={{ mt: 2, ml: 2 }}
         onClick={handleSave}
+        data-cy="doctor-save"
       >
         Save Changes
       </Button>
@@ -143,6 +165,7 @@ const DoctorProfileView = ({ userData, token }) => {
             <input
               type="file"
               id="fileUpload"
+              data-cy="doctor-verification-file"
               multiple
               hidden
               onChange={(e) => setFiles([...e.target.files])}
@@ -165,7 +188,11 @@ const DoctorProfileView = ({ userData, token }) => {
             >
               Cancel
             </Button>
-            <Button onClick={handleUpload} variant="contained">
+            <Button
+              onClick={handleUpload}
+              variant="contained"
+              data-cy="doctor-verification-upload"
+            >
               Upload
             </Button>
           </Box>

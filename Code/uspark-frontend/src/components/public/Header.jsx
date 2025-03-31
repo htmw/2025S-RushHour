@@ -104,6 +104,8 @@ const Header = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const darkMode = useSelector((state) => state.theme.darkMode);
   const role = useSelector((state) => state.dashboard?.userData?.role || null);
+  const imageUrl = useSelector((state) => state.profile?.imageUrl || null);
+
   const [routeList, setRouteList] = React.useState(publicHeaderRouteList);
 
   /**
@@ -208,12 +210,19 @@ const Header = () => {
               <Grid2 item>
                 <IconButton onClick={handleMenuOpen} color="inherit">
                   <Avatar
-                    alt={user.fullName}
-                    src={user.avatarUrl || ""}
-                    width={30}
-                    height={30}
-                  />
+                    alt={user.fullName || user}
+                    src={imageUrl}
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      bgcolor: "primary.main",
+                      fontSize: 14,
+                    }}
+                  >
+                    {!imageUrl && (user.fullName?.charAt(0) || user.charAt(0))}
+                  </Avatar>
                 </IconButton>
+
                 <Menu
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl)}

@@ -1,87 +1,158 @@
 import React, { useState } from "react";
 import {
-  TextField,
   Typography,
-  Box,
   Paper,
   Button,
   Stack,
+  TextField,
+  MenuItem,
+  Chip,
+  Autocomplete,
 } from "@mui/material";
 import ImageUpload from "../Dashboard/Imageupload.jsx";
+import CreateInsuranceDetails from "./CreateUserInsuranceDetails.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  updatePatientProfile,
+  fetchHealthIssues,
+  addHealthIssue,
+} from "../../../store/actions";
+import { debounce } from "lodash";
 import ResponsiveField from "../../../utils/components/ResponsiveField.jsx";
+
 const PatientProfileView = ({ userData }) => {
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const { healthIssues, loading: healthIssuesLoading } = useSelector(
+    (state) => state.healthIssues
+  );
+
   const [formData, setFormData] = useState({
     age: userData.age || "",
     sex: userData.sex || "",
     height: userData.height || "",
     weight: userData.weight || "",
-    healthIssues: userData.healthIssues?.join(", ") || "",
+    healthIssues: userData.healthIssues || [],
   });
 
+  const fetchIssuesDebounced = debounce((query) => {
+    if (query.length >= 3) {
+      dispatch(fetchHealthIssues({ query, token }));
+    }
+  }, 300);
+
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleHealthIssueSelect = (event, value) => {
+    const newIssue = value[value.length - 1];
+    const isAlreadyAdded = healthIssues.some(
+      (issue) => issue.health_issue === newIssue
+    );
+
+    if (!isAlreadyAdded && typeof newIssue === "string") {
+      dispatch(addHealthIssue({ health_issue: newIssue, token }));
+    }
+
+    setFormData({ ...formData, healthIssues: value });
+  };
+
+  const handleSearchChange = (event, value) => {
+    fetchIssuesDebounced(value);
   };
 
   const handleSave = () => {
-    console.log("Saving patient profile:", formData);
-    // Dispatch update action if needed
+    const payload = {
+      ...formData,
+      healthIssues: Array.isArray(formData.healthIssues)
+        ? formData.healthIssues
+        : formData.healthIssues.split(",").map((s) => s.trim()),
+      token,
+    };
+
+    dispatch(updatePatientProfile(payload));
   };
-
   return (
-    <Paper elevation={3} sx={{ p: 3, mt: "10px", width: "99%" }}>
-      <ImageUpload userData={userData} />
-      <Typography variant="h5" gutterBottom>
-        Patient Profile
-      </Typography>
+    <>
+      <Paper elevation={3} sx={{ p: 3, mt: "10px", width: "99%" }}>
+        <ImageUpload userData={userData} />
+        <Typography variant="h5" gutterBottom data-cy="patient-profile-title">
+          Patient Profile
+        </Typography>
 
-      <Stack spacing={2} mt={2}>
-        <ResponsiveField
-          label="Age"
-          name="age"
-          type="number"
-          value={formData.age}
-          onChange={handleChange}
-        />
-        <ResponsiveField
-          label="Sex"
-          name="sex"
-          value={formData.sex}
-          onChange={handleChange}
-        />
-        <ResponsiveField
-          label="Height (cm)"
-          name="height"
-          type="number"
-          value={formData.height}
-          onChange={handleChange}
-        />
-        <ResponsiveField
-          label="Weight (kg)"
-          name="weight"
-          type="number"
-          value={formData.weight}
-          onChange={handleChange}
-        />
-        <ResponsiveField
-          label="Health Issues"
-          name="healthIssues"
-          value={formData.healthIssues}
-          onChange={handleChange}
-        />
-      </Stack>
+        <Stack spacing={2} mt={2}>
+          <ResponsiveField
+            label="Age"
+            name="age"
+            type="number"
+            value={formData.age}
+            onChange={handleChange}
+            fullWidth
+            inputProps={{ "data-cy": "patient-age" }}
+          />
+          <ResponsiveField
+            label="Sex"
+            name="sex"
+            select
+            fullWidth
+            value={formData.sex}
+            onChange={handleChange}
+            inputProps={{ "data-cy": "patient-sex" }}
+          >
+            <MenuItem value="male">Male</MenuItem>
+            <MenuItem value="female">Female</MenuItem>
+          </ResponsiveField>
+          <ResponsiveField
+            label="Height (cm)"
+            name="height"
+            type="number"
+            value={formData.height}
+            onChange={handleChange}
+            fullWidth
+            inputProps={{ "data-cy": "patient-height" }}
+          />
+          <ResponsiveField
+            label="Weight (kg)"
+            name="weight"
+            type="number"
+            value={formData.weight}
+            onChange={handleChange}
+            fullWidth
+            inputProps={{ "data-cy": "patient-weight" }}
+          />
+          <Autocomplete
+            multiple
+            freeSolo
+            loading={healthIssuesLoading}
+            options={healthIssues.map((issue) => issue.health_issue)}
+            value={formData.healthIssues}
+            onChange={handleHealthIssueSelect}
+            onInputChange={handleSearchChange}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => (
+                <Chip key={index} label={option} {...getTagProps({ index })} />
+              ))
+            }
+            data-cy="patient-health-issues"
+            renderInput={(params) => (
+              <ResponsiveField {...params} label="Health Issues" />
+            )}
+          />
+        </Stack>
 
-      <Button
-        variant="contained"
-        color="success"
-        sx={{ mt: 3 }}
-        onClick={handleSave}
-      >
-        Save Changes
-      </Button>
-    </Paper>
+        <Button
+          variant="contained"
+          color="success"
+          sx={{ mt: 3 }}
+          onClick={handleSave}
+          data-cy="patient-save"
+        >
+          Save Changes
+        </Button>
+      </Paper>
+      <CreateInsuranceDetails userData={userData} />
+    </>
   );
 };
 

@@ -151,10 +151,42 @@ export const forgotPasswordApi = (email) =>
 export const resetPasswordApi = (email, token, newPassword) =>
   api.post("/auth/reset-password", { email, token, newPassword });
 
-
-export const hospitalsApi = (latitude, longitude) => 
+export const hospitalsApi = (latitude, longitude) =>
   api.get(`/api/hospitals?lat=${latitude}&long=${longitude}`);
 
-export const appointmentsApi = () => 
-  api.post("/api/appointments")
+export const appointmentsApi = () => api.post("/api/appointments");
 
+export const createInsuranceApi = (data, token) =>
+  api.post("/api/insurance", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const fetchInsuranceApi = (token) =>
+  api.get("/api/insurance", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const uploadProfileImageApi = (token, formData) =>
+  api.post("/api/profile-image", formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+export const fetchProfileImageApi = (token) =>
+  api.get("/api/profile-image", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const updatePatientProfileApi = (token, data) =>
+  api.post("/api/dashboard/patient", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+export const updateDoctorProfileApi = (token, profileData) =>
+  api.post("/api/dashboard/doctor/update", profileData, {
+    headers: { Authorization: `Bearer ${token}` },
+  });

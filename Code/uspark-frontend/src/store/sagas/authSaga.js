@@ -8,7 +8,13 @@
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
-import { login, oAuthLogin, signup, oAuthSignup } from "../actions";
+import {
+  login,
+  oAuthLogin,
+  signup,
+  oAuthSignup,
+  fetchProfileImage,
+} from "../actions";
 import { enqueueSnackbar } from "notistack";
 import { LOGIN, OAUTH_LOGIN, OAUTH_SIGNUP, SIGNUP } from "../actions/types";
 import history from "../../history";
@@ -42,6 +48,7 @@ function* handleLogin(action) {
     enqueueSnackbar("Login Successful!", { variant: "success" });
 
     history.push(userPayload.isOnboarded ? "/dashboard" : "/onboarding");
+    yield put(fetchProfileImage());
   } catch (error) {
     const errorMsg = error.response?.data?.message || "Login Failed";
     yield put(login.error(errorMsg));
@@ -78,6 +85,7 @@ function* handleOAuthLogin(action) {
     enqueueSnackbar("OAuth Login Successful!", { variant: "success" });
 
     history.push(userPayload.isOnboarded ? "/dashboard" : "/onboarding");
+    yield put(fetchProfileImage());
   } catch (error) {
     const errorMsg = error.response?.data?.message || "OAuth Login Failed";
     yield put(oAuthLogin.error(errorMsg));
@@ -114,6 +122,7 @@ function* handleSignup(action) {
     enqueueSnackbar("Signup Successful!", { variant: "success" });
 
     history.push(userPayload.isOnboarded ? "/dashboard" : "/onboarding");
+    yield put(fetchProfileImage());
   } catch (error) {
     const errorMsg = error.response?.data?.message || "Signup Failed";
     yield put(signup.error(errorMsg));
@@ -148,7 +157,7 @@ function* handleOAuthSignup(action) {
     );
     localStorage.setItem("token", token);
     enqueueSnackbar("OAuth Signup Successful!", { variant: "success" });
-
+    yield put(fetchProfileImage());
     history.push(userPayload.isOnboarded ? "/dashboard" : "/onboarding");
   } catch (error) {
     const errorMsg = error.response?.data?.message || "OAuth Signup Failed";
