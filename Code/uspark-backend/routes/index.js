@@ -30,6 +30,7 @@ const router = express.Router();
 // Register Routes
 router.use("/onboarding", onBoardingRoutes);
 router.use("/dashboard", dashboardRoutes);
+
 router.use("/profile-image", profileImageRoutes);
 router.use("/insurance", insuranceRoutes);
 router.use("/admin", adminRoutes);
