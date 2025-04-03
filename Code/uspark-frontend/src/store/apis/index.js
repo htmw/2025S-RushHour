@@ -9,7 +9,7 @@ console.log({ API_BASE_URL });
 /**
  * Axios instance with predefined base URL.
  */
-const api = axios.create({
+export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
@@ -188,5 +188,15 @@ export const updatePatientProfileApi = (token, data) =>
 
 export const updateDoctorProfileApi = (token, profileData) =>
   api.post("/api/dashboard/doctor/update", profileData, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const createMedicalHistoryApi = (token, data) =>
+  api.post("/api/medical-history", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const fetchMedicalHistoryApi = (token) =>
+  api.get("/api/medical-history", {
     headers: { Authorization: `Bearer ${token}` },
   });

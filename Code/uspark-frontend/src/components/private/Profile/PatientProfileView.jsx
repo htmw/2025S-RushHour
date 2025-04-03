@@ -19,6 +19,7 @@ import {
 } from "../../../store/actions";
 import { debounce } from "lodash";
 import ResponsiveField from "../../../utils/components/ResponsiveField.jsx";
+import MedicalHistory from "./MedicalHistory.jsx";
 
 const PatientProfileView = ({ userData }) => {
   const dispatch = useDispatch();
@@ -141,6 +142,8 @@ const PatientProfileView = ({ userData }) => {
           />
         </Stack>
 
+
+
         <Button
           variant="contained"
           color="success"
@@ -152,6 +155,8 @@ const PatientProfileView = ({ userData }) => {
         </Button>
       </Paper>
       <CreateInsuranceDetails userData={userData} />
+      <MedicalHistory showActions={false} />
+
     </>
   );
 };

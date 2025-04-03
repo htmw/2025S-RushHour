@@ -20,6 +20,8 @@ finalConfig.AWS_BUCKET_RUSH_HOUR_UPLOADS =
 finalConfig.AWS_BUCKET_PUBLIC_USPARK_DOCS =
   process.env.AWS_BUCKET_PUBLIC_USPARK_DOCS;
 
+finalConfig.AWS_BUCKET_USPARK_MEDICAL_HISTORY = process.env.AWS_BUCKET_USPARK_MEDICAL_HISTORY;
+
 console.log(finalConfig);
 // Export the correct config based on the environment
 module.exports = config[ENV];

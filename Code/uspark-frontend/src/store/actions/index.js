@@ -119,3 +119,14 @@ export const updatePatientProfile = createAsyncActions(
 export const updateDoctorProfile = createAsyncActions(
   types.UPDATE_DOCTOR_PROFILE
 );
+
+export const createMedicalHistory = createAsyncActions(
+  types.CREATE_MEDICAL_HISTORY
+);
+export const fetchMedicalHistory = createAsyncActions(
+  types.FETCH_MEDICAL_HISTORY
+);
+
+
+
+

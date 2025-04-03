@@ -152,8 +152,8 @@ const Header = () => {
       role === "patient"
         ? patientRouteList
         : role === "doctor"
-        ? doctorRouteList
-        : publicHeaderRouteList;
+          ? doctorRouteList
+          : publicHeaderRouteList;
     setRouteList(routeList);
   }, [role]);
 
@@ -191,6 +191,7 @@ const Header = () => {
                           : "secondary.main",
                     },
                   }}
+                  data-cy={`header-${name}`}
                 >
                   {name}
                 </Link>
@@ -276,6 +277,7 @@ const Header = () => {
                   component={RouterLink}
                   to={path}
                   onClick={handleMenuClose}
+                  data-cy={`header-${name}`}
                 >
                   {name}
                 </MenuItem>
