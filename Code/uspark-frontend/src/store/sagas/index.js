@@ -18,6 +18,7 @@ import doctorSaga from "./doctorSaga";
 import healthIssuesSaga from "./healthIssuesSaga";
 import forgotPasswordSaga from "./forgotPasswordSaga";
 import insuranceSaga from "./insuranceSaga";
+import medicalHistorySaga from "./medicalHistorySaga";
 /**
  * List of all saga functions used in the application.
  *
@@ -36,6 +37,7 @@ const allSagas = [
   healthIssuesSaga,
   forgotPasswordSaga,
   insuranceSaga,
+  medicalHistorySaga
 ];
 
 /**

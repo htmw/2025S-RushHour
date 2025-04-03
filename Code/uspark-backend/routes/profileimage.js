@@ -4,6 +4,7 @@ const { default: authenticate } = require("../Middleware/authenticate");
 const User = require("../Models/User");
 const { AWS_BUCKET_PUBLIC_USPARK_DOCS } = require("../config.js");
 const router = express.Router();
+
 const upload = createUploadMiddleware(
   "profile-images",
   AWS_BUCKET_PUBLIC_USPARK_DOCS

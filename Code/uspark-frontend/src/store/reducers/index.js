@@ -14,6 +14,7 @@ import adminReducer from "./adminReducer";
 import healthIssuesReducer from "./healthIssuesReducer";
 import forgotPasswordReducer from "./forgotPasswordReducer";
 import insuranceReducer from "./insuranceReducer";
+import medicalHistoryReducer from "./medicalHistoryReducer";
 
 /**
  * Root reducer object containing all application reducers.
@@ -42,4 +43,5 @@ export const reducer = {
   healthIssues: healthIssuesReducer,
   forgotPassword: forgotPasswordReducer,
   insurance: insuranceReducer,
+  medicalHistory: medicalHistoryReducer
 };

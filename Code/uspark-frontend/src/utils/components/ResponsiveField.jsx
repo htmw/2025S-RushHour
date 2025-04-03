@@ -1,5 +1,11 @@
 import React from "react";
-import { TextField, Typography, useMediaQuery, Grid2 } from "@mui/material";
+import {
+  TextField,
+  Typography,
+  useMediaQuery,
+  MenuItem,
+  Grid2
+} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 const ResponsiveField = ({
@@ -8,6 +14,9 @@ const ResponsiveField = ({
   value,
   onChange,
   type = "text",
+  required = false,
+  select = false,
+  options = [],
   ...rest
 }) => {
   const theme = useTheme();
@@ -22,7 +31,9 @@ const ResponsiveField = ({
       direction={isMobile ? "column" : "row"}
     >
       <Grid2 item size={{ xs: isMobile ? 12 : 4 }}>
-        <Typography fontWeight="bold">{label}:</Typography>
+        <Typography fontWeight="bold">
+          {label} {required ? "*" : ""}
+        </Typography>
       </Grid2>
       <Grid2 item size={{ xs: isMobile ? 12 : 8 }}>
         <TextField
@@ -32,11 +43,21 @@ const ResponsiveField = ({
           size="small"
           value={value}
           onChange={onChange}
+          select={select}
+          {...(select ? { 'data-cy': rest?.inputProps?.['data-cy'] } : {})}
           {...rest}
-        />
+        >
+          {select &&
+            options.map((opt) => (
+              <MenuItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </MenuItem>
+            ))}
+        </TextField>
       </Grid2>
     </Grid2>
   );
 };
 
 export default ResponsiveField;
+
