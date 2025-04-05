@@ -77,7 +77,7 @@ const PatientProfileView = ({ userData }) => {
   return (
     <>
       <Paper elevation={3} sx={{ p: 3, mt: "10px", width: "99%" }}>
-        <ImageUpload userData={userData} />
+        <ImageUpload userData={userData} fromProfilePage />
         <Typography variant="h5" gutterBottom data-cy="patient-profile-title">
           Patient Profile
         </Typography>
@@ -100,9 +100,11 @@ const PatientProfileView = ({ userData }) => {
             value={formData.sex}
             onChange={handleChange}
             inputProps={{ "data-cy": "patient-sex" }}
+            options={[
+              { value: "male", label: "Male" },
+              { value: "female", label: "Female" },
+            ]}
           >
-            <MenuItem value="male">Male</MenuItem>
-            <MenuItem value="female">Female</MenuItem>
           </ResponsiveField>
           <ResponsiveField
             label="Height (cm)"

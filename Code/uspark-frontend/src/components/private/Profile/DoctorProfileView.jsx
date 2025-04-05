@@ -9,6 +9,8 @@ import {
   IconButton,
   TextField,
   Stack,
+  Autocomplete,
+  Divider,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
@@ -19,12 +21,15 @@ import {
 } from "../../../store/actions";
 import ImageUpload from "../Dashboard/Imageupload";
 import ResponsiveField from "../../../utils/components/ResponsiveField.jsx";
+import FileUpload from "../../../utils/components/FileUpload"; // or wherever it's stored
+import DoctorAvailabilityCalendar from "./DoctorAvailabilityCalendar"; // adjust path as needed
 
 const DoctorProfileView = ({ token }) => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [files, setFiles] = useState([]);
-  const { userData } = useSelector((state) => state.dashboard);
+  const { userData } = useSelector((state) => state.profile);
+  const hospitals = useSelector((state) => state.makeAppointments.hospitals || []);
 
   // Editable fields
   const [formData, setFormData] = useState({
@@ -32,6 +37,9 @@ const DoctorProfileView = ({ token }) => {
     specialization: userData.specialization || "",
     experience: userData.experience || "",
     certifications: userData.certifications || "",
+    hospitalName: userData.hospitalName || "",
+    hospitalAddress: userData.hospitalAddress || "",
+
   });
 
   const handleChange = (e) => {
@@ -50,113 +58,126 @@ const DoctorProfileView = ({ token }) => {
   };
 
   const handleSave = () => {
-    console.log("Saving doctor profile:", formData);
     dispatch(updateDoctorProfile(formData));
   };
 
-  console.log("Updating form data1:", userData);
   useEffect(() => {
-    console.log("Updating form data:", userData);
 
     setFormData({
       fullName: userData.fullName || "",
       specialization: userData.specialization || "",
       experience: userData.experience || "",
       certifications: userData.certifications || "",
+      hospitalName: userData.hospitalName || "",
+      hospitalAddress: userData.hospitalAddress || "",
     });
+
   }, [userData]);
 
   return (
-    <Paper elevation={3} sx={{ p: 3, mt: "10px", width: "99%" }}>
-      <ImageUpload userData={userData} />
+    <Box>
 
-      <Stack spacing={2} mt={2}>
-        <ResponsiveField
-          label="Full Name"
-          name="fullName"
-          value={formData.fullName}
-          onChange={handleChange}
-          inputProps={{ "data-cy": "doctor-fullName" }}
-        />
-        <ResponsiveField
-          label="Specialization"
-          name="specialization"
-          value={formData.specialization}
-          onChange={handleChange}
-          inputProps={{ "data-cy": "doctor-specialization" }}
-        />
-        <ResponsiveField
-          label="Experience (years)"
-          name="experience"
-          type="number"
-          value={formData.experience}
-          onChange={handleChange}
-          inputProps={{ "data-cy": "doctor-experience" }}
-        />
-        <ResponsiveField
-          label="Certifications"
-          name="certifications"
-          value={formData.certifications}
-          onChange={handleChange}
-          inputProps={{ "data-cy": "doctor-certifications" }}
-        />
-      </Stack>
-
-      {userData.verificationStatus === "approved" && (
-        <Typography sx={{ mt: 2 }}>
-          <CheckCircleIcon sx={{ color: "green", mr: 1 }} />
-          Verified
+      <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, mt: 3 }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
+          Doctor Profile
         </Typography>
-      )}
 
-      {userData.verificationStatus === "pending" && (
-        <Alert severity="warning" sx={{ mt: 2 }}>
-          Your verification is pending.
-        </Alert>
-      )}
+        <Divider sx={{ mb: 3 }} />
 
-      {userData.verificationStatus === "rejected" && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          Rejected. Please upload valid documents.
-        </Alert>
-      )}
+        <ImageUpload userData={userData} fromProfilePage />
 
-      {userData.verificationStatus !== "approved" && (
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ mt: 2 }}
-          onClick={() => setShowModal(true)}
-          data-cy="doctor-verify-button"
-        >
-          {userData.verificationStatus === "rejected"
-            ? "Re-upload Documents"
-            : "Verify"}
-        </Button>
-      )}
+        <Stack spacing={3} mt={3}>
+          <ResponsiveField label="Full Name" name="fullName" value={formData.fullName} onChange={handleChange} />
+          <ResponsiveField label="Specialization" name="specialization" value={formData.specialization} onChange={handleChange} />
+          <ResponsiveField label="Experience (years)" name="experience" type="number" value={formData.experience} onChange={handleChange} />
+          <ResponsiveField label="Certifications" name="certifications" value={formData.certifications} onChange={handleChange} />
 
-      <Button
-        variant="contained"
-        color="success"
-        sx={{ mt: 2, ml: 2 }}
-        onClick={handleSave}
-        data-cy="doctor-save"
-      >
-        Save Changes
-      </Button>
+          <ResponsiveField
+            label="Select or Search Hospital"
+            customInput={
+              <Autocomplete
+                fullWidth
+                freeSolo
+                size="small"
+                options={[...hospitals.map((h) => h.name), "Other"]}
+                value={formData.hospitalName}
+                onChange={(e, newValue) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    hospitalName: newValue,
+                    hospitalAddress: newValue === "Other" ? "" : hospitals.find((h) => h.name === newValue)?.vicinity || "",
+                  }));
+                }}
+                renderInput={(params) => <TextField {...params} variant="outlined" />}
+              />
+            }
+          />
+
+          {formData.hospitalName === "Other" && (
+            <ResponsiveField
+              label="Hospital Address"
+              name="hospitalAddress"
+              value={formData.hospitalAddress}
+              onChange={(e) => setFormData({ ...formData, hospitalAddress: e.target.value })}
+            />
+          )}
+
+          <FileUpload
+            title="Uploaded Verification Docs"
+            defaultFiles={
+              userData.verificationDocs?.map((url) => ({
+                fileUrl: url.split("rush-hour-uploads.s3.us-east-2.amazonaws.com/")[1],
+                fileName: url.split("/").pop(),
+              })) || []
+            }
+            autoUpload={false}
+            signedUrlPath="/api/profile/signed-url"
+          />
+        </Stack>
+
+        {/* Verification Status */}
+        {userData.verificationStatus === "approved" && (
+          <Alert icon={<CheckCircleIcon fontSize="inherit" />} severity="success" sx={{ mt: 3 }}>
+            Profile Verified
+          </Alert>
+        )}
+
+        {userData.verificationStatus === "pending" && (
+          <Alert severity="warning" sx={{ mt: 3 }}>
+            Your verification is pending.
+          </Alert>
+        )}
+
+        {userData.verificationStatus === "rejected" && (
+          <Alert severity="error" sx={{ mt: 3 }}>
+            Rejected. Please upload valid documents.
+          </Alert>
+        )}
+
+        <Stack direction="row" spacing={2} mt={4} justifyContent="flex-end">
+          {userData.verificationStatus !== "approved" && (
+            <Button variant="contained" onClick={() => setShowModal(true)} data-cy="doctor-verify-button">
+              {userData.verificationStatus === "rejected" ? "Re-upload Documents" : "Verify"}
+            </Button>
+          )}
+          <Button variant="contained" color="success" onClick={handleSave} data-cy="doctor-save">
+            Save Changes
+          </Button>
+        </Stack>
+      </Paper>
 
       {/* Modal for document upload */}
       <Modal open={showModal} onClose={() => setShowModal(false)}>
         <Box sx={modalStyle}>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="h6">Verification Required</Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Typography variant="h6">Upload Verification Docs</Typography>
             <IconButton onClick={() => setShowModal(false)}>
               <CloseIcon />
             </IconButton>
           </Box>
-          <Typography sx={{ mt: 1 }}>
-            Upload your verification documents.
-          </Typography>
+
+          <Typography sx={{ mt: 2 }}>Click below to upload documents</Typography>
+
           <Paper
             elevation={3}
             sx={paperStyle}
@@ -165,40 +186,36 @@ const DoctorProfileView = ({ token }) => {
             <input
               type="file"
               id="fileUpload"
-              data-cy="doctor-verification-file"
               multiple
               hidden
               onChange={(e) => setFiles([...e.target.files])}
             />
-            <Typography>Click to upload</Typography>
+            <Typography>Click to browse or drag & drop</Typography>
           </Paper>
+
           {files.length > 0 && (
             <Box mt={2}>
-              <Typography variant="subtitle2">Selected:</Typography>
+              <Typography variant="subtitle2">Selected Files:</Typography>
               {files.map((f, i) => (
                 <Typography key={i}>{f.name}</Typography>
               ))}
             </Box>
           )}
-          <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
-            <Button
-              onClick={() => setShowModal(false)}
-              color="error"
-              sx={{ mr: 2 }}
-            >
+
+          <Box mt={3} display="flex" justifyContent="flex-end">
+            <Button onClick={() => setShowModal(false)} color="error" sx={{ mr: 2 }}>
               Cancel
             </Button>
-            <Button
-              onClick={handleUpload}
-              variant="contained"
-              data-cy="doctor-verification-upload"
-            >
+            <Button variant="contained" onClick={handleUpload}>
               Upload
             </Button>
           </Box>
         </Box>
       </Modal>
-    </Paper>
+
+      {/* Availability Section */}
+      <DoctorAvailabilityCalendar />
+    </Box>
   );
 };
 

@@ -20,7 +20,7 @@ import {
 import { Edit, Delete, Download } from "@mui/icons-material";
 import ResponsiveField from "../../../utils/components/ResponsiveField.jsx";
 import FileUpload from "../../../utils/components/FileUpload.jsx";
-import { createMedicalHistory, fetchMedicalHistory } from "../../../store/actions/index.js";
+import { createMedicalHistory } from "../../../store/actions/index.js";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
@@ -126,10 +126,6 @@ const MedicalHistory = ({ }) => {
         setOpen(false);
     };
 
-
-    useEffect(() => {
-        dispatch(fetchMedicalHistory());
-    }, []);
     return (
         <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
             <Typography variant="h5" gutterBottom data-cy="Medical-History">

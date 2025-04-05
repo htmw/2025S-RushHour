@@ -2,69 +2,98 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const cors = require("cors");
-const mongoose = require("mongoose");
-const nodemailer = require("nodemailer");
+const { sendEmail } = require("../utils/emailService"); // or wherever your utils is
+const Doctor = require("../Models/onBoarding/Doctor");
+const Appointment = require("../Models/Appointment");
+const { default: authenticate } = require("../Middleware/authenticate");
 
 router.use(cors());
 
-// Define Appointment Schema
-const appointmentSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  date: { type: String, required: true },
-  reason: { type: String, required: true },
-  hospitalName: { type: String, required: true },
-  hospitalAddress: { type: String, required: true },
-});
 
-const Appointment = mongoose.model("Appointment", appointmentSchema);
 
-// Configure Nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
 
-// Send Confirmation Email
-const sendConfirmationEmail = async (appointment) => {
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: appointment.email,
-    subject: "Appointment Confirmation",
-    text: `Hello ${appointment.name},\n\nYour appointment has been successfully booked at ${appointment.hospitalName} on ${appointment.date}.\n\nReason: ${appointment.reason}\n\nHospital Address: ${appointment.hospitalAddress}\n\nThank you for choosing our service!\n\nBest regards,\nYour Healthcare Team`,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log("Confirmation email sent to:", appointment.email);
-  } catch (error) {
-    console.error("Error sending email:", error);
-  }
-};
 
 // API to book an appointment
-router.post("/", async (req, res) => {
+
+router.post("/", authenticate, async (req, res) => {
   try {
-    const newAppointment = new Appointment(req.body);
+    const { doctorId, date, startTime, reason } = req.body;
+    const user = req.user;
+
+    if (!doctorId || !user.fullName || !user.email || !date || !startTime || !reason) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
+    const doctor = await Doctor.findById(doctorId).populate("userId");
+    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+
+    // Prevent double booking
+    const existing = await Appointment.findOne({ doctor: doctorId, date, startTime });
+    if (existing) {
+      return res.status(400).json({ message: "This time slot is already booked." });
+    }
+
+    const newAppointment = new Appointment({
+      doctor: doctorId,
+      userId: user.userId,
+      name: user.fullName,
+      email: user.email,
+      date,
+      startTime,
+      reason,
+      bookingDate: new Date().toISOString().slice(0, 10), // 👈 today's booking date
+
+    });
+
     await newAppointment.save();
 
-    // Send confirmation email
-    await sendConfirmationEmail(req.body);
+    // Send emails...
+    await sendEmail(doctor.userId.email, "New Appointment Scheduled", "appointmentDoctor", {
+      doctorName: doctor.userId.fullName,
+      patientName: user.fullName,
+      patientEmail: user.email,
+      date,
+      startTime,
+      reason,
+    });
 
-    res.status(201).json({ message: "Appointment booked successfully." });
+    await sendEmail(user.email, "Appointment Confirmation", "appointmentPatient", {
+      doctorName: doctor.userId.fullName,
+      patientName: user.fullName,
+      date,
+      startTime,
+      reason,
+      hospitalName: doctor.hospitalName,
+      hospitalAddress: doctor.hospitalAddress,
+    });
+
+    res.status(201).json({ message: "Appointment booked and emails sent." });
   } catch (error) {
-    console.error("Error booking appointment:", error);
+    console.error("Booking Error:", error);
     res.status(500).json({ error: "Failed to book appointment." });
   }
 });
 
+
+
 // API to fetch all appointments
-router.get("/", async (req, res) => {
+router.get("/", authenticate, async (req, res) => {
   try {
-    const appointments = await Appointment.find();
+    const user = req.user;
+
+    let query = {};
+    if (user.role === "patient") {
+      query.email = user.email;
+    } else if (user.role === "doctor") {
+      const doctor = await Doctor.findOne({ userId: user.userId });
+      if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+      query.doctor = doctor._id;
+    }
+
+    const appointments = await Appointment.find(query)
+      .populate("doctor", "hospitalName hospitalAddress")
+      .sort({ date: 1 });
+
     res.status(200).json(appointments);
   } catch (error) {
     console.error("Error fetching appointments:", error);
@@ -72,48 +101,115 @@ router.get("/", async (req, res) => {
   }
 });
 
-// API to reschedule an appointment
-router.put("/:id", async (req, res) => {
-  try {
-    const { date, reason } = req.body;
-    const updatedAppointment = await Appointment.findByIdAndUpdate(
-      req.params.id,
-      { date, reason },
-      { new: true }
-    );
 
-    if (!updatedAppointment) {
+// API to reschedule an appointment
+router.put("/:id", authenticate, async (req, res) => {
+  try {
+    const user = req.user;
+    const { date, startTime, reason } = req.body;
+
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
       return res.status(404).json({ error: "Appointment not found" });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Appointment rescheduled successfully.",
-        updatedAppointment,
-      });
+    // Only allow if patient is the owner
+    if (user.role === "patient" && appointment.email !== user.email) {
+      return res.status(403).json({ message: "Unauthorized to update this appointment." });
+    }
+
+    // Update the fields
+    appointment.date = date || appointment.date;
+    appointment.startTime = startTime || appointment.startTime;
+    appointment.reason = reason || appointment.reason;
+
+    await appointment.save();
+
+    // Populate doctor info
+    const updatedAppointment = await Appointment.findById(appointment._id).populate({
+      path: "doctor",
+      populate: { path: "userId", select: "email fullName" },
+    });
+
+    const doctorUser = updatedAppointment.doctor.userId;
+
+    // Send updated confirmation emails
+    await sendEmail(doctorUser.email, "Appointment Rescheduled", "appointmentDoctor", {
+      doctorName: doctorUser.fullName,
+      patientName: appointment.name,
+      patientEmail: appointment.email,
+      date: appointment.date,
+      startTime: appointment.startTime,
+      reason: appointment.reason,
+    });
+
+    await sendEmail(appointment.email, "Your Appointment Has Been Rescheduled", "appointmentPatient", {
+      doctorName: doctorUser.fullName,
+      patientName: appointment.name,
+      date: appointment.date,
+      startTime: appointment.startTime,
+      reason: appointment.reason,
+      hospitalName: updatedAppointment.doctor.hospitalName,
+      hospitalAddress: updatedAppointment.doctor.hospitalAddress,
+    });
+
+    res.status(200).json({
+      message: "Appointment rescheduled and emails sent successfully.",
+      updatedAppointment,
+    });
   } catch (error) {
     console.error("Error rescheduling appointment:", error);
     res.status(500).json({ error: "Failed to reschedule appointment." });
   }
 });
 
-// API to delete an appointment
-router.delete("/:id", async (req, res) => {
-  try {
-    const deletedAppointment = await Appointment.findByIdAndDelete(
-      req.params.id
-    );
 
-    if (!deletedAppointment) {
-      return res.status(404).json({ error: "Appointment not found" });
+
+// API to delete an appointment
+router.delete("/:id", authenticate, async (req, res) => {
+  try {
+    const user = req.user;
+
+    const appointment = await Appointment.findById(req.params.id).populate({
+      path: "doctor",
+      populate: { path: "userId", select: "email fullName" },
+    });
+
+    if (!appointment) return res.status(404).json({ error: "Appointment not found" });
+
+    // Only allow deletion by the patient who booked it or doctor
+    if (user.role === "patient" && appointment.email !== user.email) {
+      return res.status(403).json({ message: "Unauthorized to delete this appointment." });
     }
 
-    res.status(200).json({ message: "Appointment deleted successfully." });
+    const doctorUser = appointment.doctor.userId;
+
+    // Send cancellation emails
+    await sendEmail(doctorUser.email, "Appointment Cancelled", "appointmentCancelledDoctor", {
+      doctorName: doctorUser.fullName,
+      patientName: appointment.name,
+      date: appointment.date,
+      startTime: appointment.startTime,
+      reason: appointment.reason,
+    });
+
+    await sendEmail(appointment.email, "Your Appointment Has Been Cancelled", "appointmentCancelledPatient", {
+      doctorName: doctorUser.fullName,
+      date: appointment.date,
+      startTime: appointment.startTime,
+      reason: appointment.reason,
+      hospitalName: appointment.doctor.hospitalName,
+      hospitalAddress: appointment.doctor.hospitalAddress,
+    });
+
+    await appointment.deleteOne();
+
+    res.status(200).json({ message: "Appointment deleted and emails sent successfully." });
   } catch (error) {
     console.error("Error deleting appointment:", error);
     res.status(500).json({ error: "Failed to delete appointment." });
   }
 });
+
 
 module.exports = router;

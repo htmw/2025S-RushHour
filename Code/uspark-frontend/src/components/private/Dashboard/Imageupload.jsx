@@ -13,7 +13,7 @@ import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { uploadProfileImage, fetchProfileImage } from "../../../store/actions";
 
-const Imageupload = ({ userData }) => {
+const Imageupload = ({ userData, fromProfilePage }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const imageUrl = useSelector((state) => state.profile?.imageUrl);
@@ -22,7 +22,10 @@ const Imageupload = ({ userData }) => {
   const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchProfileImage());
+    if (!fromProfilePage) {
+
+      dispatch(fetchProfileImage());
+    }
   }, [dispatch]);
 
   useEffect(() => {

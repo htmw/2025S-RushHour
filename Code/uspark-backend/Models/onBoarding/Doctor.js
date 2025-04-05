@@ -1,5 +1,12 @@
 const mongoose = require("mongoose");
 
+const AvailabilitySlotSchema = new mongoose.Schema({
+  date: { type: String, }, // "YYYY-MM-DD"
+  startTime: { type: String, }, // "HH:mm"
+  endTime: { type: String, },
+  slotDuration: { type: Number, },
+});
+
 const DoctorSchema = new mongoose.Schema(
   {
     userId: {
@@ -11,14 +18,19 @@ const DoctorSchema = new mongoose.Schema(
     specialization: { type: String, required: true },
     experience: { type: Number, required: true },
     certifications: { type: String },
-    verificationStatus: { 
-      type: String, 
-      enum: ["pending", "approved", "rejected"], 
-      default: "pending" 
+    verificationStatus: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending"
     },
     verificationDocs: [{ type: String }],
+    hospitalName: { type: String },
+    hospitalAddress: { type: String },
+
+    availability: [AvailabilitySlotSchema], // 👈 Add this line
   },
   { timestamps: true }
 );
+
 
 module.exports = mongoose.model("Doctor", DoctorSchema);

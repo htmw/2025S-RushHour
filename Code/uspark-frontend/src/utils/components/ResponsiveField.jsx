@@ -17,6 +17,7 @@ const ResponsiveField = ({
   required = false,
   select = false,
   options = [],
+  customInput,
   ...rest
 }) => {
   const theme = useTheme();
@@ -36,28 +37,33 @@ const ResponsiveField = ({
         </Typography>
       </Grid2>
       <Grid2 item size={{ xs: isMobile ? 12 : 8 }}>
-        <TextField
-          fullWidth
-          name={name}
-          type={type}
-          size="small"
-          value={value}
-          onChange={onChange}
-          select={select}
-          {...(select ? { 'data-cy': rest?.inputProps?.['data-cy'] } : {})}
-          {...rest}
-        >
-          {select &&
-            options.map((opt) => (
-              <MenuItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </MenuItem>
-            ))}
-        </TextField>
+        {customInput ? (
+          customInput
+        ) : (
+          <TextField
+            fullWidth
+            name={name}
+            type={type}
+            size="small"
+            value={value}
+            onChange={onChange}
+            select={select}
+            {...(select ? { 'data-cy': rest?.inputProps?.['data-cy'] } : {})}
+            {...rest}
+          >
+            {select &&
+              options.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+          </TextField>
+        )}
       </Grid2>
     </Grid2>
   );
 };
+
 
 export default ResponsiveField;
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDashboard } from "../../../store/actions";
+import { fetchDoctors, fetchHospitals, fetchProfile } from "../../../store/actions";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress, Box } from "@mui/material";
 import PatientProfileView from "./PatientProfileView.jsx";
@@ -10,16 +10,30 @@ const ProfilePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { userData, loading } = useSelector((state) => state.dashboard);
+  const { userData, loading } = useSelector((state) => state.profile);
   const token = useSelector((state) => state.auth?.token);
-
   useEffect(() => {
     if (!token) {
       navigate("/login");
-    } else {
-      dispatch(fetchDashboard({ token }));
+    } else if (!userData) {
+      dispatch(fetchProfile({ token, fromProfilePage: true }));
     }
-  }, [token]);
+  }, []);
+
+  useEffect(() => {
+    if (userData?.role === "doctor") {
+      console.log({ userData })
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          dispatch(fetchHospitals({ lat: latitude, long: longitude }));
+        },
+        () => console.error("Location access denied for hospital fetch"),
+        { enableHighAccuracy: true }
+      );
+      dispatch(fetchDoctors({ token }))
+    }
+  }, [userData?.role, dispatch]);
 
   if (loading || !userData) {
     return (

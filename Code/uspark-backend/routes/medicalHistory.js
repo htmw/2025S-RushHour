@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const authenticate = require("../Middleware/authenticate").default;
-const MedicalHistory = require("../Models/MedicalHistory");
-const { AWS_BUCKET_RUSH_HOUR_UPLOADS } = require("../config.js");
+const { AWS_BUCKET_RUSH_HOUR_UPLOADS, FRONTEND_URL } = require("../config.js");
 const { getS3SignedUrl } = require("../Middleware/s3.js");
 const upload = require("../Middleware/upload")(
     "medical-history",
     AWS_BUCKET_RUSH_HOUR_UPLOADS
 );
+const MedicalHistory = require("../Models/MedicalHistory");
 
 
 // Save or update history

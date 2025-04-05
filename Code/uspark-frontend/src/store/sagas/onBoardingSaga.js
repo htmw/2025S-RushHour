@@ -8,11 +8,11 @@
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
-import { doctorOnboarding, login, patientOnboarding } from "../actions";
+import { doctorOnboarding, fetchDashboard, login, patientOnboarding, uploadVerificationDocs } from "../actions";
 import { enqueueSnackbar } from "notistack";
-import { DOCTOR_ONBOARDING, PATIENT_ONBOARDING } from "../actions/types";
+import { DOCTOR_ONBOARDING, PATIENT_ONBOARDING, UPLOAD_VERIFICATION_DOCS } from "../actions/types";
 import history from "../../history";
-import { doctorOnboardingApi, patientOnboardingApi } from "../apis";
+import { doctorOnboardingApi, patientOnboardingApi, uploadDocsApi } from "../apis";
 
 /**
  * Worker saga: Handles doctor onboarding.
@@ -90,6 +90,32 @@ function* handlePatientOnboarding(action) {
 }
 
 /**
+ * Worker saga: Handles uploading verification documents.
+ * Dispatches success or error actions and refreshes the dashboard upon success.
+ *
+ * @generator
+ * @function handleUploadVerificationDocs
+ * @memberof store.sagas.onBoardingSaga
+ * @param {Object} action - Redux action object.
+ * @param {Object} action.payload - The payload containing authentication details and form data.
+ * @param {string} action.payload.token - The authentication token.
+ * @param {FormData} action.payload.formData - The form data containing verification documents.
+ * @yields {Generator} Saga effects for uploading documents and updating the dashboard.
+ */
+function* handleUploadVerificationDocs(action) {
+  try {
+    yield put(uploadVerificationDocs.pending());
+    yield call(uploadDocsApi, action.payload.token, action.payload.formData);
+    yield put(uploadVerificationDocs.success());
+
+    // Refresh the dashboard after successful upload
+    yield put(fetchDashboard({ token: action.payload.token }));
+  } catch (error) {
+    yield put(uploadVerificationDocs.error(error.message));
+  }
+}
+
+/**
  * Watcher saga: Listens for onboarding actions.
  * Triggers the worker saga when an onboarding action is dispatched.
  *
@@ -101,4 +127,6 @@ function* handlePatientOnboarding(action) {
 export default function* watchOnBoardingSaga() {
   yield takeLatest(PATIENT_ONBOARDING, handlePatientOnboarding);
   yield takeLatest(DOCTOR_ONBOARDING, handleDoctorOnboarding);
+  yield takeLatest(UPLOAD_VERIFICATION_DOCS, handleUploadVerificationDocs);
+
 }

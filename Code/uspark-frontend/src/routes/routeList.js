@@ -20,7 +20,7 @@ const ForgotPassword = lazy(() =>
 const ResetPassword = lazy(() =>
   import("../components/public/auth/ResetPassword")
 );
-const Appointments = lazy(() => import("../components/private/Patient/Appointments"));
+const Appointments = lazy(() => import("../components/private/Dashboard/Appointments"));
 const Signup = lazy(() => import("../components/public/auth/Signup"));
 const PublicAboutUs = lazy(() => import("../components/public/AboutUs"));
 const ContactUs = lazy(() => import("../components/public/ContactUs"));
@@ -36,7 +36,8 @@ const AdminDashboard = lazy(() =>
 const Admin = lazy(() =>
   import("../components/private/Dashboard/AdminDashboard")
 );
-const MakeAppointments = lazy(() => import ("../components/private/Patient/MakeAppointments"));
+const MakeAppointments = lazy(() => import("../components/private/Dashboard/MakeAppointments"));
+const DoctorManagePatients = lazy(() => import("../components/private/DoctorPatient/DoctorManagePatients"));
 
 /**
  * List of private routes accessible only to authenticated users.
@@ -88,6 +89,12 @@ export const PrivateRoutes = [
     component: MakeAppointments,
     exact: true,
   },
+  {
+    path: "/my-patients",
+    component: DoctorManagePatients,
+    exact: true,
+
+  }
 ];
 
 /**
@@ -190,5 +197,9 @@ export const doctorRouteList = [
   {
     path: "/profile",
     name: "Profile",
+  },
+  {
+    path: "/my-patients",
+    name: "My Patients",
   },
 ];

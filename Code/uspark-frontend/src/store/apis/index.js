@@ -48,12 +48,6 @@ export const signupApi = (userData) => api.post("/auth/signup", userData);
 export const oAuthSignupApi = (providerData) =>
   api.post("/auth/oauth", providerData);
 
-/**
- * API call to fetch doctors.
- *
- * @returns {Promise<Object>} Resolves with the list of doctors.
- */
-export const fetchDoctorsApi = () => api.get("/api/admin/doctors");
 
 /**
  * API call to verify a doctor's status.
@@ -65,6 +59,11 @@ export const fetchDoctorsApi = () => api.get("/api/admin/doctors");
 export const verifyDoctorApi = (doctorId, decision) =>
   api.post(`/api/admin/verify-doctor/${doctorId}`, { decision });
 
+export const fetchProfileApi = (token) =>
+  api.get("/api/profile", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
 /**
  * API request to fetch dashboard data.
  *
@@ -72,7 +71,7 @@ export const verifyDoctorApi = (doctorId, decision) =>
  * @returns {Promise<Object>} Resolves with the dashboard data.
  */
 export const fetchDashboardApi = (token) =>
-  api.get("/api/dashboard", {
+  api.get("/api/dashboard/all", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -84,7 +83,7 @@ export const fetchDashboardApi = (token) =>
  * @returns {Promise<Object>} Resolves when the upload is successful.
  */
 export const uploadDocsApi = (token, formData) =>
-  api.post("/api/dashboard/doctor/verify", formData, {
+  api.post("/api/onboarding/doctor/verify", formData, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
@@ -191,6 +190,21 @@ export const updateDoctorProfileApi = (token, profileData) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
+export const saveDoctorAvailabilityApi = (token, slots) =>
+  api.post("/api/profile/doctor/availability", { slots }, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const updateDoctorAvailabilityApi = (token, slot) =>
+  api.put(`/api/profile/doctor/availability/${slot._id}`, slot, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const fetchDoctorAvailabilityApi = (token) =>
+  api.get("/api/profile/doctor/availability", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
 export const createMedicalHistoryApi = (token, data) =>
   api.post("/api/medical-history", data, {
     headers: { Authorization: `Bearer ${token}` },
@@ -198,5 +212,41 @@ export const createMedicalHistoryApi = (token, data) =>
 
 export const fetchMedicalHistoryApi = (token) =>
   api.get("/api/medical-history", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const fetchAppointmentsApi = (token) => api.get("/api/appointments", {
+  headers: { Authorization: `Bearer ${token}` },
+});
+export const createAppointmentApi = (payload, token) =>
+  api.post("/api/appointments", payload, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const updateAppointmentApi = (id, payload, token) =>
+  api.put(`/api/appointments/${id}`, payload, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const deleteAppointmentApi = (id, token) =>
+  api.delete(`/api/appointments/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+
+export const fetchHospitalsApi = (lat, long, search = "") =>
+  api.get(`/api/hospitals?lat=${lat}&long=${long}&search=${search}`);
+
+export const fetchDoctorsApi = (token) => api.get("/api/doctors", {
+  headers: { Authorization: `Bearer ${token}` },
+});
+
+export const fetchDoctorPatientsApi = (token) =>
+  api.get("/api/doctors/patients", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const fetchDoctorPatientDetailsApi = (token, patientId) =>
+  api.get(`/api/doctors/patient/${patientId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });

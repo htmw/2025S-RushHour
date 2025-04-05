@@ -1,45 +1,39 @@
-/**
- * @file Doctor onboarding questionnaire component.
- *
- * Collects doctor-specific details such as specialization, experience, and certifications.
- *
- * @namespace src.components.private.onBoarding.DoctorOnBoarding
- * @memberof src.components.private.onBoarding
- */
-
 import React, { useState, useEffect } from "react";
+import {
+  Typography,
+  Paper,
+  Grid,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Button,
+  Box,
+  Autocomplete, TextField
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { TextField, Button, Typography, Paper, Grid2 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { doctorOnboarding } from "../../../store/actions";
+import ResponsiveField from "../../../utils/components/ResponsiveField.jsx";
+import FileUpload from "../../../utils/components/FileUpload.jsx";
+import {
+  doctorOnboarding,
+  fetchHospitals,
+  uploadVerificationDocs,
+} from "../../../store/actions";
 import history from "../../../history";
 
-/**
- * DoctorOnBoarding Component
- *
- * A form to collect doctor details for onboarding.
- *
- * @component
- * @memberof src.components.private.onBoarding.DoctorOnBoarding
- * @returns {JSX.Element} The doctor onboarding form component.
- */
 const DoctorOnBoarding = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth);
-  const { doctorData, loading, error } = useSelector(
-    (state) => state.onBoarding
-  );
+  const hospitals = useSelector((state) => state.makeAppointments.hospitals || []);
 
-  /**
-   * Doctor onboarding form state.
-   *
-   * @type {Object}
-   * @property {string} name - Doctor's full name.
-   * @property {string} specialization - Doctor's area of expertise.
-   * @property {string} experience - Doctor's years of experience.
-   * @property {string} certifications - Doctor's certifications.
-   */
+  const { doctorData, loading, error } = useSelector((state) => state.onBoarding);
+
+  const [selectedHospital, setSelectedHospital] = useState("");
+  const [hospitalAddress, setHospitalAddress] = useState("");
+  const [documents, setDocuments] = useState([]);
+
   const [formData, setFormData] = useState({
     name: user.fullName || "",
     specialization: "",
@@ -47,34 +41,52 @@ const DoctorOnBoarding = () => {
     certifications: "",
   });
 
-  /**
-   * Handles input changes and updates state.
-   *
-   * @function
-   * @memberof src.components.private.onBoarding.DoctorOnBoarding
-   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event.
-   */
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value }, navigate);
   };
 
-  /**
-   * Handles form submission by dispatching doctor onboarding action.
-   *
-   * @function
-   * @memberof src.components.private.onBoarding.DoctorOnBoarding
-   */
-  const handleSubmit = () => {
-    dispatch(doctorOnboarding({ formData, token: user.token }, navigate));
+  const handleSubmit = async () => {
+    const hospitalInfo =
+      selectedHospital === "Other"
+        ? { hospitalName: "Other", hospitalAddress }
+        : {
+          hospitalName: selectedHospital,
+          hospitalAddress:
+            hospitals.find((h) => h.name === selectedHospital)?.vicinity || "",
+        };
+
+    const finalData = { ...formData, ...hospitalInfo };
+
+    await dispatch(doctorOnboarding({ formData: finalData, token: user.token }, navigate));
+
+    if (documents.length > 0) {
+      const form = new FormData();
+      documents.forEach((file) => {
+        form.append("documents", file.fileObject || file); // handle both raw and wrapped
+      });
+
+      await dispatch(uploadVerificationDocs({ formData: form, token: user.token }));
+    }
+
   };
 
-  /**
-   * Redirects to the dashboard if onboarding is complete.
-   *
-   * @function
-   * @memberof src.components.private.onBoarding.DoctorOnBoarding
-   * @effect Runs when `doctorData` updates.
-   */
+  const handleHospitalChange = (e) => {
+    const value = e.target.value;
+    setSelectedHospital(value);
+    if (value !== "Other") setHospitalAddress("");
+  };
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        dispatch(fetchHospitals({ lat: latitude, long: longitude }));
+      },
+      () => alert("Enable location to fetch hospitals."),
+      { enableHighAccuracy: true }
+    );
+  }, [dispatch]);
+
   useEffect(() => {
     if (doctorData) {
       history.push("/dashboard");
@@ -82,74 +94,83 @@ const DoctorOnBoarding = () => {
   }, [doctorData, navigate]);
 
   return (
-    <Paper elevation={3} style={{ padding: 20, marginTop: 20 }}>
-      <Typography variant="h5" gutterBottom>
+    <Paper elevation={4} sx={{ p: { xs: 3, sm: 5 }, borderRadius: 3, mt: 4 }}>
+      <Typography variant="h4" fontWeight="bold" mb={3}>
         Doctor Onboarding
       </Typography>
 
-      <Grid2 container spacing={2}>
-        <Grid2 size={{ xs: 12 }}>
-          <TextField
-            label="Full Name"
-            name="name"
-            fullWidth
-            value={formData.name}
-            onChange={handleChange}
-            data-cy="onBoarding-name"
-          />
-        </Grid2>
-        <Grid2 size={{ xs: 12 }}>
-          <TextField
-            label="Specialization"
-            name="specialization"
-            fullWidth
-            value={formData.specialization}
-            onChange={handleChange}
-            data-cy="onBoarding-specialization"
-          />
-        </Grid2>
-        <Grid2 size={{ xs: 12 }}>
-          <TextField
-            label="Years of Experience"
-            name="experience"
-            type="number"
-            fullWidth
-            value={formData.experience}
-            onChange={handleChange}
-            data-cy="onBoarding-experience"
-          />
-        </Grid2>
-        <Grid2 size={{ xs: 12 }}>
-          <TextField
-            label="Certifications"
-            name="certifications"
-            fullWidth
-            multiline
-            rows={3}
-            value={formData.certifications}
-            onChange={handleChange}
-            data-cy="onBoarding-certifications"
-          />
-        </Grid2>
-      </Grid2>
+      <Box component="form">
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <ResponsiveField label="Full Name" name="name" value={formData.name} onChange={handleChange} />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <ResponsiveField label="Specialization" name="specialization" value={formData.specialization} onChange={handleChange} />
+          </Grid>
 
-      {error && (
-        <Typography color="error" variant="body2" style={{ marginTop: 10 }}>
-          {error}
-        </Typography>
-      )}
+          <Grid item xs={12} md={6}>
+            <ResponsiveField label="Years of Experience" name="experience" type="number" value={formData.experience} onChange={handleChange} />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <ResponsiveField label="Certifications" name="certifications" multiline rows={2} value={formData.certifications} onChange={handleChange} />
+          </Grid>
 
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSubmit}
-        disabled={loading}
-        style={{ marginTop: 20 }}
-        data-cy="onBoarding-submit"
-      >
-        {loading ? "Submitting..." : "Submit"}
-      </Button>
+          <Grid item xs={12}>
+            {/* Hospital Autocomplete Field */}
+            <ResponsiveField
+              label="Select or Search Hospital"
+              customInput={
+                <Autocomplete
+                  fullWidth
+                  freeSolo
+                  size="small"
+                  options={[...hospitals.map((h) => h.name), "Other"]}
+                  value={selectedHospital}
+                  onChange={(e, newValue) => {
+                    setSelectedHospital(newValue);
+                    if (newValue !== "Other") setHospitalAddress("");
+                  }}
+                  renderInput={(params) => <TextField {...params} variant="outlined" />}
+                />
+              }
+            />
+          </Grid>
+
+          {selectedHospital === "Other" && (
+            <Grid item xs={12}>
+              <ResponsiveField label="Hospital/Clinic Address" value={hospitalAddress} onChange={(e) => setHospitalAddress(e.target.value)} />
+            </Grid>
+          )}
+
+          <Grid item xs={12}>
+            <Typography variant="subtitle1" fontWeight="bold" mb={1}>
+              Upload Verification Documents (PDF, JPG, PNG)
+            </Typography>
+            <FileUpload
+              multiple
+              onFilesChange={(files) => setDocuments(files.map(f => f.fileObject))}
+              maxFiles={5}
+              accept={["application/pdf", "image/jpeg", "image/png"]}
+              helperText="Drag & drop files or click to browse"
+              autoUpload={false}
+            />
+          </Grid>
+
+          {error && (
+            <Grid item xs={12}>
+              <Typography color="error">{error}</Typography>
+            </Grid>
+          )}
+
+          <Grid item xs={12} textAlign="right">
+            <Button variant="contained" color="primary" onClick={handleSubmit} disabled={loading} size="large">
+              {loading ? "Submitting..." : "Submit"}
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
     </Paper>
+
   );
 };
 

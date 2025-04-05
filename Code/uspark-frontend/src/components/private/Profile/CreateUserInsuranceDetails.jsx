@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Paper, Typography, Stack, Button } from "@mui/material";
 import ResponsiveField from "../../../utils/components/ResponsiveField.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import { createInsurance, fetchInsurance } from "../../../store/actions";
+import { createInsurance } from "../../../store/actions/index.js";
 
 const CreateInsuranceDetails = ({ userData }) => {
   const dispatch = useDispatch();
@@ -16,9 +16,7 @@ const CreateInsuranceDetails = ({ userData }) => {
     holderName: userData?.fullName || "",
   });
 
-  useEffect(() => {
-    dispatch(fetchInsurance());
-  }, [dispatch]);
+
 
   useEffect(() => {
     if (insuranceData && !insuranceData.error) {
@@ -55,6 +53,7 @@ const CreateInsuranceDetails = ({ userData }) => {
           value={formData.providerName}
           onChange={handleChange}
           inputProps={{ "data-cy": "insurance-provider" }}
+          required
         />
         <ResponsiveField
           label="Start Date"
@@ -64,6 +63,7 @@ const CreateInsuranceDetails = ({ userData }) => {
           value={formData.startDate}
           onChange={handleChange}
           inputProps={{ "data-cy": "insurance-start-date" }}
+          required
         />
         <ResponsiveField
           label="End Date"
@@ -73,6 +73,7 @@ const CreateInsuranceDetails = ({ userData }) => {
           value={formData.endDate}
           onChange={handleChange}
           inputProps={{ "data-cy": "insurance-end-date" }}
+          required
         />
         <ResponsiveField
           label="Policy Holder Name"
@@ -80,6 +81,7 @@ const CreateInsuranceDetails = ({ userData }) => {
           value={formData.holderName}
           onChange={handleChange}
           inputProps={{ "data-cy": "insurance-holder" }}
+          required
         />
       </Stack>
 

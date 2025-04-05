@@ -16,11 +16,11 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Typography } from "@mui/material";
 import "../../../css/PatientHomePage.css";
-import health from "./Fact.js";
+import health from "../Dashboard/Fact.js";
 import OneCard from "./OneCard";
 import { motion } from "framer-motion";
-import MedicalNews from "./News";
-import InitialAssessmentCard from "./InitialAssesment";
+import MedicalNews from "../Dashboard/News.jsx";
+import InitialAssessmentCard from "../Dashboard/InitialAssesment.jsx";
 import Chatbot from "../Chatbot/Chatbox";
 import HospitalLocator from "./HospitalLocator.jsx";
 
@@ -101,7 +101,7 @@ const PatientHomePage = () => {
         <OneCard />
       </motion.div>
       <Chatbot />
-      <HospitalLocator/>
+      <HospitalLocator />
     </motion.div>
   );
 };

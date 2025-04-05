@@ -59,6 +59,5 @@ function* handleVerifyDoctor(action) {
  * @yields {Generator} Watches for FETCH_DOCTORS and VERIFY_DOCTOR actions.
  */
 export default function* watchAdminSaga() {
-  yield takeLatest(FETCH_DOCTORS, handleFetchDoctors);
   yield takeLatest(VERIFY_DOCTOR, handleVerifyDoctor);
 }

@@ -5,7 +5,14 @@ const Patient = require("../Models/onBoarding/Patient");
 const Doctor = require("../Models/onBoarding/Doctor");
 const HealthIssue = require("../Models/onBoarding/HealthIssue");
 const { default: authenticate } = require("../Middleware/authenticate");
-
+const { sendEmail, ADMIN_EMAIL } = require("../utils/emailService");
+const createUploadMiddleware = require("../Middleware/upload");
+const { ADMIN_PANEL_URL } = require("../utils/emailService");
+const { AWS_BUCKET_RUSH_HOUR_UPLOADS } = require("../config.js");
+const upload = createUploadMiddleware(
+  "verification-docs",
+  AWS_BUCKET_RUSH_HOUR_UPLOADS
+);
 /**
  * @swagger
  * tags:
@@ -93,6 +100,70 @@ router.post("/patient", authenticate, async (req, res) => {
 
 /**
  * @swagger
+ * /api/dashboard/doctor/verify:
+ *   post:
+ *     summary: Upload verification documents for doctor approval
+ *     tags: [Dashboard]
+ *     description: Allows doctors to upload verification documents for approval.
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               documents:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 example: ["file1.pdf", "file2.jpg"]
+ *     responses:
+ *       201:
+ *         description: File uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FileUploadResponse'
+ *       500:
+ *         description: Internal server error
+ */
+
+router.post(
+  "/doctor/verify",
+  authenticate,
+  upload.array("documents", 5),
+  async (req, res) => {
+    try {
+      const doctor = await Doctor.findOne({ userId: req.user.userId });
+      if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+
+      doctor.verificationDocs = req.files.map((file) => file.location);
+      doctor.verificationStatus = "pending";
+      await doctor.save();
+
+      const adminMessage = `
+        <h2>New Doctor Verification Request</h2>
+        <p><strong>Doctor ID:</strong> ${doctor._id}</p>
+        <p><strong>Specialization:</strong> ${doctor.specialization}</p>
+        <a href="${ADMIN_PANEL_URL}">Review in Admin Portal</a>
+      `;
+
+      sendEmail(ADMIN_EMAIL, "Doctor Verification Request", adminMessage);
+      res
+        .status(201)
+        .json({ message: "Verification request submitted successfully." });
+    } catch (error) {
+      console.error("Verification Upload Error:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+);
+
+/**
+ * @swagger
  * /api/onboarding/doctor:
  *   post:
  *     summary: Doctor Onboarding
@@ -129,7 +200,10 @@ router.post("/patient", authenticate, async (req, res) => {
  *         description: Server error
  */
 router.post("/doctor", authenticate, async (req, res) => {
-  const { specialization, experience, certifications } = req.body;
+  const { specialization, experience, certifications, hospitalName, hospitalAddress } = req.body;
+  console.log({ specialization, experience, certifications, hospitalName, hospitalAddress });
+
+  // (Optional) Validate required fields here
 
   try {
     const user = await User.findById(req.user.userId);
@@ -137,19 +211,19 @@ router.post("/doctor", authenticate, async (req, res) => {
     if (user.isOnboarded)
       return res.status(400).json({ message: "User already onboarded" });
 
-    // ✅ Create Doctor Profile
     const newDoctor = new Doctor({
       userId: user._id,
       specialization,
       experience,
       certifications,
-      verificationStatus: "pending", // Initial verification status
-      verificationDocs: [], // Initial verification documents
+      verificationStatus: "pending",
+      verificationDocs: [],
+      hospitalName,
+      hospitalAddress,
     });
 
     await newDoctor.save();
 
-    // ✅ Update User Model
     user.role = "doctor";
     user.isOnboarded = true;
     await user.save();
@@ -160,6 +234,7 @@ router.post("/doctor", authenticate, async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 });
+
 
 /**
  * @swagger

@@ -8,7 +8,9 @@ const adminRoutes = require("./admin");
 const chatRoutes = require("./chat");
 const hospitalsRoutes = require("./hospitals");
 const appointmentRoutes = require("./appointments");
-const MedicalHistory = require("./medicalHistory")
+const MedicalHistory = require("./medicalHistory");
+const profileRoutes = require("./profile");
+const doctorRoutes = require("./doctors");
 const router = express.Router();
 
 /**
@@ -35,7 +37,9 @@ router.use("/profile-image", profileImageRoutes);
 router.use("/insurance", insuranceRoutes);
 router.use("/admin", adminRoutes);
 router.use("/chat", chatRoutes);
+router.use("/profile", profileRoutes);
 router.use("/hospitals", hospitalsRoutes);
 router.use("/appointments", appointmentRoutes);
 router.use("/medical-history", MedicalHistory);
+router.use("/doctors", doctorRoutes);
 module.exports = router;
