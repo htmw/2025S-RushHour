@@ -9,7 +9,7 @@
 /** Theme Management */
 export const SET_THEME = "SET_THEME";
 export const SET_THEME_SUCCESS = "SET_THEME_SUCCESS";
-
+  export const SET_THEME_FAILURE = "SET_THEME_FAILURE";         
 /** Dashboard */
 export const FETCH_DASHBOARD = "FETCH_DASHBOARD";
 export const FETCH_DASHBOARD_PENDING = "FETCH_DASHBOARD_PENDING";
