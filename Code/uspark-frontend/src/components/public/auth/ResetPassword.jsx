@@ -1,6 +1,18 @@
+/**
+ * @file ResetPassword Component
+ * @namespace src.components.public.auth.ResetPassword
+ * @memberof src.components.public.auth
+ *
+ * This component allows users to reset their password using a token-based link.
+ * Features include:
+ * - Token validation via route params
+ * - Form input for new password and confirm password
+ * - Error and success feedback
+ * - Dispatch to backend to complete password reset
+ */
+
 import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import {
   Container,
   Typography,
@@ -12,6 +24,16 @@ import {
 } from "@mui/material";
 import { resetPasswordApi } from "../../../store/apis";
 import { enqueueSnackbar } from "notistack";
+
+/**
+ * ResetPassword Component
+ *
+ * @memberof src.components.public.auth.ResetPassword
+ * @returns {JSX.Element} - A form allowing the user to reset their password using a valid token.
+ *
+ * @example
+ * <ResetPassword />
+ */
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();

@@ -1,3 +1,14 @@
+/**
+ * @file DoctorAvailabilityCalendar Component
+ *
+ * @namespace src.components.private.Dashboard.DoctorAvailabilityCalendar
+ * @memberof src.components.private.Dashboard
+ *
+ * This component displays a doctor's availability calendar using MUI's DateCalendar.
+ * It shows available days, highlights booked slots, and allows viewing appointment
+ * details. Integrates with appointment and availability data from Redux.
+ */
+
 import React, { useState } from 'react';
 import {
     Box,
@@ -17,6 +28,21 @@ import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 
+/**
+ * DoctorAvailabilityCalendar Component
+ *
+ * @memberof src.components.private.Dashboard.DoctorAvailabilityCalendar
+ *
+ * @param {Object} props
+ * @param {Array} props.availability - Array of available time slot objects for the doctor.
+ * @param {Array} props.appointments - Array of booked appointments.
+ *
+ * @returns {JSX.Element} - A calendar with marked available and booked days and time slots,
+ * with tooltip previews and dialog-based appointment details.
+ *
+ * @example
+ * <DoctorAvailabilityCalendar availability={availability} appointments={appointments} />
+ */
 
 const generateTimeSlots = (startTime, endTime, slotDuration) => {
     const slots = [];

@@ -1,3 +1,10 @@
+/**
+ * @swagger
+ * tags:
+ *   - name: Appointments
+ *     description: Endpoints for booking, viewing, updating, and deleting appointments
+ */
+
 require("dotenv").config();
 const express = require("express");
 const router = express.Router();
@@ -6,15 +13,51 @@ const { sendEmail } = require("../utils/emailService"); // or wherever your util
 const Doctor = require("../Models/onBoarding/Doctor");
 const Appointment = require("../Models/Appointment");
 const { default: authenticate } = require("../Middleware/authenticate");
+const User = require("../Models/User"); // adjust path if needed
 
 router.use(cors());
 
 
 
-
-
-// API to book an appointment
-
+/**
+ * @swagger
+ * /api/appointments:
+ *   post:
+ *     summary: Book an appointment
+ *     tags: [Appointments]
+ *     description: Book a new appointment with a doctor
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               doctorId:
+ *                 type: string
+ *                 example: "65f4c3bdf1a3d7a9e9a4d8c2"
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-04-09"
+ *               startTime:
+ *                 type: string
+ *                 example: "10:30"
+ *               reason:
+ *                 type: string
+ *                 example: "Routine Checkup"
+ *     responses:
+ *       201:
+ *         description: Appointment booked and confirmation emails sent
+ *       400:
+ *         description: Missing fields or time slot already booked
+ *       404:
+ *         description: Doctor not found
+ *       500:
+ *         description: Failed to book appointment
+ */
 router.post("/", authenticate, async (req, res) => {
   try {
     const { doctorId, date, startTime, reason } = req.body;
@@ -76,18 +119,48 @@ router.post("/", authenticate, async (req, res) => {
 
 
 
-// API to fetch all appointments
+/**
+ * @swagger
+ * /api/appointments:
+ *   get:
+ *     summary: Get appointments for current user
+ *     tags: [Appointments]
+ *     description: Returns all appointments for the authenticated patient or doctor
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of appointments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       403:
+ *         description: Unauthorized role
+ *       404:
+ *         description: User or doctor not found
+ *       500:
+ *         description: Failed to fetch appointments
+ */
 router.get("/", authenticate, async (req, res) => {
   try {
-    const user = req.user;
+    const { email, userId } = req.user;
+    // Fetch the user with role from the DB
+    const dbUser = await User.findOne({ email });
+    if (!dbUser) return res.status(404).json({ message: "User not found" });
 
     let query = {};
-    if (user.role === "patient") {
-      query.email = user.email;
-    } else if (user.role === "doctor") {
-      const doctor = await Doctor.findOne({ userId: user.userId });
+    if (dbUser.role === "patient") {
+      query.userId = userId;
+    } else if (dbUser.role === "doctor") {
+      const doctor = await Doctor.findOne({ userId: userId });
+      console.log({ doctor })
       if (!doctor) return res.status(404).json({ message: "Doctor not found" });
       query.doctor = doctor._id;
+    } else {
+      return res.status(403).json({ message: "Unauthorized role" });
     }
 
     const appointments = await Appointment.find(query)
@@ -102,7 +175,49 @@ router.get("/", authenticate, async (req, res) => {
 });
 
 
-// API to reschedule an appointment
+/**
+ * @swagger
+ * /api/appointments/{id}:
+ *   put:
+ *     summary: Reschedule an appointment
+ *     tags: [Appointments]
+ *     description: Update an existing appointment (only allowed by the patient who booked it)
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Appointment ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-04-15"
+ *               startTime:
+ *                 type: string
+ *                 example: "14:00"
+ *               reason:
+ *                 type: string
+ *                 example: "Follow-up"
+ *     responses:
+ *       200:
+ *         description: Appointment rescheduled and emails sent
+ *       403:
+ *         description: Unauthorized to update
+ *       404:
+ *         description: Appointment not found
+ *       500:
+ *         description: Failed to reschedule appointment
+ */
 router.put("/:id", authenticate, async (req, res) => {
   try {
     const user = req.user;
@@ -165,7 +280,32 @@ router.put("/:id", authenticate, async (req, res) => {
 
 
 
-// API to delete an appointment
+/**
+ * @swagger
+ * /api/appointments/{id}:
+ *   delete:
+ *     summary: Cancel an appointment
+ *     tags: [Appointments]
+ *     description: Deletes an appointment. Only the patient who booked or the doctor can delete.
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Appointment ID
+ *     responses:
+ *       200:
+ *         description: Appointment cancelled and emails sent
+ *       403:
+ *         description: Unauthorized to delete
+ *       404:
+ *         description: Appointment not found
+ *       500:
+ *         description: Failed to delete appointment
+ */
 router.delete("/:id", authenticate, async (req, res) => {
   try {
     const user = req.user;

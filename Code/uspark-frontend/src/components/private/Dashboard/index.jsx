@@ -1,3 +1,14 @@
+/**
+ * @file Dashboard Component
+ *
+ * @namespace src.components.private.Dashboard
+ * @memberof src.components.private
+ *
+ * This is the main Dashboard entry component that renders role-specific dashboards
+ * for patients, doctors, and admins. It checks authentication and onboarding status,
+ * fetches dashboard data, and handles loading/error states.
+ */
+
 import React, { useEffect } from "react";
 import { Container, Typography, CircularProgress, Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,6 +17,18 @@ import { useNavigate } from "react-router-dom";
 import PatientDashboard from "./PatientDashboard";
 import DoctorDashboard from "./DoctorDashboard.jsx";
 import AdminDashboard from "./AdminDashboard";
+
+/**
+ * Dashboard Component
+ *
+ * @memberof src.components.private.Dashboard
+ *
+ * @returns {JSX.Element} - Renders the appropriate dashboard based on the user's role.
+ * Displays loading and error states while fetching dashboard data.
+ *
+ * @example
+ * <Dashboard />
+ */
 
 const Dashboard = () => {
   const navigate = useNavigate();

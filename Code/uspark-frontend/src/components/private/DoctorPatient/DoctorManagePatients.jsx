@@ -1,3 +1,15 @@
+/**
+ * @file DoctorManagePatients Component
+ *
+ * @namespace src.components.private.DoctorPatient.DoctorManagePatients
+ * @memberof src.components.private.DoctorPatient
+ *
+ * This component allows doctors to view and manage their patients. It fetches the
+ * list of patients associated with the doctor, displays their basic info, and
+ * opens a detailed dialog showing medical history, insurance details, and upcoming
+ * appointments when "Manage" is clicked.
+ */
+
 import React, { useEffect, useState } from "react";
 import {
     Box, Typography, Paper, Grid, Button, Dialog, DialogTitle,
@@ -8,6 +20,20 @@ import {
     fetchDoctorPatients,
     fetchDoctorPatientDetails,
 } from "../../../store/actions";
+
+
+/**
+ * DoctorManagePatients Component
+ *
+ * @memberof src.components.private.DoctorPatient.DoctorManagePatients
+ *
+ * @returns {JSX.Element} - Renders a grid of patient cards and a dialog showing
+ * detailed patient information, including medical history, insurance info, and
+ * upcoming appointments.
+ *
+ * @example
+ * <DoctorManagePatients />
+ */
 
 const DoctorManagePatients = () => {
     const dispatch = useDispatch();

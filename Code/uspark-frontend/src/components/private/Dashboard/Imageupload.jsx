@@ -1,3 +1,14 @@
+/**
+ * @file Imageupload Component
+ *
+ * @namespace src.components.private.Dashboard.Imageupload
+ * @memberof src.components.private.Dashboard
+ *
+ * This component displays and manages the user's profile picture.
+ * It allows users to preview, change, and upload a new image.
+ * The component integrates with Redux actions for upload and fetch.
+ */
+
 import React, { useState, useEffect } from "react";
 import {
   Avatar,
@@ -12,6 +23,22 @@ import { Edit, PhotoCamera } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { uploadProfileImage, fetchProfileImage } from "../../../store/actions";
+
+
+/**
+ * Imageupload Component
+ *
+ * @memberof src.components.private.Dashboard.Imageupload
+ *
+ * @param {Object} props
+ * @param {Object} props.userData - The current user's data, used to display initials or image.
+ * @param {boolean} props.fromProfilePage - Flag to skip fetching image if already present.
+ *
+ * @returns {JSX.Element} - Renders an avatar with image upload and preview functionality.
+ *
+ * @example
+ * <Imageupload userData={userData} fromProfilePage />
+ */
 
 const Imageupload = ({ userData, fromProfilePage }) => {
   const theme = useTheme();

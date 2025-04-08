@@ -1,3 +1,10 @@
+/**
+ * @swagger
+ * tags:
+ *   - name: Doctors
+ *     description: Endpoints for retrieving doctor and patient information
+ */
+
 const express = require("express");
 const router = express.Router();
 const Doctor = require("../Models/onBoarding/Doctor");
@@ -8,6 +15,53 @@ const Patient = require("../Models/onBoarding/Patient");
 const Insurance = require("../Models/Insurance");
 const MedicalHistory = require("../Models/MedicalHistory");
 
+/**
+ * @swagger
+ * /api/doctors:
+ *   get:
+ *     summary: Get all doctors with availability
+ *     tags: [Doctors]
+ *     description: Retrieve a list of all doctors who have availability set
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of doctors with availability
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     example: "65f7d9b89b3c4f1a1f4c3b1e"
+ *                   fullName:
+ *                     type: string
+ *                     example: "Dr. John Smith"
+ *                   email:
+ *                     type: string
+ *                     example: "john@example.com"
+ *                   specialization:
+ *                     type: string
+ *                     example: "Cardiology"
+ *                   experience:
+ *                     type: number
+ *                     example: 10
+ *                   hospitalName:
+ *                     type: string
+ *                     example: "Saint Luke's Hospital"
+ *                   hospitalAddress:
+ *                     type: string
+ *                     example: "123 Main St, St. Louis, MO"
+ *                   availability:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *       500:
+ *         description: Failed to fetch doctors
+ */
 router.get("/", authenticate, async (req, res) => {
     try {
         const doctors = await Doctor.find({
@@ -32,6 +86,40 @@ router.get("/", authenticate, async (req, res) => {
     }
 });
 
+
+/**
+ * @swagger
+ * /api/doctors/patients:
+ *   get:
+ *     summary: Get patients of the authenticated doctor
+ *     tags: [Doctors]
+ *     description: Retrieve a list of patients who have booked appointments with the logged-in doctor
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of patient users with basic profiles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                   fullName:
+ *                     type: string
+ *                   email:
+ *                     type: string
+ *                   patientProfile:
+ *                     type: object
+ *                     description: Profile info from Patient collection
+ *       403:
+ *         description: Only doctors can access this route
+ *       500:
+ *         description: Server error
+ */
 router.get("/patients", authenticate, async (req, res) => {
     try {
         const user = await User.findById(req.user.userId); // ✅ Fetch full user
@@ -63,6 +151,52 @@ router.get("/patients", authenticate, async (req, res) => {
     }
 });
 
+
+/**
+ * @swagger
+ * /api/doctors/patient/{id}:
+ *   get:
+ *     summary: Get full patient details
+ *     tags: [Doctors]
+ *     description: Retrieve full details (profile, insurance, medical history, appointments) of a patient
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID of the patient
+ *     responses:
+ *       200:
+ *         description: Patient full information
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                 profile:
+ *                   type: object
+ *                 insurance:
+ *                   type: object
+ *                 medicalHistory:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 appointments:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       403:
+ *         description: Only doctors can access this route
+ *       404:
+ *         description: Patient not found
+ *       500:
+ *         description: Server error
+ */
 router.get("/patient/:id", authenticate, async (req, res) => {
     try {
         const user = await User.findById(req.user.userId); // ✅ Same fix here
@@ -92,10 +226,5 @@ router.get("/patient/:id", authenticate, async (req, res) => {
         res.status(500).json({ message: "Failed to fetch patient data" });
     }
 });
-
-
-
-
-
 
 module.exports = router;

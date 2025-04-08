@@ -1,3 +1,15 @@
+/**
+ * @file DoctorProfileView Component
+ *
+ * @namespace src.components.private.profile.DoctorProfileView
+ * @memberof src.components.private.profile
+ *
+ * This component provides a comprehensive profile management view for doctors.
+ * It includes editable personal and professional information fields, hospital selection,
+ * document upload for verification, and an availability calendar.
+ * Doctors can update their details and manage verification documents from this interface.
+ */
+
 import React, { useEffect, useState } from "react";
 import {
   Typography,
@@ -23,6 +35,21 @@ import ImageUpload from "../Dashboard/Imageupload";
 import ResponsiveField from "../../../utils/components/ResponsiveField.jsx";
 import FileUpload from "../../../utils/components/FileUpload"; // or wherever it's stored
 import DoctorAvailabilityCalendar from "./DoctorAvailabilityCalendar"; // adjust path as needed
+
+/**
+ * DoctorProfileView Component
+ *
+ * @memberof src.components.private.profile.DoctorProfileView
+ *
+ * @param {Object} props
+ * @param {string} props.token - The authentication token used for authorized actions.
+ *
+ * @returns {JSX.Element} - Renders the doctor profile view, including editable profile fields,
+ * document upload modal, verification status alerts, and availability calendar.
+ *
+ * @example
+ * <DoctorProfileView token={token} />
+ */
 
 const DoctorProfileView = ({ token }) => {
   const dispatch = useDispatch();

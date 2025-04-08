@@ -1,3 +1,15 @@
+/**
+ * @file PatientProfileView Component
+ *
+ * @namespace src.components.private.profile.PatientProfileView
+ * @memberof src.components.private.profile
+ *
+ * This component renders and manages the patient profile section. It includes
+ * editable fields for age, sex, height, weight, and health issues, along with
+ * integrated components for uploading profile images, managing insurance details,
+ * and viewing medical history. It supports live health issue search and creation.
+ */
+
 import React, { useState } from "react";
 import {
   Typography,
@@ -20,6 +32,22 @@ import {
 import { debounce } from "lodash";
 import ResponsiveField from "../../../utils/components/ResponsiveField.jsx";
 import MedicalHistory from "./MedicalHistory.jsx";
+
+
+/**
+ * PatientProfileView Component
+ *
+ * @memberof src.components.private.profile.PatientProfileView
+ *
+ * @param {Object} props
+ * @param {Object} props.userData - The authenticated patient's profile data.
+ *
+ * @returns {JSX.Element} - Renders a patient profile form with fields for personal
+ * and medical details, image upload, insurance entry, and medical history tracking.
+ *
+ * @example
+ * <PatientProfileView userData={userData} />
+ */
 
 const PatientProfileView = ({ userData }) => {
   const dispatch = useDispatch();

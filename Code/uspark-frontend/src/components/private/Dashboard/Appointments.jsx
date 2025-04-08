@@ -1,3 +1,13 @@
+/**
+ * @file AppointmentsPage Component
+ *
+ * @namespace src.components.private.Dashboard.AppointmentsPage
+ * @memberof src.components.private.Dashboard
+ *
+ * This component displays a list of user appointments with options to edit or cancel.
+ * It integrates with Redux to fetch, update, and delete appointments. Dialog is used for editing.
+ */
+
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -21,6 +31,18 @@ import {
   fetchAppointments,
   updateAppointment,
 } from "../../../store/actions";
+
+
+/**
+ * AppointmentsPage Component
+ *
+ * @memberof src.components.private.Dashboard.AppointmentsPage
+ *
+ * @returns {JSX.Element} - A list of upcoming appointments with edit and cancel functionality.
+ *
+ * @example
+ * <AppointmentsPage />
+ */
 
 const AppointmentsPage = () => {
   const token = useSelector((state) => state.auth.token);

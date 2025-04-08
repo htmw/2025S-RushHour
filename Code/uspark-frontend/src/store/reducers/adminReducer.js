@@ -36,13 +36,13 @@ const initialState = {
  */
 const adminReducer = (state = initialState, action) => {
   switch (action.type) {
-    case types.FETCH_DOCTORS_PENDING:
+    case types.ADMIN_DOCTOR_API_PENDING:
       return { ...state, loading: true, error: null };
 
-    case types.FETCH_DOCTORS_SUCCESS:
+    case types.ADMIN_DOCTOR_API_SUCCESS:
       return { ...state, loading: false, doctors: action.payload };
 
-    case types.FETCH_DOCTORS_ERROR:
+    case types.ADMIN_DOCTOR_API_ERROR:
       return { ...state, loading: false, error: action.payload };
 
     case types.VERIFY_DOCTOR_PENDING:

@@ -5,12 +5,15 @@ console.log(ENV);
 const config = {
   local: {
     FRONTEND_URL: process.env.FRONTEND_URL,
+    BACKEND_URL: process.env.BACKEND_URL,
   },
   staging: {
     FRONTEND_URL: process.env.STAGE_FRONTEND_URL,
+    BACKEND_URL: process.env.BACKEND_URL_STAGE,
   },
   prod: {
     FRONTEND_URL: process.env.PROD_FRONTEND_URL,
+    BACKEND_URL: process.env.BACKEND_URL_STAGE,
   },
 };
 const finalConfig = config[ENV];

@@ -1,3 +1,15 @@
+/**
+ * @file ForgotPassword Component
+ * @namespace src.components.public.auth.ForgotPassword
+ * @memberof src.components.public.auth
+ *
+ * This component handles the password reset flow by allowing users to input their email
+ * and receive a reset link. It features:
+ * - Form submission with Redux dispatch
+ * - Loading and countdown feedback
+ * - Success and error message handling
+ */
+
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -10,6 +22,16 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { forgotPassword } from "../../../store/actions";
+
+/**
+ * ForgotPassword Component
+ *
+ * @memberof src.components.public.auth.ForgotPassword
+ * @returns {JSX.Element} - A form interface for users to request a password reset link via email.
+ *
+ * @example
+ * <ForgotPassword />
+ */
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");

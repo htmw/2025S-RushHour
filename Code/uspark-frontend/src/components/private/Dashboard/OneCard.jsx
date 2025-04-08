@@ -1,9 +1,35 @@
+/**
+ * @file OneCard Component
+ *
+ * @namespace src.components.private.Dashboard.OneCard
+ * @memberof src.components.private.Dashboard
+ *
+ * This component displays a patient's profile summary card. It includes personal
+ * details, insurance information, and a preview of recent medical history along
+ * with a QR code and avatar for quick identification.
+ */
+
 import React from "react";
 import { Paper, Stack, Typography, Avatar, Divider, Grid, Box } from "@mui/material";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import HealingIcon from "@mui/icons-material/Healing";
 import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import moment from "moment";
+
+/**
+ * OneCard Component
+ *
+ * @memberof src.components.private.Dashboard.OneCard
+ *
+ * @param {Object} props
+ * @param {Object} props.data - Patient data including personal info, insurance, and medical history.
+ *
+ * @returns {JSX.Element} - A stylized card displaying the patient's profile snapshot
+ * with avatar, health info, insurance details, and recent medical history.
+ *
+ * @example
+ * <OneCard data={userData} />
+ */
 
 const OneCard = ({ data }) => {
     if (!data) return null;

@@ -1,3 +1,16 @@
+/**
+ * @file Chatbot Component
+ * @namespace src.components.private.Chatbot.Chatbot
+ * @memberof src.components.private.Chatbot
+ *
+ * A floating chatbot widget for the Uheal platform.
+ * Allows users to interact with an AI assistant by sending messages.
+ * Includes:
+ * - A toggleable floating chat icon
+ * - Chat window with styled messages for user and bot
+ * - Axios integration to fetch bot replies from a backend endpoint
+ */
+
 import React, { useState } from "react";
 import {
   Box,
@@ -11,6 +24,16 @@ import ChatIcon from "@mui/icons-material/Chat";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
+
+/**
+ * Chatbot Component
+ *
+ * @memberof src.components.private.Chatbot.Chatbot
+ * @returns {JSX.Element} - The floating chatbot interface with conversation history and input.
+ *
+ * @example
+ * <Chatbot />
+ */
 
 const Chatbot = () => {
   const [open, setOpen] = useState(false);

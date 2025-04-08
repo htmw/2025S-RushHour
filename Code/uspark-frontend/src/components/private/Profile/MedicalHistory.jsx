@@ -1,3 +1,15 @@
+/**
+ * @file MedicalHistory Component
+ *
+ * @namespace src.components.private.profile.MedicalHistory
+ * @memberof src.components.private.profile
+ *
+ * This component manages the patient's medical history records. It supports
+ * adding, editing, and displaying past medical records along with attachments.
+ * Users can view treatment details, dates, and download attached medical files.
+ * It integrates with Redux for state management and dispatches create actions.
+ */
+
 import React, { useState, useEffect } from "react";
 import {
     Typography,
@@ -51,6 +63,18 @@ const getFileIcon = (fileName) => {
 };
 
 
+/**
+ * MedicalHistory Component
+ *
+ * @memberof src.components.private.profile.MedicalHistory
+ *
+ * @returns {JSX.Element} - A complete interface for users to manage and review
+ * their medical history, including details like diagnosis, treatment, and
+ * supporting attachments. Includes a form dialog for creating or editing entries.
+ *
+ * @example
+ * <MedicalHistory />
+ */
 
 const MedicalHistory = ({ }) => {
     const medicalHistories = useSelector((state) => state.medicalHistory?.histories || []);

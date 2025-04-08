@@ -139,6 +139,8 @@ export const updateDoctorAvailability = createAsyncActions(types.UPDATE_DOCTOR_A
 
 export const fetchDoctorPatients = createAsyncActions(types.FETCH_DOCTOR_PATIENTS);
 export const fetchDoctorPatientDetails = createAsyncActions(types.FETCH_DOCTOR_PATIENT_DETAILS);
+export const adminDoctor = createAsyncActions(types.ADMIN_DOCTOR_API);
+
 // For non-standard patterns (like update/delete), you can define manually
 export const updateAppointment = (payload) => ({
   type: types.UPDATE_APPOINTMENT,

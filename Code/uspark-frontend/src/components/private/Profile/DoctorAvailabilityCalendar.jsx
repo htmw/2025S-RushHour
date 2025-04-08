@@ -1,3 +1,15 @@
+/**
+ * @file DoctorAvailabilityCalendar Component
+ *
+ * @namespace src.components.private.profile.DoctorAvailabilityCalendar
+ * @memberof src.components.private.profile
+ *
+ * This component allows doctors to manage their availability by defining
+ * time slots over a selected date range. It supports slot generation, 
+ * weekend inclusion, slot duration configuration, and slot editing. 
+ * Booked slots are visually indicated, and appointment info is shown for edits.
+ */
+
 import React, { useState, useEffect } from "react";
 import {
     Box, Typography, Paper, Button, Grid, Stack, Dialog,
@@ -22,6 +34,18 @@ dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
 
+/**
+ * DoctorAvailabilityCalendar Component
+ *
+ * @memberof src.components.private.profile.DoctorAvailabilityCalendar
+ *
+ * @returns {JSX.Element} - A full-featured calendar interface for doctors
+ * to create, view, filter, and edit their availability time slots,
+ * with pagination and support for showing booked appointments.
+ *
+ * @example
+ * <DoctorAvailabilityCalendar />
+ */
 
 const DoctorAvailabilityCalendar = () => {
     const dispatch = useDispatch();

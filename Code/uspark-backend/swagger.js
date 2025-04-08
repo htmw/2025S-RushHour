@@ -1,5 +1,6 @@
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const config = require("./config"); // Adjust this path
 
 const options = {
   definition: {
@@ -11,8 +12,8 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:5001", // Change based on your deployed environment
-        description: "Local development server",
+        url: config.BACKEND_URL || "http://localhost:5001", // Fallback to localhost if not set
+        description: `${process.env.NODE_ENV || "local"} server`,
       },
     ],
     components: {

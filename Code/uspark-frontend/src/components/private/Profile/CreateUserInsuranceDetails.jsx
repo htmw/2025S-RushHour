@@ -1,8 +1,35 @@
+/**
+ * @file CreateInsuranceDetails Component
+ *
+ * @namespace src.components.private.profile.CreateUserInsuranceDetails
+ * @memberof src.components.private.profile
+ *
+ * This component allows users to input and save their insurance details.
+ * It includes form fields for provider name, start and end dates, and 
+ * the policy holder's name. The component fetches existing insurance data 
+ * if available and provides an interface to submit updates via Redux actions.
+ */
+
 import React, { useState, useEffect } from "react";
 import { Paper, Typography, Stack, Button } from "@mui/material";
 import ResponsiveField from "../../../utils/components/ResponsiveField.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { createInsurance } from "../../../store/actions/index.js";
+
+/**
+ * CreateInsuranceDetails Component
+ *
+ * @memberof src.components.private.profile.CreateUserInsuranceDetails
+ *
+ * @param {Object} props
+ * @param {Object} props.userData - The user's profile data used to prefill holder name.
+ *
+ * @returns {JSX.Element} - Renders a form for adding or updating insurance details,
+ * with validation and Redux integration.
+ *
+ * @example
+ * <CreateInsuranceDetails userData={userData} />
+ */
 
 const CreateInsuranceDetails = ({ userData }) => {
   const dispatch = useDispatch();
