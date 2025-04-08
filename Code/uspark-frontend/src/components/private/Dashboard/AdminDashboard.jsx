@@ -178,7 +178,7 @@ const AdminDashboard = () => {
           <TableBody>
             {filteredDoctors.map((doctor) => (
               <TableRow key={doctor._id}>
-                <TableCell>{doctor.userId.fullName}</TableCell>
+                <TableCell>{doctor.userId?.fullName}</TableCell>
                 <TableCell>{doctor.specialization}</TableCell>
                 <TableCell>{doctor.experience} years</TableCell>
                 <TableCell>
