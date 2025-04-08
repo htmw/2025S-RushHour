@@ -1,3 +1,24 @@
+/**
+ * @file api.js
+ * @namespace src.store.api
+ * @memberof src.store
+ * Centralized API utility for making HTTP requests to the backend.
+ *
+ * This module sets up an `axios` instance with a predefined base URL and exports a collection of
+ * reusable functions to interact with the backend API. It supports various features across the app
+ * including:
+ *
+ * - Authentication (login, signup, OAuth, forgot/reset password)
+ * - Onboarding (patient and doctor onboarding, verification uploads)
+ * - Dashboard (fetching profile, updating profile)
+ * - Healthcare operations (appointments, insurance, medical history)
+ * - Admin tools (verifying doctors)
+ * - Doctor/patient interactions (availability, detailed views)
+ *
+ * Each function abstracts the HTTP logic and includes standard headers like the Authorization token.
+ */
+
+
 import axios from "axios";
 import config from "../../../config";
 /**
@@ -58,6 +79,9 @@ export const oAuthSignupApi = (providerData) =>
  */
 export const verifyDoctorApi = (doctorId, decision) =>
   api.post(`/api/admin/verify-doctor/${doctorId}`, { decision });
+
+export const adminDoctorApi = () =>
+  api.get(`/api/admin/doctors`);
 
 export const fetchProfileApi = (token) =>
   api.get("/api/profile", {
@@ -144,27 +168,74 @@ export const fetchHealthIssuesApi = (query, token) =>
     })
     .then((response) => response.data);
 
+/**
+ * API request to send a password reset link to a user.
+ *
+ * @param {string} email - The user's email address.
+ * @returns {Promise<Object>} Resolves with the response of the API call.
+ */
 export const forgotPasswordApi = (email) =>
   api.post("/auth/forgot-password", { email });
 
+
+/**
+ * API request to reset a user's password.
+ *
+ * @param {string} email - The user's email address.
+ * @param {string} token - The password reset token.
+ * @param {string} newPassword - The new password.
+ * @returns {Promise<Object>} Resolves with the response of the API call.
+ */
 export const resetPasswordApi = (email, token, newPassword) =>
   api.post("/auth/reset-password", { email, token, newPassword });
 
+/**
+ * API request to fetch nearby hospitals.
+ *
+ * @param {number} latitude - The current latitude.
+ * @param {number} longitude - The current longitude.
+ * @returns {Promise<Object>} Resolves with the list of nearby hospitals.
+ */
 export const hospitalsApi = (latitude, longitude) =>
   api.get(`/api/hospitals?lat=${latitude}&long=${longitude}`);
 
+/**
+ * API request to fetch appointments.
+ *
+ * @returns {Promise<Object>} Resolves with the list of appointments.
+ */
 export const appointmentsApi = () => api.post("/api/appointments");
 
+/**
+ * API request to create a new insurance.
+ *
+ * @param {Object} data - The insurance data.
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves with the created insurance.
+ */
 export const createInsuranceApi = (data, token) =>
   api.post("/api/insurance", data, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+/**
+ * API request to fetch the current user's insurance.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves with the insurance data.
+ */
 export const fetchInsuranceApi = (token) =>
   api.get("/api/insurance", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+/**
+ * API request to upload a profile image.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @param {FormData} formData - The form data containing the profile image.
+ * @returns {Promise<Object>} Resolves when the profile image is uploaded successfully.
+ */
 export const uploadProfileImageApi = (token, formData) =>
   api.post("/api/profile-image", formData, {
     headers: {
@@ -173,79 +244,187 @@ export const uploadProfileImageApi = (token, formData) =>
     },
   });
 
+/**
+ * API request to fetch the current user's profile image.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves with the profile image data.
+ */
 export const fetchProfileImageApi = (token) =>
   api.get("/api/profile-image", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+/**
+ * API request to update a patient's profile.
+ *
+ * @param {string} token - The authentication token for API authorization.
+*/
 export const updatePatientProfileApi = (token, data) =>
-  api.post("/api/dashboard/patient", data, {
+  api.post("/api/profile/patient", data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
+/**
+ * API request to update a doctor's profile.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @param {Object} profileData - The profile data to update.
+ * @returns {Promise<Object>} Resolves when the doctor profile is updated successfully.
+ */
 export const updateDoctorProfileApi = (token, profileData) =>
-  api.post("/api/dashboard/doctor/update", profileData, {
+  api.post("/api/profile/doctor/update", profileData, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+/**
+ * API request to save a doctor's availability.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @param {Array<Object>} slots - The availability slots to save.
+ * @returns {Promise<Object>} Resolves when the availability is saved successfully.
+ */
 
 export const saveDoctorAvailabilityApi = (token, slots) =>
   api.post("/api/profile/doctor/availability", { slots }, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+/**
+ * API request to update a doctor's availability slot.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @param {Object} slot - The availability slot to update.
+ * @returns {Promise<Object>} Resolves when the availability slot is updated successfully.
+ */
 export const updateDoctorAvailabilityApi = (token, slot) =>
   api.put(`/api/profile/doctor/availability/${slot._id}`, slot, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+/**
+ * API request to fetch a doctor's availability.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves with the doctor's availability data.
+ */
 
 export const fetchDoctorAvailabilityApi = (token) =>
   api.get("/api/profile/doctor/availability", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+/**
+ * API request to create a new medical history.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @param {Object} data - The medical history data to create.
+ * @returns {Promise<Object>} Resolves when the medical history is created successfully.
+ */
 export const createMedicalHistoryApi = (token, data) =>
   api.post("/api/medical-history", data, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+/**
+ * API request to fetch a user's medical history.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves with the user's medical history data.
+ */
 export const fetchMedicalHistoryApi = (token) =>
   api.get("/api/medical-history", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+/**
+ * API request to fetch a user's appointments.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves with the user's appointments data.
+ */
 export const fetchAppointmentsApi = (token) => api.get("/api/appointments", {
   headers: { Authorization: `Bearer ${token}` },
 });
+/**
+ * API request to create a new appointment.
+ *
+ * @param {Object} payload - The appointment data to create.
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves when the appointment is created successfully.
+ */
 export const createAppointmentApi = (payload, token) =>
   api.post("/api/appointments", payload, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+/**
+ * API request to update an appointment.
+ *
+ * @param {string} id - The unique identifier of the appointment to update.
+ * @param {Object} payload - The appointment data to update.
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves when the appointment is updated successfully.
+ */
 export const updateAppointmentApi = (id, payload, token) =>
   api.put(`/api/appointments/${id}`, payload, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+/**
+ * API request to delete an appointment.
+ *
+ * @param {string} id - The unique identifier of the appointment to delete.
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves when the appointment is deleted successfully.
+ */
 export const deleteAppointmentApi = (id, token) =>
   api.delete(`/api/appointments/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
 
+/**
+ * API request to fetch nearby hospitals.
+ *
+ * @param {number} lat - The current latitude.
+ * @param {number} long - The current longitude.
+ * @param {string} [search=""] - The search query to filter hospitals.
+ * @returns {Promise<Object>} Resolves with the list of nearby hospitals.
+ */
 export const fetchHospitalsApi = (lat, long, search = "") =>
   api.get(`/api/hospitals?lat=${lat}&long=${long}&search=${search}`);
 
+/**
+ * API request to fetch all doctors.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves with the list of doctors.
+ */
 export const fetchDoctorsApi = (token) => api.get("/api/doctors", {
   headers: { Authorization: `Bearer ${token}` },
 });
 
+/**
+ * API request to fetch the list of patients associated with a doctor.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves with the list of patients.
+ */
 export const fetchDoctorPatientsApi = (token) =>
   api.get("/api/doctors/patients", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+/**
+ * API request to fetch the details of a patient associated with a doctor.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @param {string} patientId - The unique identifier of the patient.
+ * @returns {Promise<Object>} Resolves with the patient's details.
+ */
 export const fetchDoctorPatientDetailsApi = (token, patientId) =>
   api.get(`/api/doctors/patient/${patientId}`, {
     headers: { Authorization: `Bearer ${token}` },

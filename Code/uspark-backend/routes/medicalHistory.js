@@ -1,3 +1,10 @@
+/**
+ * @swagger
+ * tags:
+ *   - name: MedicalHistory
+ *     description: Endpoints for managing patient medical history
+ */
+
 const express = require("express");
 const router = express.Router();
 const authenticate = require("../Middleware/authenticate").default;
@@ -10,7 +17,44 @@ const upload = require("../Middleware/upload")(
 const MedicalHistory = require("../Models/MedicalHistory");
 
 
-// Save or update history
+/**
+ * @swagger
+ * /api/medical-history:
+ *   post:
+ *     summary: Save medical history
+ *     tags: [MedicalHistory]
+ *     description: Save a new medical history record for the authenticated user
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               healthIssue:
+ *                 type: string
+ *                 example: "Asthma"
+ *               dateOfOccurrence:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-12-01"
+ *               status:
+ *                 type: string
+ *                 example: "Ongoing"
+ *               treatmentGiven:
+ *                 type: string
+ *                 example: "Inhaler and steroids"
+ *               notes:
+ *                 type: string
+ *                 example: "Patient responds well to medication"
+ *     responses:
+ *       201:
+ *         description: Medical history saved
+ *       500:
+ *         description: Server Error
+ */
 router.post("/", authenticate, async (req, res) => {
     try {
         const { healthIssue, dateOfOccurrence, status, treatmentGiven, ...optionalFields } = req.body;
@@ -32,7 +76,42 @@ router.post("/", authenticate, async (req, res) => {
     }
 });
 
-// Upload attachments
+/**
+ * @swagger
+ * /api/medical-history/upload:
+ *   post:
+ *     summary: Upload medical report
+ *     tags: [MedicalHistory]
+ *     description: Upload an attachment file for medical history (PDF, image, etc.)
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               medicalReport:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: File uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "File uploaded successfully"
+ *                 fileUrl:
+ *                   type: string
+ *                   example: "https://bucket.s3.amazonaws.com/medical-history/..."
+ *       400:
+ *         description: No file uploaded
+ */
 router.post(
     "/upload",
     authenticate,
@@ -47,15 +126,81 @@ router.post(
     }
 );
 
-
-// GET /api/files/signed-url?key=medical-history/userId/fileName.pdf
+/**
+ * @swagger
+ * /api/medical-history/upload:
+ *   post:
+ *     summary: Upload medical report
+ *     tags: [MedicalHistory]
+ *     description: Upload an attachment file for medical history (PDF, image, etc.)
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               medicalReport:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: File uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "File uploaded successfully"
+ *                 fileUrl:
+ *                   type: string
+ *                   example: "https://bucket.s3.amazonaws.com/medical-history/..."
+ *       400:
+ *         description: No file uploaded
+ */
 router.get("/signed-url", authenticate, async (req, res) => {
     const { key } = req.query;
     const signedUrl = await getS3SignedUrl(key, AWS_BUCKET_RUSH_HOUR_UPLOADS); // your S3 util function
     res.json({ url: signedUrl });
 });
 
-// Get all medical history for a user
+/**
+ * @swagger
+ * /api/medical-history:
+ *   get:
+ *     summary: Get all medical history entries
+ *     tags: [MedicalHistory]
+ *     description: Retrieve all medical history records for the authenticated user
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of medical history records
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   healthIssue:
+ *                     type: string
+ *                   dateOfOccurrence:
+ *                     type: string
+ *                     format: date
+ *                   status:
+ *                     type: string
+ *                   treatmentGiven:
+ *                     type: string
+ *                   notes:
+ *                     type: string
+ *       500:
+ *         description: Server Error
+ */
 router.get("/", authenticate, async (req, res) => {
     try {
         console.log({ userId: req.user.userId });

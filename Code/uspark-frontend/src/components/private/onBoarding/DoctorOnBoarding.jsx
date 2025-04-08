@@ -1,3 +1,15 @@
+/**
+ * @file DoctorOnBoarding Component
+ *
+ * @namespace src.components.private.onBoarding.DoctorOnBoarding
+ * @memberof src.components.private.onBoarding
+ *
+ * This component renders the onboarding form for doctors, allowing them to submit
+ * personal and professional details, select or input hospital information, and upload
+ * verification documents. It integrates geolocation for hospital suggestions and handles
+ * document upload and profile submission via Redux actions.
+ */
+
 import React, { useState, useEffect } from "react";
 import {
   Typography,
@@ -21,6 +33,19 @@ import {
   uploadVerificationDocs,
 } from "../../../store/actions";
 import history from "../../../history";
+
+/**
+ * DoctorOnBoarding Component
+ *
+ * @memberof src.components.private.onBoarding.DoctorOnBoarding
+ *
+ * @returns {JSX.Element} - A form interface for doctors to complete onboarding,
+ * including fields for specialization, experience, certifications, hospital selection,
+ * and document uploads. Automatically fetches nearby hospitals using location.
+ *
+ * @example
+ * <DoctorOnBoarding />
+ */
 
 const DoctorOnBoarding = () => {
   const navigate = useNavigate();

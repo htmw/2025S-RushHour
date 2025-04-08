@@ -1,3 +1,14 @@
+/**
+ * @file DoctorDashboard Component
+ *
+ * @namespace src.components.private.Dashboard.DoctorDashboard
+ * @memberof src.components.private.Dashboard
+ *
+ * This component renders the doctor's dashboard view, displaying profile details,
+ * verification status, QR code, and a calendar of availability integrated with appointments.
+ * It fetches doctor availability and appointment data via Redux.
+ */
+
 import React, { useEffect } from "react";
 import {
   Avatar,
@@ -24,6 +35,22 @@ import DoctorAvailabilityCalendar from "./DoctorAvailability.jsx";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
+
+
+/**
+ * DoctorDashboard Component
+ *
+ * @memberof src.components.private.Dashboard.DoctorDashboard
+ *
+ * @param {Object} props
+ * @param {Object} props.userData - The logged-in doctor's profile data including details and QR code.
+ *
+ * @returns {JSX.Element} - Displays the doctor’s profile info along with availability calendar
+ * and appointment integration.
+ *
+ * @example
+ * <DoctorDashboard userData={userData} />
+ */
 
 const DoctorDashboard = ({ userData }) => {
   const dispatch = useDispatch();

@@ -1,3 +1,14 @@
+/**
+ * @file MakeAppointments Component
+ *
+ * @namespace src.components.private.Dashboard.MakeAppointments
+ * @memberof src.components.private.Dashboard
+ *
+ * This component allows patients to search for available doctors, view their availability,
+ * and book appointments. It features paginated doctor listings, date and time slot selection,
+ * and submits appointment details to the backend via Redux actions.
+ */
+
 import React, { useState, useEffect } from "react";
 import {
   Typography, Container, Paper, CircularProgress, Dialog,
@@ -9,6 +20,18 @@ import ResponsiveField from "../../../utils/components/ResponsiveField";
 import { fetchDoctors, createAppointment } from "../../../store/actions";
 import SearchIcon from "@mui/icons-material/Search";
 import useDebounce from "../../../utils/hooks/useDebounce";
+
+/**
+ * MakeAppointments Component
+ *
+ * @memberof src.components.private.Dashboard.MakeAppointments
+ *
+ * @returns {JSX.Element} - A patient-facing booking form to search doctors, select date
+ * and time slots, and submit an appointment request.
+ *
+ * @example
+ * <MakeAppointments />
+ */
 
 const MakeAppointments = () => {
   const dispatch = useDispatch();

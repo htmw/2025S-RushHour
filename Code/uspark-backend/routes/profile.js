@@ -10,16 +10,16 @@ const { AWS_BUCKET_RUSH_HOUR_UPLOADS } = require("../config.js");
 /**
  * @swagger
  * tags:
- *   - name: Dashboard
- *     description: Endpoints for fetching user dashboard data and doctor verification
+ *   - name: Profile
+ *     description: Endpoints for fetching user Profile data and doctor verification
  */
 
 /**
  * @swagger
- * /api/dashboard:
+ * /api/profile:
  *   get:
- *     summary: Get dashboard profile data
- *     tags: [Dashboard]
+ *     summary: Get profile data
+ *     tags: [profile]
  *     description: Retrieve the profile details of the authenticated user
  *     security:
  *       - BearerAuth: []
@@ -101,7 +101,43 @@ router.get("/", authenticate, async (req, res) => {
 });
 
 
-
+/**
+ * @swagger
+ * /api/profile/patient:
+ *   post:
+ *     summary: Update patient profile
+ *     tags: [Profile]
+ *     description: Save or update the authenticated patient's profile information.
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               age:
+ *                 type: number
+ *                 example: 28
+ *               sex:
+ *                 type: string
+ *                 example: "Male"
+ *               height:
+ *                 type: number
+ *                 example: 180
+ *               weight:
+ *                 type: number
+ *                 example: 75
+ *               healthIssues:
+ *                 type: string
+ *                 example: "None"
+ *     responses:
+ *       200:
+ *         description: Patient profile updated
+ *       500:
+ *         description: Internal Server Error
+ */
 router.post("/patient", authenticate, async (req, res) => {
     try {
         const { age, sex, height, weight, healthIssues } = req.body;
@@ -119,6 +155,44 @@ router.post("/patient", authenticate, async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/profile/doctor/update:
+ *   post:
+ *     summary: Update doctor profile
+ *     tags: [Profile]
+ *     description: Update the authenticated doctor's profile information.
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: "Dr. Jane Doe"
+ *               specialization:
+ *                 type: string
+ *                 example: "Dermatology"
+ *               experience:
+ *                 type: number
+ *                 example: 7
+ *               certifications:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["MBBS", "MD Dermatology"]
+ *     responses:
+ *       200:
+ *         description: Doctor profile updated successfully
+ *       404:
+ *         description: Doctor not found
+ *       500:
+ *         description: Server Error
+ */
 router.post("/doctor/update", authenticate, async (req, res) => {
     try {
         const doctor = await Doctor.findOne({ userId: req.user.userId });
@@ -151,7 +225,46 @@ router.post("/doctor/update", authenticate, async (req, res) => {
     }
 });
 
-// Save availability
+/**
+ * @swagger
+ * /api/profile/doctor/availability:
+ *   post:
+ *     summary: Save doctor availability
+ *     tags: [Profile]
+ *     description: Save availability slots for the authenticated doctor.
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               slots:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     date:
+ *                       type: string
+ *                       format: date
+ *                       example: "2025-04-08"
+ *                     startTime:
+ *                       type: string
+ *                       example: "09:00"
+ *                     endTime:
+ *                       type: string
+ *                       example: "12:00"
+ *                     slotDuration:
+ *                       type: number
+ *                       example: 30
+ *     responses:
+ *       200:
+ *         description: Availability saved successfully
+ *       500:
+ *         description: Server Error
+ */
 router.post("/doctor/availability", authenticate, async (req, res) => {
     try {
         const { slots } = req.body;
@@ -169,7 +282,22 @@ router.post("/doctor/availability", authenticate, async (req, res) => {
     }
 });
 
-// Get availability
+
+/**
+ * @swagger
+ * /api/profile/doctor/availability:
+ *   get:
+ *     summary: Get doctor availability
+ *     tags: [Profile]
+ *     description: Retrieve availability slots for the authenticated doctor.
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Doctor availability retrieved
+ *       500:
+ *         description: Server Error
+ */
 router.get("/doctor/availability", authenticate, async (req, res) => {
     try {
         const doctor = await Doctor.findOne({ userId: req.user.userId });
@@ -182,8 +310,51 @@ router.get("/doctor/availability", authenticate, async (req, res) => {
     }
 });
 
-// PUT /api/profile/doctor/availability
-// PUT /api/profile/doctor/availability/:id
+
+/**
+ * @swagger
+ * /api/profile/doctor/availability/{id}:
+ *   put:
+ *     summary: Update specific availability slot
+ *     tags: [Profile]
+ *     description: Update a single availability slot by ID for the authenticated doctor.
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the availability slot to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-04-08"
+ *               startTime:
+ *                 type: string
+ *                 example: "10:00"
+ *               endTime:
+ *                 type: string
+ *                 example: "13:00"
+ *               slotDuration:
+ *                 type: number
+ *                 example: 30
+ *     responses:
+ *       200:
+ *         description: Slot updated successfully
+ *       404:
+ *         description: Slot or doctor not found
+ *       500:
+ *         description: Server Error
+ */
 router.put("/doctor/availability/:id", authenticate, async (req, res) => {
     try {
         const { id } = req.params;
@@ -214,6 +385,36 @@ router.put("/doctor/availability/:id", authenticate, async (req, res) => {
 });
 
 
+/**
+ * @swagger
+ * /api/profile/signed-url:
+ *   get:
+ *     summary: Get signed S3 URL for file upload
+ *     tags: [Profile]
+ *     description: Generate a signed S3 URL for secure file uploads.
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: key
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The key (filename) for which to generate the signed URL
+ *     responses:
+ *       200:
+ *         description: Signed URL generated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 url:
+ *                   type: string
+ *                   example: "https://bucket.s3.amazonaws.com/key?signature=abc"
+ *       500:
+ *         description: Server Error
+ */
 router.get("/signed-url", authenticate, async (req, res) => {
     const { key } = req.query;
     const signedUrl = await getS3SignedUrl(key, AWS_BUCKET_RUSH_HOUR_UPLOADS); // your S3 util function

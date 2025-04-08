@@ -1,3 +1,14 @@
+/**
+ * @file PatientDashboard Component
+ *
+ * @namespace src.components.private.Dashboard.PatientDashboard
+ * @memberof src.components.private.Dashboard
+ *
+ * This component renders the main dashboard view for patients. It includes
+ * personalized information, appointment booking, recent appointments, initial
+ * assessment, and health news. It fetches patient dashboard data on load.
+ */
+
 import React, { useEffect } from "react";
 import { Box, Grid, Typography, Paper, Stack } from "@mui/material";
 import HealthNewsCard from "./HealthNewsCard.jsx";
@@ -8,6 +19,17 @@ import InitialAssessmentCard from "./InitialAssesment";
 import AppointmentsPage from "./Appointments.jsx";
 import MakeAppointments from "./MakeAppointments.jsx";
 
+/**
+ * PatientDashboard Component
+ *
+ * @memberof src.components.private.Dashboard.PatientDashboard
+ *
+ * @returns {JSX.Element} - A responsive two-column layout showing patient data,
+ * health news, appointment booking, and other personalized dashboard components.
+ *
+ * @example
+ * <PatientDashboard />
+ */
 
 const PatientDashboard = () => {
     const dispatch = useDispatch();

@@ -1,3 +1,15 @@
+/**
+ * @file Profile Component
+ *
+ *
+ * @namespace src.components.private.profile
+ * @memberof src.components.private
+ *
+ * This component renders the profile page based on the user's role (doctor or patient).
+ * It handles authentication, profile data fetching, and conditional rendering of
+ * DoctorProfileView or PatientProfileView components. For doctors, it also fetches
+ * nearby hospitals using geolocation and a list of doctors.
+ */
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDoctors, fetchHospitals, fetchProfile } from "../../../store/actions";
@@ -5,6 +17,24 @@ import { useNavigate } from "react-router-dom";
 import { CircularProgress, Box } from "@mui/material";
 import PatientProfileView from "./PatientProfileView.jsx";
 import DoctorProfileView from "./DoctorProfileView.jsx";
+
+/**
+ * @file Profile Page Component
+ *
+ * @namespace src.components.private.profile
+ * @memberof src.components.private
+ *
+ * This component renders the profile page based on the user's role (doctor or patient).
+ * It handles authentication, profile data fetching, and conditional rendering of
+ * DoctorProfileView or PatientProfileView components. For doctors, it also fetches
+ * nearby hospitals using geolocation and a list of doctors.
+ *
+ * @component
+ * @returns {JSX.Element} - The profile view for the authenticated user.
+ *
+ * @example
+ * <ProfilePage />
+ */
 
 const ProfilePage = () => {
   const dispatch = useDispatch();

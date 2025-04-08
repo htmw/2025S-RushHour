@@ -1,3 +1,14 @@
+/**
+ * @file InitialAssessmentCard Component
+ *
+ * @namespace src.components.private.Dashboard.InitialAssessmentCard
+ * @memberof src.components.private.Dashboard
+ *
+ * This component displays a card to trigger an initial assessment form for patients.
+ * It opens a dialog where users can fill in assessment details and comments.
+ * Currently, it logs the data to console on submission and can be extended for backend integration.
+ */
+
 import React, { useState } from "react";
 import {
   Card,
@@ -18,9 +29,15 @@ import ResponsiveField from "../../../utils/components/ResponsiveField";
 /**
  * InitialAssessmentCard Component
  *
- * @component
- * @returns {JSX.Element}
+ * @memberof src.components.private.Dashboard.InitialAssessmentCard
+ *
+ * @returns {JSX.Element} - A card with a form dialog that allows patients to
+ * submit initial assessment details and comments.
+ *
+ * @example
+ * <InitialAssessmentCard />
  */
+
 const InitialAssessmentCard = () => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({

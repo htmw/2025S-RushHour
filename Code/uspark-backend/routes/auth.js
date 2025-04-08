@@ -418,6 +418,11 @@ router.post("/auth/reset-password", async (req, res) => {
   }
 });
 
+/**
+ * Generates a JWT token for the given user.
+ * @param {Object} user - User object containing id, email, fullName, and isOnboarded
+ * @returns {string} - JWT token
+ */
 function generateToken(user) {
   return jwt.sign(
     {

@@ -1,14 +1,17 @@
 /**
  * @file HealthNewsCard Component
- * @namespace src.components.private.Patient.HealthNewsCard
- * @memberof src.components.private.Patient
+ *
+ * @namespace src.components.private.Dashboard.HealthNewsCard
+ * @memberof src.components.private.Dashboard
+ *
  * This component fetches and displays health-related news articles from an external API.
  * Features include:
  * - Fetching the latest health news from NewsAPI.
- * - Displaying news articles with images, titles, and descriptions.
- * - Auto-switching to the next article every 10 seconds with a smooth transition.
- * - A "Read More" button that links to the full article.
+ * - Displaying articles with images, titles, and descriptions.
+ * - Auto-rotating articles every 10 seconds with a fade transition.
+ * - "Read More" button linking to the full article.
  */
+
 
 import React, { useState, useEffect } from "react";
 import {
@@ -22,15 +25,17 @@ import axios from "axios";
 import "../../../css/News.css";
 
 /**
-
+ * HealthNewsCard Component
  *
- * @component
- * @memberof src.components.private.Patient.HealthNewsCard
- * @returns {JSX.Element} - The HealthNewsCard component displaying health-related news.
+ * @memberof src.components.private.Dashboard.HealthNewsCard
+ *
+ * @returns {JSX.Element} - The HealthNewsCard component that displays health-related news
+ * with auto-rotation and external links to full articles.
  *
  * @example
  * <HealthNewsCard />
  */
+
 const HealthNewsCard = () => {
   /**
    * State for storing fetched news articles.
