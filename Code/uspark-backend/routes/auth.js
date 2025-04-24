@@ -430,6 +430,7 @@ function generateToken(user) {
       email: user.email,
       fullName: user.fullName,
       isOnboarded: user.isOnboarded,
+      role: user.role,
     },
     JWT_SECRET,
     { expiresIn: "1h" }

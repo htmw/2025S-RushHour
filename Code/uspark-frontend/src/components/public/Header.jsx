@@ -103,7 +103,10 @@ const Header = () => {
   const dispatch = useDispatch();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const darkMode = useSelector((state) => state.theme.darkMode);
-  const role = useSelector((state) => state.profile?.userData?.role || state.dashboard?.userData?.role || null);
+  const role = useSelector(
+    (state) =>
+      state.profile?.userData?.role || state.dashboard?.userData?.role || null
+  );
   const imageUrl = useSelector((state) => state.profile?.imageUrl || null);
 
   const [routeList, setRouteList] = React.useState(publicHeaderRouteList);
@@ -152,8 +155,8 @@ const Header = () => {
       role === "patient"
         ? patientRouteList
         : role === "doctor"
-          ? doctorRouteList
-          : publicHeaderRouteList;
+        ? doctorRouteList
+        : publicHeaderRouteList;
     setRouteList(routeList);
   }, [role]);
 

@@ -22,6 +22,8 @@ import {
   Button,
   Stack,
   Box,
+  useTheme,
+  Paper,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ResponsiveField from "../../../utils/components/ResponsiveField";
@@ -39,6 +41,7 @@ import ResponsiveField from "../../../utils/components/ResponsiveField";
  */
 
 const InitialAssessmentCard = () => {
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     assessment: "",
@@ -57,35 +60,51 @@ const InitialAssessmentCard = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here
     console.log("Submitted:", formData);
     handleClose();
   };
 
   return (
     <>
-      <Card
+      <Paper
         elevation={3}
         sx={{
           p: 2,
           mt: 3,
           borderRadius: 3,
-          backgroundColor: "#ffffff",
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
+          justifyContent: "space-between",
+          transition: "all 0.3s ease",
         }}
       >
         <Typography variant="h6" fontWeight={500}>
           Initial Assessment
         </Typography>
-        <IconButton onClick={handleOpen} color="primary" sx={{ ml: "auto" }}>
+        <IconButton
+          onClick={handleOpen}
+          color="primary"
+          sx={{
+            ml: "auto",
+            backgroundColor: theme.palette.action.hover,
+            color: theme.palette.primary.contrastText,
+            borderRadius: 2,
+            "&:hover": {
+              backgroundColor: theme.palette.primary.main,
+            },
+          }}
+        >
           <AddIcon />
         </IconButton>
-      </Card>
+      </Paper>
 
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle>Initial Assessment Form</DialogTitle>
+        <DialogTitle>
+          <Typography variant="h6" fontWeight="bold">
+            Initial Assessment Form
+          </Typography>
+        </DialogTitle>
+
         <form onSubmit={handleSubmit}>
           <DialogContent dividers>
             <Stack spacing={2}>
@@ -107,7 +126,7 @@ const InitialAssessmentCard = () => {
               />
             </Stack>
           </DialogContent>
-          <DialogActions>
+          <DialogActions sx={{ px: 3, py: 2 }}>
             <Button onClick={handleClose} color="secondary">
               Cancel
             </Button>

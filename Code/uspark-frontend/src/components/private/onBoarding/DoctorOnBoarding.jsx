@@ -21,7 +21,8 @@ import {
   FormControl,
   Button,
   Box,
-  Autocomplete, TextField
+  Autocomplete,
+  TextField,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -51,9 +52,13 @@ const DoctorOnBoarding = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth);
-  const hospitals = useSelector((state) => state.makeAppointments.hospitals || []);
+  const hospitals = useSelector(
+    (state) => state.makeAppointments.hospitals || []
+  );
 
-  const { doctorData, loading, error } = useSelector((state) => state.onBoarding);
+  const { doctorData, loading, error } = useSelector(
+    (state) => state.onBoarding
+  );
 
   const [selectedHospital, setSelectedHospital] = useState("");
   const [hospitalAddress, setHospitalAddress] = useState("");
@@ -75,14 +80,17 @@ const DoctorOnBoarding = () => {
       selectedHospital === "Other"
         ? { hospitalName: "Other", hospitalAddress }
         : {
-          hospitalName: selectedHospital,
-          hospitalAddress:
-            hospitals.find((h) => h.name === selectedHospital)?.vicinity || "",
-        };
+            hospitalName: selectedHospital,
+            hospitalAddress:
+              hospitals.find((h) => h.name === selectedHospital)?.vicinity ||
+              "",
+          };
 
     const finalData = { ...formData, ...hospitalInfo };
 
-    await dispatch(doctorOnboarding({ formData: finalData, token: user.token }, navigate));
+    await dispatch(
+      doctorOnboarding({ formData: finalData, token: user.token }, navigate)
+    );
 
     if (documents.length > 0) {
       const form = new FormData();
@@ -90,9 +98,10 @@ const DoctorOnBoarding = () => {
         form.append("documents", file.fileObject || file); // handle both raw and wrapped
       });
 
-      await dispatch(uploadVerificationDocs({ formData: form, token: user.token }));
+      await dispatch(
+        uploadVerificationDocs({ formData: form, token: user.token })
+      );
     }
-
   };
 
   const handleHospitalChange = (e) => {
@@ -127,17 +136,40 @@ const DoctorOnBoarding = () => {
       <Box component="form">
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
-            <ResponsiveField label="Full Name" name="name" value={formData.name} onChange={handleChange} />
+            <ResponsiveField
+              label="Full Name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item xs={12} md={6}>
-            <ResponsiveField label="Specialization" name="specialization" value={formData.specialization} onChange={handleChange} />
+            <ResponsiveField
+              label="Specialization"
+              name="specialization"
+              value={formData.specialization}
+              onChange={handleChange}
+            />
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <ResponsiveField label="Years of Experience" name="experience" type="number" value={formData.experience} onChange={handleChange} />
+            <ResponsiveField
+              label="Years of Experience"
+              name="experience"
+              type="number"
+              value={formData.experience}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item xs={12} md={6}>
-            <ResponsiveField label="Certifications" name="certifications" multiline rows={2} value={formData.certifications} onChange={handleChange} />
+            <ResponsiveField
+              label="Certifications"
+              name="certifications"
+              multiline
+              rows={2}
+              value={formData.certifications}
+              onChange={handleChange}
+            />
           </Grid>
 
           <Grid item xs={12}>
@@ -155,7 +187,16 @@ const DoctorOnBoarding = () => {
                     setSelectedHospital(newValue);
                     if (newValue !== "Other") setHospitalAddress("");
                   }}
-                  renderInput={(params) => <TextField {...params} variant="outlined" />}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      inputProps={{
+                        ...params.inputProps,
+                        "data-cy": "select-hospital",
+                      }}
+                    />
+                  )}
                 />
               }
             />
@@ -163,7 +204,12 @@ const DoctorOnBoarding = () => {
 
           {selectedHospital === "Other" && (
             <Grid item xs={12}>
-              <ResponsiveField label="Hospital/Clinic Address" value={hospitalAddress} onChange={(e) => setHospitalAddress(e.target.value)} />
+              <ResponsiveField
+                label="Hospital/Clinic Address"
+                value={hospitalAddress}
+                onChange={(e) => setHospitalAddress(e.target.value)}
+                inputProps={{ "data-cy": "hospital-address-input" }} // ✅ Add this
+              />
             </Grid>
           )}
 
@@ -173,7 +219,9 @@ const DoctorOnBoarding = () => {
             </Typography>
             <FileUpload
               multiple
-              onFilesChange={(files) => setDocuments(files.map(f => f.fileObject))}
+              onFilesChange={(files) =>
+                setDocuments(files.map((f) => f.fileObject))
+              }
               maxFiles={5}
               accept={["application/pdf", "image/jpeg", "image/png"]}
               helperText="Drag & drop files or click to browse"
@@ -188,14 +236,19 @@ const DoctorOnBoarding = () => {
           )}
 
           <Grid item xs={12} textAlign="right">
-            <Button variant="contained" color="primary" onClick={handleSubmit} disabled={loading} size="large">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+              disabled={loading}
+              size="large"
+            >
               {loading ? "Submitting..." : "Submit"}
             </Button>
           </Grid>
         </Grid>
       </Box>
     </Paper>
-
   );
 };
 

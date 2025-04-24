@@ -1,11 +1,17 @@
 const mongoose = require("mongoose");
 
 const AvailabilitySlotSchema = new mongoose.Schema({
-  date: { type: String, }, // "YYYY-MM-DD"
-  startTime: { type: String, }, // "HH:mm"
-  endTime: { type: String, },
-  slotDuration: { type: Number, },
+  date: { type: String }, // "YYYY-MM-DD"
+  startTime: { type: String }, // "HH:mm"
+  endTime: { type: String },
+  slotDuration: { type: Number },
+  mode: {
+    type: String,
+    enum: ['in-person', 'virtual', 'both'],
+    default: 'both',
+  },
 });
+
 
 const DoctorSchema = new mongoose.Schema(
   {

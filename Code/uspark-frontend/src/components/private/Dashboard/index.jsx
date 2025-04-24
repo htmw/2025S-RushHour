@@ -10,7 +10,13 @@
  */
 
 import React, { useEffect } from "react";
-import { Container, Typography, CircularProgress, Box } from "@mui/material";
+import {
+  Container,
+  Typography,
+  CircularProgress,
+  Box,
+  useTheme,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDashboard } from "../../../store/actions";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +37,7 @@ import AdminDashboard from "./AdminDashboard";
  */
 
 const Dashboard = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -82,7 +89,12 @@ const Dashboard = () => {
 
   // ⬇️ Let each role render its own fully styled dashboard
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f7fa" }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        backgroundColor: theme.palette.background.default,
+      }}
+    >
       {userData.role === "patient" ? (
         <PatientDashboard />
       ) : userData.role === "doctor" ? (

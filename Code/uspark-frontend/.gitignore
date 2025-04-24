@@ -30,3 +30,7 @@ dist-ssr
 
 .env
 .vercel
+
+# Cypress videos and screenshots
+cypress/videos
+cypress/screenshots

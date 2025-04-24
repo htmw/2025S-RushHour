@@ -62,44 +62,43 @@ const { AWS_BUCKET_RUSH_HOUR_UPLOADS } = require("../config.js");
  *         description: Server error
  */
 router.get("/", authenticate, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.userId);
-        if (!user) return res.status(404).json({ message: "User not found" });
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-        let profileData = {
-            userId: user._id,
-            fullName: user.fullName,
-            email: user.email,
-            role: user.role,
-            isOnboarded: user.isOnboarded,
+    let profileData = {
+      userId: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      role: user.role,
+      isOnboarded: user.isOnboarded,
+    };
+
+    if (user.role === "patient") {
+      const patientDetails = await Patient.findOne({ userId: user._id });
+      if (patientDetails)
+        profileData = { ...profileData, ...patientDetails._doc };
+    } else if (user.role === "doctor") {
+      const doctorDetails = await Doctor.findOne({ userId: user._id });
+      if (doctorDetails)
+        profileData = {
+          ...profileData,
+          ...doctorDetails._doc,
+
+          verificationStatus: doctorDetails.verificationStatus, // Will send verification status
+          verificationDocs:
+            doctorDetails.verificationStatus === "pending"
+              ? doctorDetails.verificationDocs
+              : [], // Hide docs after approval
         };
-
-        if (user.role === "patient") {
-            const patientDetails = await Patient.findOne({ userId: user._id });
-            if (patientDetails)
-                profileData = { ...profileData, ...patientDetails._doc };
-        } else if (user.role === "doctor") {
-            const doctorDetails = await Doctor.findOne({ userId: user._id });
-            if (doctorDetails)
-                profileData = {
-                    ...profileData,
-                    ...doctorDetails._doc,
-
-                    verificationStatus: doctorDetails.verificationStatus, // Will send verification status
-                    verificationDocs:
-                        doctorDetails.verificationStatus === "pending"
-                            ? doctorDetails.verificationDocs
-                            : [], // Hide docs after approval
-                };
-        }
-
-        res.json(profileData);
-    } catch (err) {
-        console.error("Dashboard Error:", err);
-        res.status(500).json({ message: "Server Error" });
     }
-});
 
+    res.json(profileData);
+  } catch (err) {
+    console.error("Dashboard Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
 
 /**
  * @swagger
@@ -139,20 +138,20 @@ router.get("/", authenticate, async (req, res) => {
  *         description: Internal Server Error
  */
 router.post("/patient", authenticate, async (req, res) => {
-    try {
-        const { age, sex, height, weight, healthIssues } = req.body;
+  try {
+    const { age, sex, height, weight, healthIssues } = req.body;
 
-        let patient = await Patient.findOne({ userId: req.user.userId });
-        if (!patient) patient = new Patient({ userId: req.user.userId });
+    let patient = await Patient.findOne({ userId: req.user.userId });
+    if (!patient) patient = new Patient({ userId: req.user.userId });
 
-        Object.assign(patient, { age, sex, height, weight, healthIssues });
-        await patient.save();
+    Object.assign(patient, { age, sex, height, weight, healthIssues });
+    await patient.save();
 
-        res.status(200).json({ message: "Patient profile updated", patient });
-    } catch (error) {
-        console.error("Error updating patient profile:", error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
+    res.status(200).json({ message: "Patient profile updated", patient });
+  } catch (error) {
+    console.error("Error updating patient profile:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 /**
@@ -194,35 +193,35 @@ router.post("/patient", authenticate, async (req, res) => {
  *         description: Server Error
  */
 router.post("/doctor/update", authenticate, async (req, res) => {
-    try {
-        const doctor = await Doctor.findOne({ userId: req.user.userId });
-        if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+  try {
+    const doctor = await Doctor.findOne({ userId: req.user.userId });
+    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
-        const { fullName, specialization, experience, certifications } = req.body;
+    const { fullName, specialization, experience, certifications } = req.body;
 
-        const user = await User.findByIdAndUpdate(
-            req.user.userId,
-            { fullName },
-            { new: true }
-        );
+    const user = await User.findByIdAndUpdate(
+      req.user.userId,
+      { fullName },
+      { new: true }
+    );
 
-        doctor.specialization = specialization || doctor.specialization;
-        doctor.experience = experience || doctor.experience;
-        doctor.certifications = certifications || doctor.certifications;
+    doctor.specialization = specialization || doctor.specialization;
+    doctor.experience = experience || doctor.experience;
+    doctor.certifications = certifications || doctor.certifications;
 
-        await doctor.save();
+    await doctor.save();
 
-        res.status(200).json({
-            message: "Profile updated successfully",
-            doctor: {
-                fullName: user.fullName,
-                ...doctor._doc,
-            },
-        });
-    } catch (error) {
-        console.error("Update doctor profile error:", error);
-        res.status(500).json({ message: "Server Error", error: error.message });
-    }
+    res.status(200).json({
+      message: "Profile updated successfully",
+      doctor: {
+        fullName: user.fullName,
+        ...doctor._doc,
+      },
+    });
+  } catch (error) {
+    console.error("Update doctor profile error:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
 });
 
 /**
@@ -266,22 +265,30 @@ router.post("/doctor/update", authenticate, async (req, res) => {
  *         description: Server Error
  */
 router.post("/doctor/availability", authenticate, async (req, res) => {
-    try {
-        const { slots } = req.body;
+  try {
+    const { slots } = req.body;
 
-        const doctor = await Doctor.findOne({ userId: req.user.userId });
-        if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+    const doctor = await Doctor.findOne({ userId: req.user.userId });
+    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
-        doctor.availability = slots;
-        await doctor.save();
+    doctor.availability = slots.map((slot) => ({
+      date: slot.date,
+      startTime: slot.startTime,
+      endTime: slot.endTime,
+      slotDuration: slot.slotDuration,
+      mode: slot.mode || "both", // default to both if not provided
+    }));
+    await doctor.save();
 
-        res.status(200).json({ message: "Availability saved successfully", availability: doctor.availability });
-    } catch (err) {
-        console.error("Error saving availability:", err);
-        res.status(500).json({ message: "Server Error" });
-    }
+    res.status(200).json({
+      message: "Availability saved successfully",
+      availability: doctor.availability,
+    });
+  } catch (err) {
+    console.error("Error saving availability:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
-
 
 /**
  * @swagger
@@ -299,17 +306,16 @@ router.post("/doctor/availability", authenticate, async (req, res) => {
  *         description: Server Error
  */
 router.get("/doctor/availability", authenticate, async (req, res) => {
-    try {
-        const doctor = await Doctor.findOne({ userId: req.user.userId });
-        if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+  try {
+    const doctor = await Doctor.findOne({ userId: req.user.userId });
+    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
-        res.status(200).json({ availability: doctor.availability });
-    } catch (err) {
-        console.error("Error fetching availability:", err);
-        res.status(500).json({ message: "Server Error" });
-    }
+    res.status(200).json({ availability: doctor.availability });
+  } catch (err) {
+    console.error("Error fetching availability:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
-
 
 /**
  * @swagger
@@ -356,34 +362,34 @@ router.get("/doctor/availability", authenticate, async (req, res) => {
  *         description: Server Error
  */
 router.put("/doctor/availability/:id", authenticate, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { date, startTime, endTime, slotDuration } = req.body;
+  try {
+    const { id } = req.params;
+    const { date, startTime, endTime, slotDuration, mode } = req.body;
 
-        const doctor = await Doctor.findOne({ userId: req.user.userId });
-        if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+    const doctor = await Doctor.findOne({ userId: req.user.userId });
+    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
-        const slot = doctor.availability.id(id);
-        if (!slot) return res.status(404).json({ message: "Slot not found" });
+    const slot = doctor.availability.id(id);
+    if (!slot) return res.status(404).json({ message: "Slot not found" });
 
-        // Update fields
-        slot.date = date;
-        slot.startTime = startTime;
-        slot.endTime = endTime;
-        slot.slotDuration = slotDuration;
+    // Update fields
+    slot.date = date;
+    slot.startTime = startTime;
+    slot.endTime = endTime;
+    slot.slotDuration = slotDuration;
+    slot.mode = mode || slot.mode; // fallback to previous if mode not passed
 
-        await doctor.save();
+    await doctor.save();
 
-        res.status(200).json({
-            message: "Slot updated successfully",
-            availability: doctor.availability,
-        });
-    } catch (err) {
-        console.error("Error updating slot:", err);
-        res.status(500).json({ message: "Server Error" });
-    }
+    res.status(200).json({
+      message: "Slot updated successfully",
+      availability: doctor.availability,
+    });
+  } catch (err) {
+    console.error("Error updating slot:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
-
 
 /**
  * @swagger
@@ -416,9 +422,9 @@ router.put("/doctor/availability/:id", authenticate, async (req, res) => {
  *         description: Server Error
  */
 router.get("/signed-url", authenticate, async (req, res) => {
-    const { key } = req.query;
-    const signedUrl = await getS3SignedUrl(key, AWS_BUCKET_RUSH_HOUR_UPLOADS); // your S3 util function
-    res.json({ url: signedUrl });
+  const { key } = req.query;
+  const signedUrl = await getS3SignedUrl(key, AWS_BUCKET_RUSH_HOUR_UPLOADS); // your S3 util function
+  res.json({ url: signedUrl });
 });
 
 module.exports = router;

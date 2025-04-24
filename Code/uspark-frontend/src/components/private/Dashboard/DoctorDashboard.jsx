@@ -19,6 +19,7 @@ import {
   Paper,
   Typography,
   Divider,
+  useTheme,
 } from "@mui/material";
 import {
   AccessTime,
@@ -28,14 +29,16 @@ import {
 } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAppointments, fetchDoctorAvailability } from "../../../store/actions";
+import {
+  fetchAppointments,
+  fetchDoctorAvailability,
+} from "../../../store/actions";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import DoctorAvailabilityCalendar from "./DoctorAvailability.jsx";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
-
 
 /**
  * DoctorDashboard Component
@@ -53,11 +56,12 @@ dayjs.extend(isSameOrBefore);
  */
 
 const DoctorDashboard = ({ userData }) => {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
 
   const { availability } = useSelector((state) => state.doctorAvailability);
-  const { data: appointments } = useSelector(state => state.appointments);
+  const { data: appointments } = useSelector((state) => state.appointments);
 
   const {
     fullName,
@@ -68,12 +72,8 @@ const DoctorDashboard = ({ userData }) => {
     doctorDetails = {},
   } = userData || {};
 
-  const {
-    specialization,
-    experience,
-    certifications,
-    verificationStatus,
-  } = doctorDetails;
+  const { specialization, experience, certifications, verificationStatus } =
+    doctorDetails;
 
   const statusColor = {
     pending: "warning",
@@ -84,49 +84,97 @@ const DoctorDashboard = ({ userData }) => {
   useEffect(() => {
     if (token) {
       dispatch(fetchDoctorAvailability(token));
-      dispatch(fetchAppointments({ token })); // ✅ also fetch appointments
-
+      dispatch(fetchAppointments({ token }));
     }
   }, [dispatch, token]);
-  console.log({ availability });
 
   return (
-    <Container sx={{ mt: 5 }}>
-      <Paper elevation={4} sx={{ p: 4, borderRadius: 4 }}>
+    <Container
+      sx={{
+        py: 4,
+        px: { xs: 2, sm: 4, md: 6 },
+        ":root": {
+          background: theme.palette.background.default,
+          backgroundColor: theme.palette.background.default,
+        },
+      }}
+    >
+      <Paper
+        elevation={4}
+        sx={{
+          p: 4,
+          borderRadius: 4,
+        }}
+      >
         <Grid container spacing={4}>
-          {/* Left Side - Doctor Info */}
+          {/* Left - Profile Info */}
           <Grid item xs={12} md={6}>
-            <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              gap={2}
+            >
               <Avatar
                 src={profileImage || ""}
                 alt={fullName}
-                sx={{ width: 120, height: 120, fontSize: 40, bgcolor: "#1976d2" }}
+                sx={{
+                  width: 120,
+                  height: 120,
+                  fontSize: 40,
+                  bgcolor: theme.palette.primary.main,
+                }}
               >
                 {fullName?.[0]}
               </Avatar>
-              <Typography variant="h6" fontWeight="bold" data-cy="doctor-dashboard-name">{fullName}</Typography>
-              <Chip label={role?.toUpperCase()} color="info" variant="outlined" />
-              <img
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                data-cy="doctor-dashboard-name"
+              >
+                {fullName}
+              </Typography>
+              <Chip
+                label={role?.toUpperCase()}
+                color="info"
+                variant="outlined"
+              />
+              <Box
+                component="img"
                 src={qrCode}
                 alt="QR Code"
-                style={{ width: 120, height: 120, marginTop: 16 }}
+                sx={{ width: 120, height: 120, mt: 2 }}
               />
               <Divider sx={{ width: "100%", my: 2 }} />
+
               <Grid container spacing={1}>
                 <Grid item xs={12}>
-                  <Typography><Email fontSize="small" /> {email}</Typography>
+                  <Typography>
+                    <Email fontSize="small" /> {email}
+                  </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography><LocalHospital fontSize="small" /> Specialization: <strong>{specialization || "N/A"}</strong></Typography>
+                  <Typography>
+                    <LocalHospital fontSize="small" /> Specialization:{" "}
+                    <strong>{specialization || "N/A"}</strong>
+                  </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography><AccessTime fontSize="small" /> Experience: <strong>{experience} years</strong></Typography>
+                  <Typography>
+                    <AccessTime fontSize="small" /> Experience:{" "}
+                    <strong>{experience || "N/A"} years</strong>
+                  </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography><Assignment fontSize="small" /> Certifications: <strong>{certifications || "N/A"}</strong></Typography>
+                  <Typography>
+                    <Assignment fontSize="small" /> Certifications:{" "}
+                    <strong>{certifications || "N/A"}</strong>
+                  </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography fontWeight="bold" mt={2}>Verification:</Typography>
+                  <Typography fontWeight="bold" mt={2}>
+                    Verification:
+                  </Typography>
                   <Chip
                     label={verificationStatus?.toUpperCase()}
                     color={statusColor[verificationStatus] || "default"}
@@ -138,10 +186,13 @@ const DoctorDashboard = ({ userData }) => {
             </Box>
           </Grid>
 
-          {/* Right Side - Calendar Replaces Previous Block */}
+          {/* Right - Availability Calendar */}
           <Grid item xs={12} md={6}>
             {availability?.length > 0 ? (
-              <DoctorAvailabilityCalendar availability={availability} appointments={appointments} />
+              <DoctorAvailabilityCalendar
+                availability={availability}
+                appointments={appointments}
+              />
             ) : (
               <Typography variant="body1">Loading availability...</Typography>
             )}

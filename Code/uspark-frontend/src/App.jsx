@@ -14,8 +14,6 @@ import { ThemeProvider, CssBaseline } from "@mui/material";
 import { lightTheme, darkTheme } from "./theme/theme.js";
 import SnackbarCustomizedProvider from "./components/public/SnackBarCustomizedProvider.jsx";
 
-import "./App.css";
-
 /**
  * Wrapper component that manages theme selection based on Redux state.
  * Uses Material UI's ThemeProvider to apply light or dark mode.
