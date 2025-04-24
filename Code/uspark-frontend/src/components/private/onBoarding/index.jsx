@@ -7,12 +7,15 @@
  * @memberof src.components.private
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense, lazy } from "react";
 import { useSelector } from "react-redux";
-import RoleSelection from "./RoleSelection";
-import PatientOnBoarding from "./PatientOnBoarding";
-import DoctorOnBoarding from "./DoctorOnBoarding";
 import { useNavigate } from "react-router-dom";
+import { CircularProgress, Box } from "@mui/material";
+
+// Lazy-load onboarding steps to improve performance
+const RoleSelection = lazy(() => import("./RoleSelection"));
+const PatientOnBoarding = lazy(() => import("./PatientOnBoarding"));
+const DoctorOnBoarding = lazy(() => import("./DoctorOnBoarding"));
 
 /**
  * Onboarding Component
@@ -33,25 +36,41 @@ const Onboarding = () => {
   /** @type {boolean} */
   const userOnboarded = useSelector((state) => state.auth.isOnboarded);
 
+  /** @type {boolean} */
+  const authLoading = useSelector((state) => state.auth.loading);
+
   /**
-   * Redirects onboarded users to the dashboard.
+   * Redirect onboarded users to the dashboard.
    *
-   * @function
-   * @memberof src.components.private.onBoarding
    * @effect Runs when `userOnboarded` changes.
    */
   useEffect(() => {
     if (userOnboarded) {
       navigate("/dashboard");
     }
-  }, [userOnboarded]);
+  }, [userOnboarded, navigate]);
+
+  // Show spinner while checking auth status or lazy-loading
+  if (authLoading) {
+    return (
+      <Box display="flex" justifyContent="center" mt={10}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
-    <div>
+    <Suspense
+      fallback={
+        <Box display="flex" justifyContent="center" mt={10}>
+          <CircularProgress />
+        </Box>
+      }
+    >
       {!role && <RoleSelection />}
       {role === "patient" && <PatientOnBoarding />}
       {role === "doctor" && <DoctorOnBoarding />}
-    </div>
+    </Suspense>
   );
 };
 

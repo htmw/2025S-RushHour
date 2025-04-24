@@ -12,9 +12,16 @@ import auth from "./authSaga";
 import dashboard from "./dashboardSaga";
 import onBoarding from "./onBoardingSaga";
 import logout from "./logout";
-import uploadProfileImage from "./ImageUsaga";
+import profileImageSaga from "./profileImageSaga";
 import adminSaga from "./adminSaga";
-import doctorSaga from "./doctorSaga";
+import healthIssuesSaga from "./healthIssuesSaga";
+import forgotPasswordSaga from "./forgotPasswordSaga";
+import insuranceSaga from "./insuranceSaga";
+import medicalHistorySaga from "./medicalHistorySaga";
+import profileSaga from "./profileSaga";
+import appointmentsSaga from "./appointmentsSaga";
+import doctorAvailabilitySaga from "./doctorAvailabilitySaga";
+import doctorPatientSaga from "./doctorPatientSaga";
 
 /**
  * List of all saga functions used in the application.
@@ -28,9 +35,16 @@ const allSagas = [
   dashboard,
   onBoarding,
   logout,
-  uploadProfileImage,
+  profileImageSaga,
   adminSaga,
-  doctorSaga,
+  healthIssuesSaga,
+  forgotPasswordSaga,
+  insuranceSaga,
+  medicalHistorySaga,
+  profileSaga,
+  appointmentsSaga,
+  doctorAvailabilitySaga,
+  doctorPatientSaga
 ];
 
 /**

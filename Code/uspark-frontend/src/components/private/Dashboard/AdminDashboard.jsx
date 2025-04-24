@@ -1,3 +1,16 @@
+/**
+ * @file AdminDashboard Component
+ * @namespace src.components.private.Dashboard.AdminDashboard
+ * @memberof src.components.private.Dashboard
+ *
+ * This component provides the admin interface for managing and verifying doctors.
+ * It includes functionality for:
+ * - Setting and validating an admin access code
+ * - Viewing lists of doctors by verification status (Pending, Approved, Rejected)
+ * - Approving or rejecting doctors
+ * - Viewing detailed information in a dialog
+ */
+
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -19,7 +32,19 @@ import {
   TextField,
   Box,
 } from "@mui/material";
-import { fetchDoctors, verifyDoctor } from "../../../store/actions";
+import { adminDoctor, verifyDoctor } from "../../../store/actions";
+
+
+/**
+ * AdminDashboard Component
+ *
+ * @memberof src.components.private.Dashboard.AdminDashboard
+ *
+ * @returns {JSX.Element} - The admin dashboard interface for verifying doctors.
+ *
+ * @example
+ * <AdminDashboard />
+ */
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -39,9 +64,9 @@ const AdminDashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (accessGranted) {
-      dispatch(fetchDoctors());
-    }
+    // if (accessGranted) {
+      dispatch(adminDoctor());
+    // }
   }, [dispatch, accessGranted]);
 
   const handleSetCode = () => {
@@ -153,7 +178,7 @@ const AdminDashboard = () => {
           <TableBody>
             {filteredDoctors.map((doctor) => (
               <TableRow key={doctor._id}>
-                <TableCell>{doctor.userId.fullName}</TableCell>
+                <TableCell>{doctor.userId?.fullName}</TableCell>
                 <TableCell>{doctor.specialization}</TableCell>
                 <TableCell>{doctor.experience} years</TableCell>
                 <TableCell>

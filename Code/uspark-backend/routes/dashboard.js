@@ -1,33 +1,36 @@
-const express = require("express");
-const User = require("../Models/User");
-const Patient = require("../Models/Patient");
-const Doctor = require("../Models/Doctor");
-const { default: authenticate } = require("../Middleware/authenticate");
-const { sendEmail, ADMIN_EMAIL } = require("../utils/emailService");
-const upload = require("../Middleware/upload"); // Ensure this exists
-const { ADMIN_PANEL_URL } = require("../utils/emailService");
-
-const router = express.Router();
-
 /**
  * @swagger
  * tags:
  *   - name: Dashboard
- *     description: Endpoints for fetching user dashboard data and doctor verification
+ *     description: Dashboard view with full user data including QR code, profile, and related info
  */
+
+const express = require("express");
+const User = require("../Models/User");
+const Patient = require("../Models/onBoarding/Patient");
+const { default: authenticate } = require("../Middleware/authenticate");
+const { FRONTEND_URL } = require("../config.js");
+const Insurance = require("../Models/Insurance");
+const MedicalHistory = require("../Models/MedicalHistory.js");
+const QRCode = require("qrcode")
+const router = express.Router();
+const Doctor = require("../Models/onBoarding/Doctor"); // <-- Make sure this is imported
 
 /**
  * @swagger
- * /api/dashboard:
+ * /api/dashboard/all:
  *   get:
- *     summary: Get dashboard profile data
+ *     summary: Get full dashboard data
  *     tags: [Dashboard]
- *     description: Retrieve the profile details of the authenticated user
+ *     description: |
+ *       Returns comprehensive profile information for the authenticated user along with a QR code.
+ *       If the user is a patient, insurance details and medical history are also included.
+ *       If the user is a doctor, doctor-specific details are included.
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: User profile data retrieved successfully
+ *         description: Full dashboard data retrieved successfully
  *         content:
  *           application/json:
  *             schema:
@@ -41,134 +44,82 @@ const router = express.Router();
  *                   example: "John Doe"
  *                 email:
  *                   type: string
- *                   example: "johndoe@example.com"
+ *                   example: "john@example.com"
  *                 role:
  *                   type: string
  *                   enum: [patient, doctor]
- *                   example: "doctor"
- *                 isOnboarded:
- *                   type: boolean
- *                   example: true
- *                 specialization:
+ *                   example: "patient"
+ *                 profileImage:
  *                   type: string
- *                   example: "Cardiology"
- *                 verificationStatus:
+ *                   example: "https://example.com/uploads/profile.png"
+ *                 qrCode:
  *                   type: string
- *                   enum: [pending, approved, rejected]
- *                   example: "pending"
- *       401:
- *         description: Unauthorized - Invalid or missing token.
+ *                   format: base64
+ *                   description: QR Code image as a base64 string
+ *                 patientDetails:
+ *                   type: object
+ *                   description: Patient-specific profile data
+ *                 insuranceDetails:
+ *                   type: object
+ *                   description: Patient insurance information
+ *                 medicalHistory:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                   description: List of medical history records
+ *                 doctorDetails:
+ *                   type: object
+ *                   description: Doctor-specific profile data (if user is a doctor)
  *       404:
  *         description: User not found
  *       500:
- *         description: Server error
+ *         description: Server Error
  */
-router.get("/", authenticate, async (req, res) => {
+router.get("/all", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    let profileData = {
+    const qrData = `${FRONTEND_URL}/${user.role}/${user._id}`;
+    const qrCodeBase64 = await QRCode.toDataURL(qrData);
+
+    let data = {
       userId: user._id,
       fullName: user.fullName,
       email: user.email,
       role: user.role,
-      isOnboarded: user.isOnboarded,
+      profileImage: user.image || "",
+      qrCode: qrCodeBase64,
     };
 
     if (user.role === "patient") {
-      const patientDetails = await Patient.findOne({ userId: user._id });
-      if (patientDetails)
-        profileData = { ...profileData, ...patientDetails._doc };
-    } else if (user.role === "doctor") {
-      const doctorDetails = await Doctor.findOne({ userId: user._id });
-      if (doctorDetails)
-        profileData = {
-          ...profileData,
-          ...doctorDetails._doc,
+      const [patient, insurance, medicalHistory] = await Promise.all([
+        Patient.findOne({ userId: user._id }),
+        Insurance.findOne({ userId: user._id }),
+        MedicalHistory.find({ userId: user._id }).sort({ dateOfOccurrence: -1 }),
+      ]);
 
-          verificationStatus: doctorDetails.verificationStatus, // Will send verification status
-          verificationDocs:
-            doctorDetails.verificationStatus === "pending"
-              ? doctorDetails.verificationDocs
-              : [], // Hide docs after approval
-        };
+      data = {
+        ...data,
+        patientDetails: patient || {},
+        insuranceDetails: insurance || {},
+        medicalHistory: medicalHistory || [],
+      };
+    } else if (user.role === "doctor") {
+      const doctor = await Doctor.findOne({ userId: user._id });
+
+      data = {
+        ...data,
+        doctorDetails: doctor || {},
+      };
     }
 
-    res.json(profileData);
+    res.status(200).json(data);
   } catch (err) {
-    console.error("Dashboard Error:", err);
+    console.error("Error fetching full dashboard data:", err);
     res.status(500).json({ message: "Server Error" });
   }
 });
 
-/**
- * @swagger
- * /api/dashboard/doctor/verify:
- *   post:
- *     summary: Upload verification documents for doctor approval
- *     tags: [Dashboard]
- *     description: Allows doctors to upload verification documents for approval.
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               documents:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: binary
- *                 example: ["file1.pdf", "file2.jpg"]
- *     responses:
- *       201:
- *         description: File uploaded successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/FileUploadResponse'
- *       500:
- *         description: Internal server error
- */
-
-router.post(
-  "/doctor/verify",
-  authenticate,
-  upload.array("documents", 5),
-  async (req, res) => {
-    try {
-      const doctor = await Doctor.findOne({ userId: req.user.userId });
-      if (!doctor) return res.status(404).json({ message: "Doctor not found" });
-
-      // Save uploaded document URLs
-      doctor.verificationDocs = req.files.map((file) => file.location);
-      doctor.verificationStatus = "pending"; // Set status to pending
-      await doctor.save();
-
-      //  Send Email to Admin
-      const adminMessage = `
-      <h2>New Doctor Verification Request</h2>
-      <p>A doctor has submitted verification documents.</p>
-      <p><strong>Doctor ID:</strong> ${doctor._id}</p>
-      <p><strong>Specialization:</strong> ${doctor.specialization}</p>
-      <p>Click below to review:</p>
-      <a href="${ADMIN_PANEL_URL}">Go to Admin Portal</a>
-    `;
-
-      sendEmail(ADMIN_EMAIL, "Doctor Verification Request", adminMessage);
-
-      res
-        .status(201)
-        .json({ message: "Verification request submitted successfully." });
-    } catch (error) {
-      console.error("Verification Upload Error:", error);
-      res.status(500).json({ message: "Internal Server Error" });
-    }
-  }
-);
 
 module.exports = router;

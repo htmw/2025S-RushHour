@@ -1,115 +1,114 @@
 /**
- * @file Dashboard component.
- *
- * Displays different dashboards based on the user's role (Patient, Doctor, or Admin).
- * Fetches user data and ensures proper onboarding before allowing access.
+ * @file Dashboard Component
  *
  * @namespace src.components.private.Dashboard
  * @memberof src.components.private
+ *
+ * This is the main Dashboard entry component that renders role-specific dashboards
+ * for patients, doctors, and admins. It checks authentication and onboarding status,
+ * fetches dashboard data, and handles loading/error states.
  */
 
 import React, { useEffect } from "react";
 import {
   Container,
   Typography,
-  Paper,
-  Grid2,
   CircularProgress,
+  Box,
+  useTheme,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDashboard } from "../../../store/actions";
 import { useNavigate } from "react-router-dom";
-import PatientHomePage from "../Patient/Patient";
-import DoctorHomePage from "../Doctor/Doctor";
+import PatientDashboard from "./PatientDashboard";
+import DoctorDashboard from "./DoctorDashboard.jsx";
 import AdminDashboard from "./AdminDashboard";
 
 /**
  * Dashboard Component
  *
- * Manages the main dashboard view by rendering different layouts based on the user's role.
- * Redirects non-onboarded users to the onboarding page.
- *
- * @component
  * @memberof src.components.private.Dashboard
- * @returns {JSX.Element} The dashboard component.
+ *
+ * @returns {JSX.Element} - Renders the appropriate dashboard based on the user's role.
+ * Displays loading and error states while fetching dashboard data.
+ *
+ * @example
+ * <Dashboard />
  */
+
 const Dashboard = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  /** @type {Object} */
   const auth = useSelector((state) => state.auth);
-
-  /** @type {Object} */
   const { userData, loading, error } = useSelector((state) => state.dashboard);
 
-  /**
-   * Ensures only onboarded users access the dashboard.
-   * Fetches user data if authenticated.
-   *
-   * @function
-   * @memberof src.components.private.Dashboard
-   * @effect Runs when `auth` state changes.
-   */
   useEffect(() => {
     if (!auth.isOnboarded) {
       navigate("/onBoarding");
-    } else if (auth.token) {
+    } else if (auth.token && !userData) {
       dispatch(fetchDashboard({ token: auth.token }, navigate));
     }
-  }, [auth, dispatch, navigate]);
+  }, [auth.token, auth.isOnboarded, userData, dispatch, navigate]);
 
-  // Loading state
   if (loading) {
     return (
-      <Container>
-        <CircularProgress size={80} />
-      </Container>
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress size={60} />
+      </Box>
     );
   }
 
-  // Error state
   if (error) {
     return (
-      <Container>
+      <Box sx={{ mt: 5 }}>
         <Typography variant="h5" color="error" align="center">
           {error}
         </Typography>
-      </Container>
+      </Box>
     );
   }
 
-  // No user data
   if (!userData) {
     return (
-      <Container>
-        <Typography variant="h5" color="textSecondary" align="center">
+      <Box sx={{ mt: 5 }}>
+        <Typography variant="h6" align="center" color="text.secondary">
           No user data found.
         </Typography>
-      </Container>
+      </Box>
     );
   }
 
+  // ⬇️ Let each role render its own fully styled dashboard
   return (
-    <Container sx={{ mt: 5 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Grid2 container spacing={4}>
-          <Grid2 item size={{ xs: 12, md: 8 }}>
-            {userData.role === "patient" ? (
-              <PatientHomePage />
-            ) : userData.role === "doctor" ? (
-              <DoctorHomePage />
-            ) : userData.role === "admin" ? (
-              <AdminDashboard />
-            ) : (
-              <Typography align="center">
-                No additional profile details found.
-              </Typography>
-            )}
-          </Grid2>
-        </Grid2>
-      </Paper>
-    </Container>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        backgroundColor: theme.palette.background.default,
+      }}
+    >
+      {userData.role === "patient" ? (
+        <PatientDashboard />
+      ) : userData.role === "doctor" ? (
+        <DoctorDashboard userData={userData} />
+      ) : userData.role === "admin" ? (
+        <AdminDashboard />
+      ) : (
+        <Container sx={{ py: 5 }}>
+          <Typography align="center">
+            No additional profile details found.
+          </Typography>
+        </Container>
+      )}
+    </Box>
   );
 };
 

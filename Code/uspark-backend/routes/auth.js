@@ -5,7 +5,10 @@ const bcrypt = require("bcryptjs");
 const User = require("../Models/User");
 const JWT_SECRET = process.env.JWT_SECRET;
 const { v4: uuidv4 } = require("uuid");
-
+const ResetToken = require("../Models/ResetToken");
+const crypto = require("crypto");
+const { sendEmail } = require("../utils/emailService");
+const { FRONTEND_URL } = require("../config");
 /**
  * @swagger
  * tags:
@@ -232,6 +235,194 @@ router.post("/auth/signup", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/auth/forgot-password:
+ *   post:
+ *     summary: Request password reset
+ *     tags: [Authentication]
+ *     description: Sends a password reset link to the user's email address.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *     responses:
+ *       200:
+ *         description: Password reset link sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Password reset link sent successfully"
+ *       400:
+ *         description: Email is required
+ *       500:
+ *         description: Server error
+ *
+ */
+router.post("/auth/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ message: "Email is required" });
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "User not found" });
+
+    // Extract the name from the email (before the '@')
+    const name = email.split("@")[0];
+
+    // Generate a unique reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    // Save token in MongoDB (upsert to avoid duplicates)
+    await ResetToken.findOneAndUpdate(
+      { email },
+      { token: resetToken, createdAt: new Date() },
+      { upsert: true, new: true }
+    );
+
+    // Construct Reset Link
+    const resetLink = `${FRONTEND_URL}/reset-password?token=${resetToken}&email=${email}`;
+
+    // Send Email using Mustache Template
+    await sendEmail(email, "Password Reset Request", "forgotPassword", {
+      name,
+      resetLink,
+    });
+
+    res.json({ message: `Password reset email sent to ${email}` });
+  } catch (err) {
+    console.error("Forgot Password Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+/**
+ * @swagger
+ * /api/auth/verify-reset-token:
+ *   post:
+ *     summary: Verify password reset token
+ *     tags: [Authentication]
+ *     description: Verifies if the provided token is valid and not expired.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *               token:
+ *                 type: string
+ *                 example: "valid_token"
+ *     responses:
+ *       200:
+ *         description: Token verified, proceed with reset
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Token verified, proceed with reset"
+ *       400:
+ *         description: Invalid or expired token
+ *       500:
+ *         description: Server error
+ */
+router.post("/auth/verify-reset-token", async (req, res) => {
+  const { email, token } = req.body;
+
+  try {
+    // Check if the token exists in the database
+    const resetEntry = await ResetToken.findOne({ email, token });
+
+    if (!resetEntry) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    res.json({ message: "Token verified, proceed with reset" });
+  } catch (err) {
+    console.error("Token Verification Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+/**
+ *  @swagger
+ * /api/auth/reset-password:
+ *   post:
+ *     summary: Reset user password
+ *     tags: [Authentication]
+ *     description: Resets the user's password using the provided token and new password.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *               token:
+ *                 type: string
+ *                 example: "valid_token"
+ *               newPassword:
+ *                 type: string
+ *                 example: "new_password"
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Password reset successful"
+ *       400:
+ *         description: Invalid or expired token
+ *       500:
+ *         description: Server error
+ */
+router.post("/auth/reset-password", async (req, res) => {
+  const { email, token, newPassword } = req.body;
+  console.log(email, token, newPassword);
+  try {
+    const resetEntry = await ResetToken.findOne({ email, token });
+    if (!resetEntry)
+      return res.status(400).json({ message: "Invalid or expired token" });
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await User.updateOne({ email }, { password: hashedPassword });
+
+    await ResetToken.deleteOne({ email });
+
+    res.json({ message: "Password reset successful" });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+/**
+ * Generates a JWT token for the given user.
+ * @param {Object} user - User object containing id, email, fullName, and isOnboarded
+ * @returns {string} - JWT token
+ */
 function generateToken(user) {
   return jwt.sign(
     {
@@ -239,6 +430,7 @@ function generateToken(user) {
       email: user.email,
       fullName: user.fullName,
       isOnboarded: user.isOnboarded,
+      role: user.role,
     },
     JWT_SECRET,
     { expiresIn: "1h" }

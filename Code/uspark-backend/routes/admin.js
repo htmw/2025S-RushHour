@@ -1,5 +1,5 @@
 const express = require("express");
-const Doctor = require("../Models/Doctor");
+const Doctor = require("../Models/onBoarding/Doctor");
 const { sendEmail } = require("../utils/emailService");
 
 const router = express.Router();
@@ -117,7 +117,8 @@ router.post("/verify-doctor/:id", async (req, res) => {
  */
 router.get("/doctors", async (req, res) => {
   try {
-    const doctors = await Doctor.find().populate("userId");
+    console.log({res,req})
+    const doctors = await Doctor.find({}).populate("userId");
     res.json(doctors);
   } catch (error) {
     console.error("Error fetching doctors:", error);

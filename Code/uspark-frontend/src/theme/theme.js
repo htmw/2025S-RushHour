@@ -6,6 +6,7 @@ const darkTheme = createTheme({
     mode: "light", // Switch to "light" if you want a brighter UI
     primary: {
       main: "#2979FF", // Bright Blue
+      contrastText: "#FFFFFF",
     },
     secondary: {
       main: "#43A047", // Emerald Green

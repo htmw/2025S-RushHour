@@ -8,9 +8,15 @@
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
-import { fetchDashboard } from "../actions";
-import { FETCH_DASHBOARD } from "../actions/types";
-import { fetchDashboardApi } from "../apis";
+import {
+  fetchDashboard,
+} from "../actions";
+import {
+  FETCH_DASHBOARD,
+} from "../actions/types";
+import {
+  fetchDashboardApi,
+} from "../apis";
 
 /**
  * Worker saga: Handles fetching dashboard data.
@@ -34,6 +40,7 @@ function* handleFetchDashboard(action) {
     yield put(fetchDashboard.error(errorMsg));
   }
 }
+
 
 /**
  * Watcher saga: Listens for the FETCH_DASHBOARD action.

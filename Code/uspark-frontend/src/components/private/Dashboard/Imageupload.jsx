@@ -1,65 +1,66 @@
 /**
- * @file Profile image upload component.
- *
- * Allows users to upload and preview profile images.
+ * @file Imageupload Component
  *
  * @namespace src.components.private.Dashboard.Imageupload
  * @memberof src.components.private.Dashboard
+ *
+ * This component displays and manages the user's profile picture.
+ * It allows users to preview, change, and upload a new image.
+ * The component integrates with Redux actions for upload and fetch.
  */
 
 import React, { useState, useEffect } from "react";
-import { Avatar, IconButton, Button } from "@mui/material";
-import { PhotoCamera } from "@mui/icons-material";
+import {
+  Avatar,
+  IconButton,
+  Button,
+  Box,
+  Typography,
+  Paper,
+  Stack,
+} from "@mui/material";
+import { Edit, PhotoCamera } from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { uploadProfileImage } from "../../../store/actions";
+import { uploadProfileImage, fetchProfileImage } from "../../../store/actions";
+
 
 /**
  * Imageupload Component
  *
- * Handles profile image selection, preview, and upload.
- *
- * @component
  * @memberof src.components.private.Dashboard.Imageupload
- * @param {Object} props - Component props.
- * @param {Object} props.userData - The logged-in user's data.
- * @param {string} props.userData.image - URL of the user's profile image.
- * @param {string} props.userData.fullName - Full name of the user.
- * @param {string} props.userData.userId - Unique user identifier.
- * @returns {JSX.Element} The profile image upload component.
+ *
+ * @param {Object} props
+ * @param {Object} props.userData - The current user's data, used to display initials or image.
+ * @param {boolean} props.fromProfilePage - Flag to skip fetching image if already present.
+ *
+ * @returns {JSX.Element} - Renders an avatar with image upload and preview functionality.
+ *
+ * @example
+ * <Imageupload userData={userData} fromProfilePage />
  */
-const Imageupload = ({ userData }) => {
-  /** @property {File} */
-  const [selectedImage, setSelectedImage] = useState(null);
 
-  /** @property {string} */
-  const [previewImage, setPreviewImage] = useState(userData.image || null);
-
+const Imageupload = ({ userData, fromProfilePage }) => {
+  const theme = useTheme();
   const dispatch = useDispatch();
+  const imageUrl = useSelector((state) => state.profile?.imageUrl);
+  const [editMode, setEditMode] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
 
-  /** @property {string} */
-  const imageUrl = useSelector((state) => state.profile?.imageUrl || null);
+  useEffect(() => {
+    if (!fromProfilePage) {
 
-  /**
-   * Updates the preview image when the uploaded image URL changes.
-   *
-   * @function
-   * @memberof src.components.private.Dashboard.Imageupload
-   * @effect Runs when `imageUrl` changes.
-   */
+      dispatch(fetchProfileImage());
+    }
+  }, [dispatch]);
+
   useEffect(() => {
     if (imageUrl) {
       setPreviewImage(imageUrl);
-      setSelectedImage(null); // Reset selected image after successful upload
     }
   }, [imageUrl]);
 
-  /**
-   * Handles image selection and updates the preview.
-   *
-   * @function
-   * @memberof src.components.private.Dashboard.Imageupload
-   * @param {React.ChangeEvent<HTMLInputElement>} event - The file input change event.
-   */
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -68,55 +69,133 @@ const Imageupload = ({ userData }) => {
     }
   };
 
-  /**
-   * Handles profile image upload.
-   *
-   * @function
-   * @memberof src.components.private.Dashboard.Imageupload
-   */
   const handleUpload = () => {
     if (!selectedImage) return alert("Please select an image.");
-
     const formData = new FormData();
     formData.append("profileImage", selectedImage);
-    formData.append("userId", userData.userId);
-
     dispatch(uploadProfileImage(formData));
+    setEditMode(false);
+  };
+
+  const handleCancel = () => {
+    setEditMode(false);
+    setSelectedImage(null);
+    setPreviewImage(imageUrl || null);
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <Avatar
-        sx={{ width: 100, height: 100, mx: "auto", bgcolor: "primary.main" }}
-        src={previewImage}
+    <Paper
+      elevation={2}
+      sx={{
+        p: 3,
+        mb: 3,
+        borderRadius: 4,
+        textAlign: "center",
+        border: `1px solid ${theme.palette.divider}`,
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,
+        boxShadow:
+          theme.palette.mode === "dark"
+            ? "0 2px 14px rgba(255, 255, 255, 0)"
+            : "0 2px 14px rgba(0, 0, 0, 0.1)",
+        transition: "all 0.3s ease-in-out",
+      }}
+    >
+      <Typography
+        variant="h6"
+        color="primary"
+        fontWeight={700}
+        sx={{ letterSpacing: 1.5 }}
+        gutterBottom
+        data-cy="upload-profile-title"
       >
-        {!previewImage && userData.fullName.charAt(0)}
-      </Avatar>
+        Profile Picture
+      </Typography>
 
-      <input
-        accept="image/*"
-        type="file"
-        id="upload-profile-image"
-        style={{ display: "none" }}
-        onChange={handleImageChange}
-      />
-      <label htmlFor="upload-profile-image">
-        <IconButton color="primary" component="span" sx={{ mt: 2 }}>
-          <PhotoCamera />
-        </IconButton>
-      </label>
-
-      {selectedImage && (
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ mt: 2 }}
-          onClick={handleUpload}
+      <Box sx={{ position: "relative", display: "inline-block" }}>
+        <Avatar
+          src={previewImage}
+          sx={{
+            width: 100,
+            height: 100,
+            mx: "auto",
+            bgcolor: "primary.main",
+            fontSize: 32,
+          }}
+          data-cy="profile-avatar"
         >
-          Upload Image
-        </Button>
+          {!previewImage && userData.fullName.charAt(0)}
+        </Avatar>
+
+        {editMode ? (
+          <>
+            <input
+              accept="image/*"
+              type="file"
+              id="upload-profile-image"
+              style={{ display: "none" }}
+              onChange={handleImageChange}
+              data-cy="profile-image-input"
+            />
+            <label htmlFor="upload-profile-image">
+              <IconButton
+                color="primary"
+                component="span"
+                sx={{
+                  position: "absolute",
+                  bottom: -10,
+                  right: -10,
+                  bgcolor: "white",
+                  border: "1px solid #ccc",
+                  boxShadow: 1,
+                  ":hover": { bgcolor: "#f0f0f0" },
+                }}
+                data-cy="edit-profile-image-button"
+              >
+                <PhotoCamera />
+              </IconButton>
+            </label>
+          </>
+        ) : (
+          <IconButton
+            onClick={() => setEditMode(true)}
+            sx={{
+              position: "absolute",
+              bottom: -10,
+              right: -10,
+              bgcolor: "white",
+              border: "1px solid #ccc",
+              boxShadow: 1,
+              ":hover": { bgcolor: "#f0f0f0" },
+            }}
+            data-cy="edit-profile-image-button"
+          >
+            <Edit color="primary" />
+          </IconButton>
+        )}
+      </Box>
+
+      {editMode && (
+        <Stack direction="row" spacing={2} justifyContent="center" mt={3}>
+          <Button
+            variant="contained"
+            color="secondary"
+            data-cy="upload-image-button"
+            onClick={handleUpload}
+          >
+            Upload
+          </Button>
+          <Button
+            variant="outlined"
+            color="error"
+            data-cy="cancel-image-upload"
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>
+        </Stack>
       )}
-    </div>
+    </Paper>
   );
 };
 

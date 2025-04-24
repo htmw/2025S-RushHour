@@ -8,17 +8,17 @@
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
-import { fetchDoctors, verifyDoctor } from "../../store/actions";
-import { FETCH_DOCTORS, VERIFY_DOCTOR } from "../actions/types";
-import { fetchDoctorsApi, verifyDoctorApi } from "../apis";
+import { adminDoctor, verifyDoctor } from "../../store/actions";
+import { ADMIN_DOCTOR_API, VERIFY_DOCTOR } from "../actions/types";
+import { adminDoctorApi, verifyDoctorApi } from "../apis";
 
 function* handleFetchDoctors() {
   try {
-    yield put(fetchDoctors.pending());
-    const response = yield call(fetchDoctorsApi);
-    yield put(fetchDoctors.success(response.data));
+    yield put(adminDoctor.pending());
+    const response = yield call(adminDoctorApi);
+    yield put(adminDoctor.success(response.data));
   } catch (error) {
-    yield put(fetchDoctors.error(error.message));
+    yield put(adminDoctor.error(error.message));
   }
 }
 
@@ -43,11 +43,12 @@ function* handleVerifyDoctor(action) {
       action.payload.decision
     );
     yield put(verifyDoctor.success(action.payload));
-    yield put(fetchDoctors()); // Refresh the doctors list
+    yield put(adminDoctor()); // Refresh the doctors list
   } catch (error) {
     yield put(verifyDoctor.error(error.message));
   }
 }
+
 
 /**
  * Watcher saga: Listens for admin-related actions.
@@ -59,6 +60,6 @@ function* handleVerifyDoctor(action) {
  * @yields {Generator} Watches for FETCH_DOCTORS and VERIFY_DOCTOR actions.
  */
 export default function* watchAdminSaga() {
-  yield takeLatest(FETCH_DOCTORS, handleFetchDoctors);
+  yield takeLatest(ADMIN_DOCTOR_API, handleFetchDoctors);
   yield takeLatest(VERIFY_DOCTOR, handleVerifyDoctor);
 }

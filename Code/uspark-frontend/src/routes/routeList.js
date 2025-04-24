@@ -9,9 +9,18 @@
 
 import { lazy } from "react";
 
+
+
 // Public Routes
 /** @constant {React.LazyExoticComponent<React.ComponentType>} */
 const Login = lazy(() => import("../components/public/auth/Login"));
+const ForgotPassword = lazy(() =>
+  import("../components/public/auth/ForgotPassword")
+);
+const ResetPassword = lazy(() =>
+  import("../components/public/auth/ResetPassword")
+);
+const Appointments = lazy(() => import("../components/private/Dashboard/Appointments"));
 const Signup = lazy(() => import("../components/public/auth/Signup"));
 const PublicAboutUs = lazy(() => import("../components/public/AboutUs"));
 const ContactUs = lazy(() => import("../components/public/ContactUs"));
@@ -20,16 +29,15 @@ const ContactUs = lazy(() => import("../components/public/ContactUs"));
 const Home = lazy(() => import("../components/private/Home"));
 const Dashboard = lazy(() => import("../components/private/Dashboard"));
 const Onboarding = lazy(() => import("../components/private/onBoarding"));
-const Doctorprofile = lazy(() =>
-  import("../components/private/Doctor/Doctorprofile")
-);
+const ProfilePage = lazy(() => import("../components/private/Profile"));
 const AdminDashboard = lazy(() =>
   import("../components/private/Dashboard/AdminDashboard")
 );
-const Patprofile = lazy(() => import("../components/private/Patient/PatinetProfile"));
 const Admin = lazy(() =>
   import("../components/private/Dashboard/AdminDashboard")
 );
+const MakeAppointments = lazy(() => import("../components/private/Dashboard/MakeAppointments"));
+const DoctorManagePatients = lazy(() => import("../components/private/DoctorPatient/DoctorManagePatients"));
 
 /**
  * List of private routes accessible only to authenticated users.
@@ -59,23 +67,34 @@ export const PrivateRoutes = [
     component: AdminDashboard,
     exact: true,
   },
-  {
-    path: "/docprofile",
-    component: Doctorprofile,
-    exact: true,
-  },
 
   {
-    path: "/patprofile",
-    component: Patprofile,
+    path: "/profile",
+    component: ProfilePage,
     exact: true,
   },
-
   {
     path: "/admin",
     component: Admin,
     exact: true,
   },
+  {
+    path: "/appointments",
+    component: Appointments,
+    exact: true,
+  },
+
+  {
+    path: "/findahosp",
+    component: MakeAppointments,
+    exact: true,
+  },
+  {
+    path: "/my-patients",
+    component: DoctorManagePatients,
+    exact: true,
+
+  }
 ];
 
 /**
@@ -94,6 +113,16 @@ export const PublicRoutes = [
   {
     path: "/signup",
     component: Signup,
+    exact: true,
+  },
+  {
+    path: "/forgot-password",
+    component: ForgotPassword,
+    exact: true,
+  },
+  {
+    path: "/reset-password",
+    component: ResetPassword,
     exact: true,
   },
   {
@@ -120,7 +149,7 @@ export const PublicRoutes = [
  * @memberof src.routes.routeList
  * @property {Array<{path: string, name: string}>}
  */
-export const headerRouteList = [
+export const publicHeaderRouteList = [
   {
     path: "/aboutus",
     name: "About Us",
@@ -128,5 +157,49 @@ export const headerRouteList = [
   {
     path: "/contactus",
     name: "Contact Us",
+  },
+];
+
+/**
+ * Routes used in the navigation header.
+ *
+ * @constant
+ * @memberof src.routes.routeList
+ * @property {Array<{path: string, name: string}>}
+ */
+export const patientRouteList = [
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+  },
+  {
+    path: "/appointments",
+    name: "Appointments",
+  },
+];
+
+/**
+ * Routes used in the navigation header.
+ *
+ * @constant
+ * @memberof src.routes.routeList
+ * @property {Array<{path: string, name: string}>}
+ */
+export const doctorRouteList = [
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+  },
+  {
+    path: "/my-patients",
+    name: "My Patients",
   },
 ];

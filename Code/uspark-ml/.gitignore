@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.pyc
+*.log
+data/  # Consider if you want to track data
+.DS_Store

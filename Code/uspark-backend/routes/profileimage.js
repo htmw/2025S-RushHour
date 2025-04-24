@@ -1,23 +1,65 @@
 const express = require("express");
-const upload = require("../Middleware/upload");
+const createUploadMiddleware = require("../Middleware/upload");
+const { default: authenticate } = require("../Middleware/authenticate");
 const User = require("../Models/User");
-
+const { AWS_BUCKET_PUBLIC_USPARK_DOCS } = require("../config.js");
 const router = express.Router();
 
+const upload = createUploadMiddleware(
+  "profile-images",
+  AWS_BUCKET_PUBLIC_USPARK_DOCS
+);
 /**
  * @swagger
  * tags:
  *   - name: Profile Image
- *     description: Endpoints related to profile image upload
+ *     description: Endpoints related to profile image upload and retrieval
  */
 
 /**
  * @swagger
- * /api/upload-profile-image:
- *   post:
- *     summary: Upload a profile image
+ * /api/profile-image:
+ *   get:
+ *     summary: Fetch profile image URL for the logged-in user
  *     tags: [Profile Image]
- *     description: Upload a profile image for a user and store the image URL in the database.
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully fetched profile image
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 image:
+ *                   type: string
+ *                   example: "https://s3.amazonaws.com/bucket/image.jpg"
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router.get("/", authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json({ image: user.image || null });
+  } catch (error) {
+    console.error("Error fetching profile image:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+/**
+ * @swagger
+ * /api/profile-image:
+ *   post:
+ *     summary: Upload profile image
+ *     tags: [Profile Image]
+ *     security:
+ *       - BearerAuth: []
  *     consumes:
  *       - multipart/form-data
  *     requestBody:
@@ -30,9 +72,6 @@ const router = express.Router();
  *               profileImage:
  *                 type: string
  *                 format: binary
- *               userId:
- *                 type: string
- *                 example: "65f4c3bdf1a3d7a9e9a4d8c2"
  *     responses:
  *       200:
  *         description: Image uploaded successfully
@@ -46,7 +85,7 @@ const router = express.Router();
  *                   example: "Image uploaded successfully"
  *                 imageUrl:
  *                   type: string
- *                   example: "https://s3.amazonaws.com/bucket-name/image.jpg"
+ *                   example: "https://s3.amazonaws.com/bucket/image.jpg"
  *       400:
  *         description: No file uploaded
  *       404:
@@ -54,30 +93,32 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/", upload.single("profileImage"), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: "No file uploaded." });
-  }
+router.post(
+  "/",
+  authenticate,
+  upload.single("profileImage"),
+  async (req, res) => {
+    if (!req.file)
+      return res.status(400).json({ message: "No file uploaded." });
 
-  try {
-    const { userId } = req.body;
-    const imageUrl = req.file.location; // S3 file URL
+    try {
+      const user = await User.findByIdAndUpdate(
+        req.user.userId,
+        { image: req.file.location },
+        { new: true }
+      );
 
-    const user = await User.findOneAndUpdate(
-      { userId: userId },
-      { image: imageUrl },
-      { new: true }
-    );
+      if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      res.status(200).json({
+        message: "Image uploaded successfully",
+        imageUrl: user.image,
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      res.status(500).json({ message: "Server error", error: error.message });
     }
-
-    res.json({ message: "Image uploaded successfully", imageUrl });
-  } catch (error) {
-    console.error("Error while uploading image:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
   }
-});
+);
 
 module.exports = router;
