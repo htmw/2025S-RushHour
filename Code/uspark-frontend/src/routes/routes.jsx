@@ -16,10 +16,11 @@ import {
 import { PrivateRoutes, PublicRoutes } from "./routeList";
 import { Suspense } from "react";
 import LoadingSpinner from "../components/public/Suspense";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/public/Header";
 import Footer from "../components/public/Footer";
 import history from "../history";
+import { fetchDashboard } from "../store/actions";
 
 /**
  * Private route wrapper.
@@ -68,6 +69,13 @@ const PublicRoute = ({ Component }) => {
  * @returns {JSX.Element} The main routing structure with headers and footers.
  */
 const AppRoutes = () => {
+  const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
+  console.log("Token in AppRoutes:", token);
+
+  if (token) {
+    dispatch(fetchDashboard({ token }));
+  }
   return (
     <Router history={history}>
       <Header />
