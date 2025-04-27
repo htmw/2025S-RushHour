@@ -9,17 +9,10 @@
 
 import { lazy } from "react";
 
-
-
 // Public Routes
-/** @constant {React.LazyExoticComponent<React.ComponentType>} */
 const Login = lazy(() => import("../components/public/auth/Login"));
-const ForgotPassword = lazy(() =>
-  import("../components/public/auth/ForgotPassword")
-);
-const ResetPassword = lazy(() =>
-  import("../components/public/auth/ResetPassword")
-);
+const ForgotPassword = lazy(() => import("../components/public/auth/ForgotPassword"));
+const ResetPassword = lazy(() => import("../components/public/auth/ResetPassword"));
 const Appointments = lazy(() => import("../components/private/Dashboard/Appointments"));
 const Signup = lazy(() => import("../components/public/auth/Signup"));
 const PublicAboutUs = lazy(() => import("../components/public/AboutUs"));
@@ -30,22 +23,14 @@ const Home = lazy(() => import("../components/private/Home"));
 const Dashboard = lazy(() => import("../components/private/Dashboard"));
 const Onboarding = lazy(() => import("../components/private/onBoarding"));
 const ProfilePage = lazy(() => import("../components/private/Profile"));
-const AdminDashboard = lazy(() =>
-  import("../components/private/Dashboard/AdminDashboard")
-);
-const Admin = lazy(() =>
-  import("../components/private/Dashboard/AdminDashboard")
-);
+const AdminDashboard = lazy(() => import("../components/private/Dashboard/AdminDashboard"));
+const Admin = lazy(() => import("../components/private/Dashboard/AdminDashboard"));
 const MakeAppointments = lazy(() => import("../components/private/Dashboard/MakeAppointments"));
 const DoctorManagePatients = lazy(() => import("../components/private/DoctorPatient/DoctorManagePatients"));
 
-/**
- * List of private routes accessible only to authenticated users.
- *
- * @constant
- * @memberof src.routes.routeList
- * @property {Array<{path: string, component: React.ComponentType, exact: boolean}>}
- */
+// ✅ NEW Import
+const MedsegUpload = lazy(() => import("../components/private/DoctorPatient/MedsegUpload")); // ⭐️ ADDED THIS
+
 export const PrivateRoutes = [
   {
     path: "/",
@@ -67,7 +52,6 @@ export const PrivateRoutes = [
     component: AdminDashboard,
     exact: true,
   },
-
   {
     path: "/profile",
     component: ProfilePage,
@@ -83,7 +67,6 @@ export const PrivateRoutes = [
     component: Appointments,
     exact: true,
   },
-
   {
     path: "/findahosp",
     component: MakeAppointments,
@@ -93,17 +76,15 @@ export const PrivateRoutes = [
     path: "/my-patients",
     component: DoctorManagePatients,
     exact: true,
-
-  }
+  },
+  // ✅ NEW Route
+  {
+    path: "/doctor/medseg-upload",
+    component: MedsegUpload,
+    exact: true,
+  },
 ];
 
-/**
- * List of public routes accessible without authentication.
- *
- * @constant
- * @memberof src.routes.routeList
- * @property {Array<{path: string, component: React.ComponentType, exact: boolean}>}
- */
 export const PublicRoutes = [
   {
     path: "/login",
@@ -142,13 +123,6 @@ export const PublicRoutes = [
   },
 ];
 
-/**
- * Routes used in the navigation header.
- *
- * @constant
- * @memberof src.routes.routeList
- * @property {Array<{path: string, name: string}>}
- */
 export const publicHeaderRouteList = [
   {
     path: "/aboutus",
@@ -160,13 +134,6 @@ export const publicHeaderRouteList = [
   },
 ];
 
-/**
- * Routes used in the navigation header.
- *
- * @constant
- * @memberof src.routes.routeList
- * @property {Array<{path: string, name: string}>}
- */
 export const patientRouteList = [
   {
     path: "/dashboard",
@@ -182,13 +149,6 @@ export const patientRouteList = [
   },
 ];
 
-/**
- * Routes used in the navigation header.
- *
- * @constant
- * @memberof src.routes.routeList
- * @property {Array<{path: string, name: string}>}
- */
 export const doctorRouteList = [
   {
     path: "/dashboard",
@@ -201,5 +161,10 @@ export const doctorRouteList = [
   {
     path: "/my-patients",
     name: "My Patients",
+  },
+  // ✅ OPTIONAL: Add MedsegUpload to doctor's sidebar
+  {
+    path: "/doctor/medseg-upload",
+    name: "Segmentation",
   },
 ];

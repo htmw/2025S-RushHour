@@ -114,6 +114,20 @@ export const uploadDocsApi = (token, formData) =>
     },
   });
 
+  /**
+ * API request to upload an image for biomedical segmentation (MedSeg).
+ *
+ * @param {FormData} formData - The form data containing patient email and file.
+ * @returns {Promise<Object>} Resolves with the S3 upload result URL.
+ */
+export const medsegUploadApi = (formData) =>
+  api.post("/api/medseg/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+
 /**
  * API request to onboard a doctor.
  *

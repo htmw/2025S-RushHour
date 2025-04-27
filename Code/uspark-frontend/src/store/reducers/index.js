@@ -20,6 +20,9 @@ import makeAppointmentsReducer from "./makeAppointments";
 import doctorAvailabilityReducer from "./doctorAvailabilityReducer";
 import { doctorPatientsReducer } from "./doctorPatientsReducer";
 
+// ⭐️ NEW import for MedSeg
+import { medsegReducer } from "./medsegReducer";
+
 /**
  * Root reducer object containing all application reducers.
  * Used in Redux store configuration.
@@ -51,5 +54,8 @@ export const reducer = {
   appointments: appointmentsReducer,
   makeAppointments: makeAppointmentsReducer,
   doctorAvailability: doctorAvailabilityReducer,
-  doctorPatients: doctorPatientsReducer
+  doctorPatients: doctorPatientsReducer,
+
+  // ⭐️ NEW added for Biomedical Image Segmentation
+  medseg: medsegReducer
 };
