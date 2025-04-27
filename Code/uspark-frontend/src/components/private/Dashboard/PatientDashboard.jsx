@@ -6,7 +6,7 @@ import { fetchDashboard } from "../../../store/actions";
 
 import HealthNewsCard from "./HealthNewsCard.jsx";
 import OneCard from "./OneCard";
-import InitialAssessmentCard from "./InitialAssesment";
+import InitialAssessmentCard from "./InitialAssesment.jsx";
 import AppointmentsPage from "./Appointments.jsx";
 import MakeAppointments from "./MakeAppointments.jsx";
 import ChatBox from "../Chatbot/Chatbox.jsx";
@@ -18,34 +18,12 @@ const PatientDashboard = () => {
   const { userData, loading } = useSelector((state) => state.dashboard);
 
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [assessmentList, setAssessmentList] = useState(() => {
-    const storedAssessments = localStorage.getItem("assessmentList");
-    return storedAssessments ? JSON.parse(storedAssessments) : [];
-  });
 
   useEffect(() => {
     if (token && !userData && !loading) {
       dispatch(fetchDashboard({ token }));
     }
   }, [token, userData, loading, dispatch]);
-
-const handleAddAssessment = (fullConversation) => {
-  const now = new Date();
-  const newAssessment = {
-    number: assessmentList.length + 1,
-    date: now.toLocaleDateString(),
-    time: now.toLocaleTimeString(),
-    fullSummary: fullConversation, // Full conversation to show in modal
-    shortSummary:
-      fullConversation.length > 50
-        ? fullConversation.slice(0, 50) + "..."
-        : fullConversation,
-  };
-  const updatedList = [...assessmentList, newAssessment];
-  setAssessmentList(updatedList);
-  localStorage.setItem("assessmentList", JSON.stringify(updatedList));
-};
-
 
   return (
     <Box
@@ -79,37 +57,31 @@ const handleAddAssessment = (fullConversation) => {
         <Grid item xs={12} md={7}>
           <Stack spacing={3}>
             <OneCard data={userData} />
-            <InitialAssessmentCard
-              openChat={() => setIsChatOpen(true)}
-              assessmentList={assessmentList}
-            />
+            <InitialAssessmentCard openChat={() => setIsChatOpen(true)} />
             <AppointmentsPage />
           </Stack>
         </Grid>
       </Grid>
 
       {/* Chatbox */}
-      {isChatOpen && (
-        <ChatBox
-          onClose={() => setIsChatOpen(false)}
-          onSaveAssessment={handleAddAssessment}
-        />
-      )}
+      {isChatOpen && <ChatBox onClose={() => setIsChatOpen(false)} />}
 
       {/* Floating Chat Button */}
-      <Fab
-        color="primary"
-        aria-label="chat"
-        onClick={() => setIsChatOpen(true)}
-        sx={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          zIndex: 1100,
-        }}
-      >
-        {isChatOpen ? <CloseIcon /> : <ChatIcon />}
-      </Fab>
+      {!isChatOpen && (
+        <Fab
+          color="primary"
+          aria-label="chat"
+          onClick={() => setIsChatOpen(!isChatOpen)}
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            zIndex: 1100,
+          }}
+        >
+          <ChatIcon />
+        </Fab>
+      )}
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Paper,
   Typography,
@@ -8,21 +8,43 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  CircularProgress,
+  Button,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAssessments } from "../../../store/actions";
+import { useNavigate } from "react-router-dom";
 
-const InitialAssessmentCard = ({ openChat, assessmentList }) => {
+const InitialAssessmentCard = ({ openChat }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { assessments, loading, error } = useSelector(
+    (state) => state.assessments
+  );
+
   const [openModal, setOpenModal] = useState(false);
-  const [selectedSummary, setSelectedSummary] = useState("");
+  const [selectedMessages, setSelectedMessages] = useState([]);
 
-  const handleOpenModal = (summary) => {
-    setSelectedSummary(summary);
+  const handleOpenModal = (messages) => {
+    setSelectedMessages(messages);
     setOpenModal(true);
   };
 
   const handleCloseModal = () => {
     setOpenModal(false);
   };
+
+  useEffect(() => {
+    // Fetch assessments if not already present
+    if (!assessments || assessments.length === 0) {
+      dispatch(fetchAssessments());
+    }
+  }, [dispatch, assessments]);
+
+  // Get the last assessment if available
+  const lastAssessment = assessments?.length > 0 ? assessments[0] : null;
 
   return (
     <Paper
@@ -38,7 +60,7 @@ const InitialAssessmentCard = ({ openChat, assessmentList }) => {
     >
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Typography variant="h6" fontWeight={500}>
-          Initial Assessments
+          {assessments?.length === 0 ? "Initial Assessments" : "My Assessments"}
         </Typography>
         <IconButton
           onClick={openChat}
@@ -55,35 +77,66 @@ const InitialAssessmentCard = ({ openChat, assessmentList }) => {
         </IconButton>
       </Box>
 
-      <Stack spacing={2}>
-        {assessmentList.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">
-            No assessments yet.
+      {loading ? (
+        <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
+          <CircularProgress />
+        </Box>
+      ) : error ? (
+        <Typography variant="body2" color="error">
+          {error}
+        </Typography>
+      ) : lastAssessment ? (
+        <Paper
+          sx={{
+            p: 2,
+            borderRadius: 3,
+            backgroundColor: "grey.100",
+          }}
+        >
+          <Typography fontWeight={600}>
+            Outcome: {lastAssessment.outcome}
           </Typography>
-        ) : (
-          assessmentList.map((item) => (
-            <Paper
-              key={item.number}
-              sx={{ p: 2, cursor: "pointer" }}
-              onClick={() => handleOpenModal(item.fullSummary)}
-            >
-              <Typography fontWeight={600}>
-                Assessment #{item.number}
-              </Typography>
-              <Typography variant="body2">
-                Time: {item.date}, {item.time}
-              </Typography>
-              <Typography variant="body2">
-                Summary:{" "}
-                {item.fullSummary
-                  .split("\n")
-                  [item.fullSummary.split("\n").length - 1].slice(0, 50)}
-                ...
-              </Typography>
-            </Paper>
-          ))
-        )}
-      </Stack>
+          <Typography variant="body2" color="text.secondary">
+            Date: {new Date(lastAssessment.createdAt).toLocaleDateString()} -
+            Time:{" "}
+            {new Date(lastAssessment.createdAt).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.primary"
+            sx={{ mt: 1, fontStyle: "italic" }}
+          >
+            Last Response:{" "}
+            {lastAssessment.messages[lastAssessment.messages.length - 1]
+              ?.text || "No response"}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="primary"
+            sx={{ mt: 1, cursor: "pointer" }}
+            onClick={() => handleOpenModal(lastAssessment.messages)}
+          >
+            View Full Conversation
+          </Typography>
+        </Paper>
+      ) : (
+        <Typography variant="body2" color="text.secondary">
+          No assessments yet.
+        </Typography>
+      )}
+
+      {/* View All Assessments Button */}
+      <Button
+        variant="outlined"
+        color="primary"
+        sx={{ mt: 2 }}
+        onClick={() => navigate("/assessments")}
+      >
+        View All Assessments
+      </Button>
 
       {/* Modal for full chat view */}
       <Dialog
@@ -92,26 +145,48 @@ const InitialAssessmentCard = ({ openChat, assessmentList }) => {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle>Full Chat Summary</DialogTitle>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            px: 3,
+            py: 2,
+            borderBottom: "1px solid #ccc",
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold">
+            Full Chat Conversation
+          </Typography>
+          <IconButton onClick={handleCloseModal}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
         <DialogContent dividers>
           <Stack spacing={2}>
-            {selectedSummary.split("\n").map((line, index) => (
+            {selectedMessages.map((message, index) => (
               <Box
                 key={index}
                 sx={{
-                  backgroundColor: line.startsWith("Doctor:")
-                    ? "primary.light"
-                    : "grey.300",
-                  color: "black",
-                  p: 1.5,
-                  borderRadius: 2,
-                  maxWidth: "75%",
-                  alignSelf: line.startsWith("Doctor:")
-                    ? "flex-start"
-                    : "flex-end",
+                  display: "flex",
+                  justifyContent:
+                    message.sender === "bot" ? "flex-start" : "flex-end",
                 }}
               >
-                <Typography variant="body2">{line.trim()}</Typography>
+                <Box
+                  sx={{
+                    maxWidth: "70%",
+                    p: 1.5,
+                    borderRadius: 2,
+                    backgroundColor:
+                      message.sender === "bot" ? "grey.300" : "primary.light",
+                    color: message.sender === "bot" ? "primary.main" : "white",
+
+                    boxShadow: 2,
+                  }}
+                >
+                  <Typography variant="body2">{message.text}</Typography>
+                </Box>
               </Box>
             ))}
           </Stack>

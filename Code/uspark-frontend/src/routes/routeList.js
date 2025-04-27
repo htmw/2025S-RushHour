@@ -9,8 +9,6 @@
 
 import { lazy } from "react";
 
-
-
 // Public Routes
 /** @constant {React.LazyExoticComponent<React.ComponentType>} */
 const Login = lazy(() => import("../components/public/auth/Login"));
@@ -20,7 +18,9 @@ const ForgotPassword = lazy(() =>
 const ResetPassword = lazy(() =>
   import("../components/public/auth/ResetPassword")
 );
-const Appointments = lazy(() => import("../components/private/Dashboard/Appointments"));
+const Appointments = lazy(() =>
+  import("../components/private/Dashboard/Appointments")
+);
 const Signup = lazy(() => import("../components/public/auth/Signup"));
 const PublicAboutUs = lazy(() => import("../components/public/AboutUs"));
 const ContactUs = lazy(() => import("../components/public/ContactUs"));
@@ -36,8 +36,16 @@ const AdminDashboard = lazy(() =>
 const Admin = lazy(() =>
   import("../components/private/Dashboard/AdminDashboard")
 );
-const MakeAppointments = lazy(() => import("../components/private/Dashboard/MakeAppointments"));
-const DoctorManagePatients = lazy(() => import("../components/private/DoctorPatient/DoctorManagePatients"));
+const MakeAppointments = lazy(() =>
+  import("../components/private/Dashboard/MakeAppointments")
+);
+const DoctorManagePatients = lazy(() =>
+  import("../components/private/DoctorPatient/DoctorManagePatients")
+);
+
+const PatientAssessments = lazy(() =>
+  import("../components/private/Assessments/index")
+);
 
 /**
  * List of private routes accessible only to authenticated users.
@@ -93,8 +101,12 @@ export const PrivateRoutes = [
     path: "/my-patients",
     component: DoctorManagePatients,
     exact: true,
-
-  }
+  },
+  {
+    path: "/assessments",
+    component: PatientAssessments,
+    exact: true,
+  },
 ];
 
 /**
@@ -179,6 +191,10 @@ export const patientRouteList = [
   {
     path: "/appointments",
     name: "Appointments",
+  },
+  {
+    path: "/assessments",
+    name: "Assessments",
   },
 ];
 

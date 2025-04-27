@@ -132,14 +132,32 @@ export const fetchHospitals = createAsyncActions(types.FETCH_HOSPITALS);
 export const fetchAppointments = createAsyncActions(types.FETCH_APPOINTMENTS);
 export const createAppointment = createAsyncActions(types.CREATE_APPOINTMENT);
 // Export doctor availability actions
-export const fetchDoctorAvailability = createAsyncActions(types.FETCH_DOCTOR_AVAILABILITY);
-export const saveDoctorAvailability = createAsyncActions(types.SAVE_DOCTOR_AVAILABILITY);
-export const updateDoctorAvailability = createAsyncActions(types.UPDATE_DOCTOR_AVAILABILITY);
+export const fetchDoctorAvailability = createAsyncActions(
+  types.FETCH_DOCTOR_AVAILABILITY
+);
+export const saveDoctorAvailability = createAsyncActions(
+  types.SAVE_DOCTOR_AVAILABILITY
+);
+export const updateDoctorAvailability = createAsyncActions(
+  types.UPDATE_DOCTOR_AVAILABILITY
+);
 
-
-export const fetchDoctorPatients = createAsyncActions(types.FETCH_DOCTOR_PATIENTS);
-export const fetchDoctorPatientDetails = createAsyncActions(types.FETCH_DOCTOR_PATIENT_DETAILS);
+export const fetchDoctorPatients = createAsyncActions(
+  types.FETCH_DOCTOR_PATIENTS
+);
+export const fetchDoctorPatientDetails = createAsyncActions(
+  types.FETCH_DOCTOR_PATIENT_DETAILS
+);
 export const adminDoctor = createAsyncActions(types.ADMIN_DOCTOR_API);
+export const saveChatHistory = createAsyncActions(types.SAVE_CHAT_HISTORY);
+
+export const startChatWithBot = createAsyncActions(types.START_CHAT_WITH_BOT);
+export const sendMessageWithBot = createAsyncActions(
+  types.SEND_MESSAGE_WITH_BOT
+);
+
+export const fetchAssessments = createAsyncActions(types.FETCH_ASSESSMENTS);
+export const deleteAssessment = createAsyncActions(types.DELETE_ASSESSMENT);
 
 // For non-standard patterns (like update/delete), you can define manually
 export const updateAppointment = (payload) => ({
@@ -151,5 +169,3 @@ export const deleteAppointment = (payload) => ({
   type: types.DELETE_APPOINTMENT,
   payload,
 });
-
-

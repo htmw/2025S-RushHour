@@ -18,9 +18,9 @@
  * Each function abstracts the HTTP logic and includes standard headers like the Authorization token.
  */
 
-
 import axios from "axios";
 import config from "../../../config";
+import { ApiSharp } from "@mui/icons-material";
 /**
  * Base API URL from environment variables.
  * Defaults to localhost if not set.
@@ -69,7 +69,6 @@ export const signupApi = (userData) => api.post("/auth/signup", userData);
 export const oAuthSignupApi = (providerData) =>
   api.post("/auth/oauth", providerData);
 
-
 /**
  * API call to verify a doctor's status.
  *
@@ -80,8 +79,7 @@ export const oAuthSignupApi = (providerData) =>
 export const verifyDoctorApi = (doctorId, decision) =>
   api.post(`/api/admin/verify-doctor/${doctorId}`, { decision });
 
-export const adminDoctorApi = () =>
-  api.get(`/api/admin/doctors`);
+export const adminDoctorApi = () => api.get(`/api/admin/doctors`);
 
 export const fetchProfileApi = (token) =>
   api.get("/api/profile", {
@@ -177,7 +175,6 @@ export const fetchHealthIssuesApi = (query, token) =>
 export const forgotPasswordApi = (email) =>
   api.post("/auth/forgot-password", { email });
 
-
 /**
  * API request to reset a user's password.
  *
@@ -259,7 +256,7 @@ export const fetchProfileImageApi = (token) =>
  * API request to update a patient's profile.
  *
  * @param {string} token - The authentication token for API authorization.
-*/
+ */
 export const updatePatientProfileApi = (token, data) =>
   api.post("/api/profile/patient", data, {
     headers: {
@@ -288,9 +285,13 @@ export const updateDoctorProfileApi = (token, profileData) =>
  */
 
 export const saveDoctorAvailabilityApi = (token, slots) =>
-  api.post("/api/profile/doctor/availability", { slots }, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  api.post(
+    "/api/profile/doctor/availability",
+    { slots },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
 
 /**
  * API request to update a doctor's availability slot.
@@ -345,9 +346,10 @@ export const fetchMedicalHistoryApi = (token) =>
  * @param {string} token - The authentication token for API authorization.
  * @returns {Promise<Object>} Resolves with the user's appointments data.
  */
-export const fetchAppointmentsApi = (token) => api.get("/api/appointments", {
-  headers: { Authorization: `Bearer ${token}` },
-});
+export const fetchAppointmentsApi = (token) =>
+  api.get("/api/appointments", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 /**
  * API request to create a new appointment.
  *
@@ -385,7 +387,6 @@ export const deleteAppointmentApi = (id, token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
-
 /**
  * API request to fetch nearby hospitals.
  *
@@ -403,9 +404,10 @@ export const fetchHospitalsApi = (lat, long, search = "") =>
  * @param {string} token - The authentication token for API authorization.
  * @returns {Promise<Object>} Resolves with the list of doctors.
  */
-export const fetchDoctorsApi = (token) => api.get("/api/doctors", {
-  headers: { Authorization: `Bearer ${token}` },
-});
+export const fetchDoctorsApi = (token) =>
+  api.get("/api/doctors", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
 /**
  * API request to fetch the list of patients associated with a doctor.
@@ -429,3 +431,76 @@ export const fetchDoctorPatientDetailsApi = (token, patientId) =>
   api.get(`/api/doctors/patient/${patientId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+/**
+ * API request to save chat history.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @param {Object} formData - The chat history data to save.
+ * @returns {Promise<Object>} Resolves when the chat history is saved successfully.
+ */
+export const saveChatHistoryApi = (token, formData) =>
+  api.post(`/api/chathistory/save`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+/**
+ * API request to start a chat with the bot.
+ *
+ * @returns {Promise<Object>} Resolves with the session ID and bot's initial reply.
+ */
+export const startChatWithBotApi = () =>
+  axios.post(
+    "https://pranaychamala-uspark.hf.space/chat/start",
+    {},
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+
+/**
+ * API request to send a message to the bot.
+ *
+ * @param {string} sessionId - The session ID of the chat.
+ * @param {string} message - The user's message.
+ * @returns {Promise<Object>} Resolves with the bot's reply.
+ */
+export const sendMessageWithBotApi = (sessionId, message) =>
+  axios.post(
+    "https://pranaychamala-uspark.hf.space/chat/message",
+    {
+      session_id: sessionId,
+      message,
+    },
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+
+/**
+ * API request to fetch assessments.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @returns {Promise<Object>} Resolves with the assessments data.
+ */
+export const fetchAssessmentsApi = async (token) => {
+  return api.get("/api/assessments", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+/**
+ * API request to delete an assessment.
+ *
+ * @param {string} token - The authentication token for API authorization.
+ * @param {string} id - The unique identifier of the assessment to delete.
+ * @returns {Promise<Object>} Resolves when the assessment is deleted successfully.
+ */
+export const deleteAssessmentApi = async (token, id) => {
+  return api.delete(`/api/assessments/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};

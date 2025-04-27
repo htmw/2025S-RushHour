@@ -10,7 +10,8 @@ const appointmentRoutes = require("./appointments");
 const MedicalHistory = require("./medicalHistory");
 const profileRoutes = require("./profile");
 const doctorRoutes = require("./doctors");
-const chatHistory = require("./chatHistory")
+const chatHistory = require("./chatHistory");
+const assessmentsRoutes = require("./assessments");
 const router = express.Router();
 
 /**
@@ -41,5 +42,7 @@ router.use("/hospitals", hospitalsRoutes);
 router.use("/appointments", appointmentRoutes);
 router.use("/medical-history", MedicalHistory);
 router.use("/doctors", doctorRoutes);
-router.use("/chathistory",chatHistory);
+router.use("/chathistory", chatHistory);
+router.use("/assessments", assessmentsRoutes);
+
 module.exports = router;
