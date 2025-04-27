@@ -1,184 +1,218 @@
-/**
- * @file Chatbot Component
- * @namespace src.components.private.Chatbot.Chatbot
- * @memberof src.components.private.Chatbot
- *
- * A floating chatbot widget for the Uheal platform.
- * Allows users to interact with an AI assistant by sending messages.
- * Includes:
- * - A toggleable floating chat icon
- * - Chat window with styled messages for user and bot
- * - Axios integration to fetch bot replies from a backend endpoint
- */
-
-import React, { useState } from "react";
-import {
-  Box,
-  IconButton,
-  TextField,
-  Button,
-  Paper,
-  Typography,
-} from "@mui/material";
-import ChatIcon from "@mui/icons-material/Chat";
+import React, { useEffect, useState, useRef } from "react";
+import { Box, Typography, IconButton, TextField, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
+import { toast } from "react-hot-toast";
+import { api } from "../../../store/apis";
+import {
+  chatBoxWrapper,
+  chatBoxHeader,
+  chatMessagesContainer,
+  chatMessage,
+  chatBubble,
+  chatInputContainer,
+} from "./Chatbox";
 
-/**
- * Chatbot Component
- *
- * @memberof src.components.private.Chatbot.Chatbot
- * @returns {JSX.Element} - The floating chatbot interface with conversation history and input.
- *
- * @example
- * <Chatbot />
- */
-
-const Chatbot = () => {
-  const [open, setOpen] = useState(false);
+const ChatBox = ({ onClose }) => {
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
+  const [newMessage, setNewMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
+  const bottomRef = useRef(null);
+  const started = useRef(false);
 
-  const toggleChat = () => {
-    setOpen(!open);
-  };
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
 
-  const handleSend = async () => {
-    if (input.trim()) {
-      const userMessage = { text: input, sender: "user" };
-      setMessages([...messages, userMessage]);
-      setInput("");
-
+    const startChat = async () => {
       try {
-        const response = await axios.post("http://localhost:5001/api/chat", {
-          message: input,
-        });
+        const response = await axios.post(
+          "https://pranaychamala-uspark.hf.space/chat/start",
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const { session_id, reply } = response.data;
+        console.log("✅ Session Started:", session_id);
 
-        const botMessage = { text: response.data.response, sender: "bot" };
-        setMessages((prev) => [...prev, botMessage]);
+        setSessionId(session_id);
+        setMessages([
+          { sender: "bot", text: reply || "Hello! How can I help you today?" },
+        ]);
       } catch (error) {
-        console.error("Chatbot Error:", error);
-        setMessages((prev) => [
-          ...prev,
-          { text: "Sorry, I couldn't get a response.", sender: "bot" },
+        console.error("❌ Error starting chat:", error);
+        setMessages([
+          { sender: "bot", text: "Hello! (Couldn't connect properly.)" },
         ]);
       }
+    };
+
+    startChat();
+  }, []);
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  const saveChatHistory = async (fullMessages) => {
+    try {
+      await api.post(
+        "/api/chathistory/save",
+        {
+          sessionId,
+          messages: fullMessages,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("✅ Chat saved successfully!");
+      toast.success("Chat saved!");
+    } catch (error) {
+      console.error(
+        "❌ Error saving chat:",
+        error.response?.data || error.message
+      );
+      toast.error(error.response?.data?.message || "Failed to save chat!");
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !sessionId) return;
+
+    const userMessage = { sender: "user", text: newMessage };
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
+    setNewMessage("");
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
+        "https://pranaychamala-uspark.hf.space/chat/message",
+        {
+          session_id: sessionId,
+          message: newMessage,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("🤖 Bot Reply:", response.data);
+
+      const botReply = {
+        sender: "bot",
+        text: response.data.response || "Sorry, I couldn't understand.",
+      };
+
+      const finalMessages = [...updatedMessages, botReply];
+      setMessages(finalMessages);
+
+      // Check if session should end
+      if (
+        botReply.text.toLowerCase().includes("thank you") ||
+        botReply.text.toLowerCase().includes("session ended")
+      ) {
+        console.log("💾 Session end detected. Saving chat...");
+        await saveChatHistory(finalMessages);
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+      }
+    } catch (error) {
+      console.error(
+        "❌ Error sending message:",
+        error.response?.data || error.message
+      );
+      const errorReply = { sender: "bot", text: "Oops! Something went wrong." };
+      setMessages((prev) => [...prev, errorReply]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
+    }
+  };
+
+  const handleCloseChat = async () => {
+    try {
+      if (userId && sessionId && messages.length > 0) {
+        await saveChatHistory(messages);
+      }
+    } catch (error) {
+      console.error("❌ Error saving chat on close:", error);
+    } finally {
+      onClose();
     }
   };
 
   return (
-    <>
-      {/* Floating Chat Button */}
-      <Box
-        sx={{ position: "fixed", bottom: 20, right: 100, textAlign: "center" }}
-      >
-        <IconButton
-          sx={{
-            backgroundColor: "#007bff",
-            color: "white",
-            "&:hover": { backgroundColor: "#0056b3" },
-          }}
-          onClick={toggleChat}
-        >
-          <ChatIcon />
+    <Box sx={chatBoxWrapper}>
+      <Box sx={chatBoxHeader}>
+        <Typography variant="h6">Chatbot</Typography>
+        <IconButton size="small" onClick={handleCloseChat}>
+          <CloseIcon />
         </IconButton>
-        <Typography variant="caption" sx={{ color: "#007bff", mt: 1 }}>
-          <p></p>Uheal
-        </Typography>
       </Box>
 
-      {/* Chatbox */}
-      {open && (
-        <Paper
-          sx={{
-            position: "fixed",
-            bottom: 80,
-            right: 20,
-            width: 300,
-            height: 400,
-            display: "flex",
-            flexDirection: "column",
-            boxShadow: 3,
-            borderRadius: 2,
-            overflow: "hidden",
-          }}
-        >
-          {/* Chat Header */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              backgroundColor: "#007bff",
-              color: "white",
-              padding: "8px 12px",
-            }}
-          >
-            <Typography variant="h6">Uheal</Typography>
-            <IconButton onClick={toggleChat} sx={{ color: "white" }}>
-              <CloseIcon />
-            </IconButton>
+      <Box sx={chatMessagesContainer}>
+        {messages.map((msg, idx) => (
+          <Box key={idx} sx={chatMessage(msg.sender)}>
+            <Box sx={chatBubble(msg.sender)}>
+              <Typography variant="body2">{msg.text}</Typography>
+            </Box>
           </Box>
-
-          {/* Chat Messages */}
-          <Box
-            sx={{
-              flex: 1,
-              padding: 2,
-              overflowY: "auto",
-              display: "flex",
-              flexDirection: "column",
-              gap: 1,
-            }}
-          >
-            {messages.map((msg, index) => (
+        ))}
+        {loading && (
+          <Box sx={chatMessage("bot")}>
+            <Box sx={chatBubble("bot")}>
               <Typography
-                key={index}
-                sx={{
-                  alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
-                  backgroundColor:
-                    msg.sender === "user" ? "#007bff" : "#e0e0e0",
-                  color: msg.sender === "user" ? "white" : "black",
-                  padding: "8px 12px",
-                  borderRadius: "12px",
-                  maxWidth: "70%",
-                }}
+                variant="body2"
+                sx={{ fontStyle: "italic", opacity: 0.7 }}
               >
-                {msg.text}
+                Uheal is typing...
               </Typography>
-            ))}
+            </Box>
           </Box>
+        )}
+        <div ref={bottomRef} />
+      </Box>
 
-          {/* Input Field */}
-          <Box
-            sx={{
-              display: "flex",
-              padding: "8px",
-              borderTop: "1px solid #ddd",
-            }}
-          >
-            <TextField
-              fullWidth
-              variant="outlined"
-              size="small"
-              placeholder="Type a message..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSend}
-              sx={{ ml: 1 }}
-            >
-              <SendIcon />
-            </Button>
-          </Box>
-        </Paper>
-      )}
-    </>
+      <Box sx={chatInputContainer}>
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="Type a message..."
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
+          disabled={loading}
+        />
+        <Button
+          variant="contained"
+          onClick={handleSendMessage}
+          disabled={loading || !sessionId || !newMessage.trim()}
+        >
+          Send
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
-export default Chatbot;
+export default ChatBox;
