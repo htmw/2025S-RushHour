@@ -19,7 +19,8 @@ import appointmentsReducer from "./appointments";
 import makeAppointmentsReducer from "./makeAppointments";
 import doctorAvailabilityReducer from "./doctorAvailabilityReducer";
 import { doctorPatientsReducer } from "./doctorPatientsReducer";
-
+import chatHistoryReducer from "./chatHistoryReducer"; // Import the chat history reducer
+import assessmentReducer from "./assessmentReducer"; // Import the assessment reducer
 /**
  * Root reducer object containing all application reducers.
  * Used in Redux store configuration.
@@ -51,5 +52,7 @@ export const reducer = {
   appointments: appointmentsReducer,
   makeAppointments: makeAppointmentsReducer,
   doctorAvailability: doctorAvailabilityReducer,
-  doctorPatients: doctorPatientsReducer
+  doctorPatients: doctorPatientsReducer,
+  chatHistory: chatHistoryReducer,
+  assessments: assessmentReducer, // Add the assessment reducer here
 };

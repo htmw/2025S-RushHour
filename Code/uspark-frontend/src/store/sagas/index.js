@@ -22,7 +22,8 @@ import profileSaga from "./profileSaga";
 import appointmentsSaga from "./appointmentsSaga";
 import doctorAvailabilitySaga from "./doctorAvailabilitySaga";
 import doctorPatientSaga from "./doctorPatientSaga";
-
+import chatHistorySaga from "./chatHistorySaga"; // Import the chat history saga
+import assessmentSaga from "./assessmentSaga"; // Import the assessment saga
 /**
  * List of all saga functions used in the application.
  *
@@ -44,7 +45,9 @@ const allSagas = [
   profileSaga,
   appointmentsSaga,
   doctorAvailabilitySaga,
-  doctorPatientSaga
+  doctorPatientSaga,
+  chatHistorySaga,
+  assessmentSaga, // Add the assessment saga to the list
 ];
 
 /**

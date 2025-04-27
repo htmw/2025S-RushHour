@@ -5,12 +5,13 @@ const dashboardRoutes = require("./dashboard");
 const profileImageRoutes = require("./profileimage");
 const insuranceRoutes = require("./Insurances");
 const adminRoutes = require("./admin");
-const chatRoutes = require("./chat");
 const hospitalsRoutes = require("./hospitals");
 const appointmentRoutes = require("./appointments");
 const MedicalHistory = require("./medicalHistory");
 const profileRoutes = require("./profile");
 const doctorRoutes = require("./doctors");
+const chatHistory = require("./chatHistory");
+const assessmentsRoutes = require("./assessments");
 const router = express.Router();
 
 /**
@@ -36,10 +37,12 @@ router.use("/dashboard", dashboardRoutes);
 router.use("/profile-image", profileImageRoutes);
 router.use("/insurance", insuranceRoutes);
 router.use("/admin", adminRoutes);
-router.use("/chat", chatRoutes);
 router.use("/profile", profileRoutes);
 router.use("/hospitals", hospitalsRoutes);
 router.use("/appointments", appointmentRoutes);
 router.use("/medical-history", MedicalHistory);
 router.use("/doctors", doctorRoutes);
+router.use("/chathistory", chatHistory);
+router.use("/assessments", assessmentsRoutes);
+
 module.exports = router;
