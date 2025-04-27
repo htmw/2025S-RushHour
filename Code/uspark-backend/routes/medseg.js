@@ -1,8 +1,8 @@
 const express = require('express');
 const multer = require('multer');
 const axios = require('axios');
-const FormData = require('form-data');
 const fs = require('fs');
+const FormData = require('form-data');
 const { uploadToS3 } = require('../Middleware/s3');
 require('dotenv').config();
 
@@ -10,7 +10,6 @@ const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
 router.post('/medseg/upload', upload.single('file'), async (req, res) => {
-  let tempFilePath;
   try {
     console.log("➡️ POST /medseg/upload called");
 
@@ -22,22 +21,21 @@ router.post('/medseg/upload', upload.single('file'), async (req, res) => {
       return res.status(400).json({ message: "No file uploaded." });
     }
 
-    tempFilePath = req.file.path; // save the path
-
-    const formData = new FormData();
-    formData.append('file', fs.createReadStream(tempFilePath), {
+    // Prepare form data to send to Hugging Face
+    const form = new FormData();
+    form.append('file', fs.createReadStream(req.file.path), {
       filename: req.file.originalname,
-      contentType: req.file.mimetype,
+      contentType: req.file.mimetype
     });
 
     console.log("➡️ Sending request to Hugging Face MedSeg API...");
 
-    const hfResponse = await axios.post(
+    const response = await axios.post(
       'https://pranaychamala-uspark.hf.space/medseg',
-      formData,
+      form,
       {
         headers: {
-          ...formData.getHeaders(),
+          ...form.getHeaders(),
           'accept': 'application/json',
         },
         timeout: 60000,
@@ -46,30 +44,33 @@ router.post('/medseg/upload', upload.single('file'), async (req, res) => {
 
     console.log("✅ Hugging Face API responded!");
 
-    const hfData = hfResponse.data;
+    // Very important step: decoding base64 into Buffer
+    const base64Data = response.data.segmentation_result;
 
-    if (!hfData || !hfData.segmentation_result) {
-      throw new Error("Segmentation result not found.");
+    if (!base64Data) {
+      console.error("🔥 Segmented image base64 not found in response!");
+      fs.unlinkSync(req.file.path);
+      return res.status(500).json({ message: "Segmentation failed. No image returned." });
     }
 
-    const base64String = hfData.segmentation_result;
-    const segmentedBuffer = Buffer.from(base64String, 'base64');
+    const cleanedBase64 = base64Data.replace(/^data:image\/\w+;base64,/, "");
+    const segmentedBuffer = Buffer.from(cleanedBase64, 'base64');
 
+    // Generate S3 Key
     const safeEmail = patientEmail.replace(/[@.]/g, "_");
     const key = `segmented/${safeEmail}_${Date.now()}.png`;
 
     console.log("➡️ Uploading segmented image to S3...");
 
+    // Upload binary buffer to S3
     const uploadResult = await uploadToS3(segmentedBuffer, key, 'image/png');
 
     console.log("✅ Image uploaded to S3 successfully:", uploadResult.Location);
 
-    // ⭐ Only now, after everything, delete the file
-    if (tempFilePath) {
-      fs.unlinkSync(tempFilePath);
-      console.log("🗑️ Temp file deleted after full success");
-    }
+    // Clean up temp uploaded file
+    fs.unlinkSync(req.file.path);
 
+    // Return the S3 URL to frontend
     return res.status(200).json({
       message: 'Segmentation successful!',
       s3Url: uploadResult.Location,
@@ -78,13 +79,9 @@ router.post('/medseg/upload', upload.single('file'), async (req, res) => {
   } catch (error) {
     console.error("🔥 Error during segmentation/upload:");
     console.error(error.response?.data?.toString() || error.message);
-
-    // ⭐ Cleanup temp file even in case of error
-    if (tempFilePath && fs.existsSync(tempFilePath)) {
-      fs.unlinkSync(tempFilePath);
-      console.log("🗑️ Temp file cleaned up after error");
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
     }
-
     return res.status(500).json({ message: error.message || "Segmentation or upload failed." });
   }
 });

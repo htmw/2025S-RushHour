@@ -12,7 +12,7 @@ function MedsegUpload() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file || !email) {
-      alert('Please enter email and upload a file.');
+      alert('Please fill both fields');
       return;
     }
 
@@ -46,167 +46,168 @@ function MedsegUpload() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#f5f5f5', // White theme background (neutral)
+      padding: '40px 20px',
+      background: '#f5f6fa',
       display: 'flex',
-      justifyContent: 'center',
+      flexDirection: 'column',
       alignItems: 'center',
-      padding: '40px'
     }}>
+      
+      {/* Card for Form */}
       <div style={{
-        background: '#fff',
-        borderRadius: '16px',
-        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
-        width: '1200px',
-        maxWidth: '95%',
-        padding: '40px',
-        display: 'flex',
-        gap: '40px'
+        background: '#ffffff',
+        borderRadius: '20px',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+        padding: '30px',
+        width: '100%',
+        maxWidth: '600px',
+        marginBottom: '40px'
       }}>
-        
-        {/* Left: Form Section */}
-        <div style={{ flex: 1 }}>
-          <h2 style={{ marginBottom: '30px', fontSize: '26px', fontWeight: '700', color: '#333' }}>
-            Useg Biomedical Image Segmentation
-          </h2>
+        <h2 style={{ textAlign: 'center', fontWeight: '700', fontSize: '26px', marginBottom: '25px', color: '#333' }}>
+          Useg Biomedical Image Segmentation
+        </h2>
 
-          <form onSubmit={handleSubmit}>
-            <input
-              type="email"
-              placeholder="Enter Patient Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '14px',
-                marginBottom: '20px',
-                borderRadius: '10px',
-                border: '1px solid #ccc',
-                fontSize: '16px'
-              }}
-              required
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files[0])}
-              style={{
-                width: '100%',
-                padding: '14px',
-                marginBottom: '20px',
-                borderRadius: '10px',
-                border: '1px solid #ccc',
-                background: '#f9f9f9',
-                fontSize: '16px'
-              }}
-              required
-            />
-
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: '100%',
-                padding: '15px',
-                borderRadius: '10px',
-                border: 'none',
-                backgroundColor: loading ? '#9ccc9c' : '#4caf50',
-                color: '#fff',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                transition: 'background 0.3s'
-              }}
-            >
-              {loading ? 'Uploading...' : 'Segment and Upload'}
-            </button>
-          </form>
-
-          {/* Progress Bar */}
-          {loading && (
-            <div style={{
-              marginTop: '20px',
-              background: '#ddd',
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Enter Patient Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '15px',
+              marginBottom: '20px',
               borderRadius: '10px',
-              overflow: 'hidden',
-              height: '18px'
-            }}>
-              <div style={{
-                height: '100%',
-                width: `${progress}%`,
-                backgroundColor: '#4caf50',
-                transition: 'width 0.4s ease',
-                textAlign: 'center',
-                color: 'white',
-                fontWeight: 'bold'
-              }}>
-                {progress}%
-              </div>
-            </div>
-          )}
-
-          {/* Message */}
-          {message && (
-            <div style={{
-              marginTop: '20px',
+              fontSize: '16px',
+              border: '1px solid #ccc',
+              background: '#f9f9f9'
+            }}
+            required
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setFile(e.target.files[0])}
+            style={{
+              width: '100%',
+              padding: '15px',
+              marginBottom: '20px',
+              borderRadius: '10px',
+              fontSize: '16px',
+              background: '#f9f9f9',
+              border: '1px solid #ccc'
+            }}
+            required
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
               padding: '15px',
               borderRadius: '10px',
-              backgroundColor: message.includes('Successful') ? '#e6f4ea' : '#fdecea',
-              color: message.includes('Successful') ? '#276749' : '#c53030',
-              fontSize: '16px',
+              fontSize: '17px',
               fontWeight: 'bold',
-              textAlign: 'center'
-            }}>
-              {message}
+              color: 'white',
+              backgroundColor: '#28a745',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background 0.3s ease'
+            }}
+          >
+            {loading ? 'Uploading...' : 'Segment and Upload'}
+          </button>
+        </form>
+
+        {loading && (
+          <div style={{
+            marginTop: '20px',
+            height: '20px',
+            background: '#ddd',
+            borderRadius: '10px',
+            overflow: 'hidden'
+          }}>
+            <div
+              style={{
+                height: '100%',
+                width: `${progress}%`,
+                backgroundColor: '#28a745',
+                color: 'white',
+                textAlign: 'center',
+                fontSize: '13px',
+                fontWeight: 'bold',
+                lineHeight: '20px',
+                transition: 'width 0.4s'
+              }}
+            >
+              {progress}%
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* Right: Image Section */}
-        <div style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#fafafa',
-          borderRadius: '10px',
-          padding: '20px',
-          border: '1px solid #eee'
-        }}>
-          {segmentedImageUrl ? (
-            <>
-              <h3 style={{ marginBottom: '20px', fontSize: '22px', color: '#333' }}>Segmented Output:</h3>
-              <img
-                src={segmentedImageUrl}
-                alt="Segmented Output"
-                style={{
-                  width: '100%',
-                  maxHeight: '400px',
-                  objectFit: 'contain',
-                  borderRadius: '12px',
-                  boxShadow: '0 6px 18px rgba(0,0,0,0.1)',
-                }}
-              />
-              <a
-                href={segmentedImageUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  marginTop: '15px',
-                  color: '#007bff',
-                  fontWeight: 'bold',
-                  textDecoration: 'underline'
-                }}
-              >
-                View Full Image
-              </a>
-            </>
-          ) : (
-            <p style={{ color: '#aaa', fontSize: '18px' }}>No output yet. Please upload an image.</p>
-          )}
-        </div>
-
+        {message && (
+          <div style={{
+            marginTop: '20px',
+            padding: '15px',
+            borderRadius: '10px',
+            backgroundColor: message.includes('Successful') ? '#d4edda' : '#f8d7da',
+            color: message.includes('Successful') ? '#155724' : '#721c24',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            fontSize: '15px'
+          }}>
+            {message}
+          </div>
+        )}
       </div>
+
+      {/* Card for Output */}
+      {segmentedImageUrl && (
+        <div style={{
+          background: '#ffffff',
+          borderRadius: '20px',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+          padding: '30px',
+          width: '100%',
+          maxWidth: '800px',
+          textAlign: 'center'
+        }}>
+          <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '20px', color: '#333' }}>
+            Segmented Output
+          </h3>
+          <div style={{
+            background: '#f2f2f2',
+            borderRadius: '12px',
+            padding: '20px',
+            marginBottom: '15px'
+          }}>
+            <img
+              src={segmentedImageUrl}
+              alt="Segmented Result"
+              style={{
+                width: '100%',
+                maxHeight: '500px',
+                objectFit: 'contain',
+                borderRadius: '10px'
+              }}
+            />
+          </div>
+          <a
+            href={segmentedImageUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: '#007bff',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              textDecoration: 'underline'
+            }}
+          >
+            View Full Image
+          </a>
+        </div>
+      )}
+
     </div>
   );
 }
