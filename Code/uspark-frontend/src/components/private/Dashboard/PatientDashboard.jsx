@@ -11,8 +11,6 @@ import AppointmentsPage from "./Appointments.jsx";
 import MakeAppointments from "./MakeAppointments.jsx";
 import ChatBox from "../Chatbot/Chatbox.jsx";
 
-
-
 const PatientDashboard = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -20,12 +18,34 @@ const PatientDashboard = () => {
   const { userData, loading } = useSelector((state) => state.dashboard);
 
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [assessmentList, setAssessmentList] = useState(() => {
+    const storedAssessments = localStorage.getItem("assessmentList");
+    return storedAssessments ? JSON.parse(storedAssessments) : [];
+  });
 
   useEffect(() => {
     if (token && !userData && !loading) {
       dispatch(fetchDashboard({ token }));
     }
   }, [token, userData, loading, dispatch]);
+
+const handleAddAssessment = (fullConversation) => {
+  const now = new Date();
+  const newAssessment = {
+    number: assessmentList.length + 1,
+    date: now.toLocaleDateString(),
+    time: now.toLocaleTimeString(),
+    fullSummary: fullConversation, // Full conversation to show in modal
+    shortSummary:
+      fullConversation.length > 50
+        ? fullConversation.slice(0, 50) + "..."
+        : fullConversation,
+  };
+  const updatedList = [...assessmentList, newAssessment];
+  setAssessmentList(updatedList);
+  localStorage.setItem("assessmentList", JSON.stringify(updatedList));
+};
+
 
   return (
     <Box
@@ -42,7 +62,6 @@ const PatientDashboard = () => {
         fontWeight={600}
         gutterBottom
         color="text.primary"
-        data-cy="dashboard-welcome"
       >
         🩺 Patient Dashboard
       </Typography>
@@ -60,20 +79,28 @@ const PatientDashboard = () => {
         <Grid item xs={12} md={7}>
           <Stack spacing={3}>
             <OneCard data={userData} />
-            <InitialAssessmentCard />
+            <InitialAssessmentCard
+              openChat={() => setIsChatOpen(true)}
+              assessmentList={assessmentList}
+            />
             <AppointmentsPage />
           </Stack>
         </Grid>
       </Grid>
 
       {/* Chatbox */}
-      {isChatOpen && <ChatBox onClose={() => setIsChatOpen(false)} />}
+      {isChatOpen && (
+        <ChatBox
+          onClose={() => setIsChatOpen(false)}
+          onSaveAssessment={handleAddAssessment}
+        />
+      )}
 
       {/* Floating Chat Button */}
       <Fab
         color="primary"
         aria-label="chat"
-        onClick={() => setIsChatOpen(!isChatOpen)}
+        onClick={() => setIsChatOpen(true)}
         sx={{
           position: "fixed",
           bottom: 20,

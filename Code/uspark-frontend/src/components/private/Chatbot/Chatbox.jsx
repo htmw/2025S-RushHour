@@ -13,7 +13,7 @@ import {
   chatInputContainer,
 } from "./Chatbox";
 
-const ChatBox = ({ onClose }) => {
+const ChatBox = ({ onClose, onSaveAssessment }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,21 +30,14 @@ const ChatBox = ({ onClose }) => {
         const response = await axios.post(
           "https://pranaychamala-uspark.hf.space/chat/start",
           {},
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+          { headers: { "Content-Type": "application/json" } }
         );
         const { session_id, reply } = response.data;
-        console.log("✅ Session Started:", session_id);
-
         setSessionId(session_id);
         setMessages([
           { sender: "bot", text: reply || "Hello! How can I help you today?" },
         ]);
       } catch (error) {
-        console.error("❌ Error starting chat:", error);
         setMessages([
           { sender: "bot", text: "Hello! (Couldn't connect properly.)" },
         ]);
@@ -64,10 +57,7 @@ const ChatBox = ({ onClose }) => {
     try {
       await api.post(
         "/api/chathistory/save",
-        {
-          sessionId,
-          messages: fullMessages,
-        },
+        { sessionId, messages: fullMessages },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -75,14 +65,8 @@ const ChatBox = ({ onClose }) => {
           },
         }
       );
-
-      console.log("✅ Chat saved successfully!");
       toast.success("Chat saved!");
     } catch (error) {
-      console.error(
-        "❌ Error saving chat:",
-        error.response?.data || error.message
-      );
       toast.error(error.response?.data?.message || "Failed to save chat!");
     }
   };
@@ -99,43 +83,38 @@ const ChatBox = ({ onClose }) => {
     try {
       const response = await axios.post(
         "https://pranaychamala-uspark.hf.space/chat/message",
-        {
-          session_id: sessionId,
-          message: newMessage,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { session_id: sessionId, message: newMessage },
+        { headers: { "Content-Type": "application/json" } }
       );
-
-      console.log("🤖 Bot Reply:", response.data);
 
       const botReply = {
         sender: "bot",
         text: response.data.response || "Sorry, I couldn't understand.",
       };
-
       const finalMessages = [...updatedMessages, botReply];
       setMessages(finalMessages);
 
-      // Check if session should end
+      
       if (
-        botReply.text.toLowerCase().includes("thank you") ||
+        botReply.text.toLowerCase().includes("thank you for the") ||
         botReply.text.toLowerCase().includes("session ended")
       ) {
         console.log("💾 Session end detected. Saving chat...");
         await saveChatHistory(finalMessages);
-        setTimeout(() => {
-          onClose();
-        }, 2000);
+
+        if (onSaveAssessment) {
+          const combinedSummary = finalMessages
+            .map((m) => {
+              return (m.sender === "bot" ? "Doctor: " : "You: ") + m.text;
+            })
+            .join("\n");
+
+          onSaveAssessment(combinedSummary);
+
+        }
       }
+
     } catch (error) {
-      console.error(
-        "❌ Error sending message:",
-        error.response?.data || error.message
-      );
       const errorReply = { sender: "bot", text: "Oops! Something went wrong." };
       setMessages((prev) => [...prev, errorReply]);
     } finally {
@@ -149,22 +128,21 @@ const ChatBox = ({ onClose }) => {
     }
   };
 
-  const handleCloseChat = async () => {
-    try {
-      if (userId && sessionId && messages.length > 0) {
-        await saveChatHistory(messages);
-      }
-    } catch (error) {
-      console.error("❌ Error saving chat on close:", error);
-    } finally {
-      onClose();
+const handleCloseChat = async () => {
+  try {
+    if (sessionId && messages.length > 0) {
+      await saveChatHistory(messages);
     }
-  };
+  } finally {
+    onClose(); // Only close the chat, don't add assessment here
+  }
+};
+
 
   return (
     <Box sx={chatBoxWrapper}>
       <Box sx={chatBoxHeader}>
-        <Typography variant="h6">Chatbot</Typography>
+        <Typography variant="h6">Uheal Chatbot</Typography>
         <IconButton size="small" onClick={handleCloseChat}>
           <CloseIcon />
         </IconButton>
@@ -178,18 +156,6 @@ const ChatBox = ({ onClose }) => {
             </Box>
           </Box>
         ))}
-        {loading && (
-          <Box sx={chatMessage("bot")}>
-            <Box sx={chatBubble("bot")}>
-              <Typography
-                variant="body2"
-                sx={{ fontStyle: "italic", opacity: 0.7 }}
-              >
-                Uheal is typing...
-              </Typography>
-            </Box>
-          </Box>
-        )}
         <div ref={bottomRef} />
       </Box>
 

@@ -1,142 +1,123 @@
-/**
- * @file InitialAssessmentCard Component
- *
- * @namespace src.components.private.Dashboard.InitialAssessmentCard
- * @memberof src.components.private.Dashboard
- *
- * This component displays a card to trigger an initial assessment form for patients.
- * It opens a dialog where users can fill in assessment details and comments.
- * Currently, it logs the data to console on submission and can be extended for backend integration.
- */
-
 import React, { useState } from "react";
 import {
-  Card,
-  CardContent,
+  Paper,
   Typography,
   IconButton,
+  Stack,
+  Box,
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  Button,
-  Stack,
-  Box,
-  useTheme,
-  Paper,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import ResponsiveField from "../../../utils/components/ResponsiveField";
 
-/**
- * InitialAssessmentCard Component
- *
- * @memberof src.components.private.Dashboard.InitialAssessmentCard
- *
- * @returns {JSX.Element} - A card with a form dialog that allows patients to
- * submit initial assessment details and comments.
- *
- * @example
- * <InitialAssessmentCard />
- */
+const InitialAssessmentCard = ({ openChat, assessmentList }) => {
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedSummary, setSelectedSummary] = useState("");
 
-const InitialAssessmentCard = () => {
-  const theme = useTheme();
-  const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    assessment: "",
-    comments: "",
-  });
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+  const handleOpenModal = (summary) => {
+    setSelectedSummary(summary);
+    setOpenModal(true);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitted:", formData);
-    handleClose();
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   return (
-    <>
-      <Paper
-        elevation={3}
-        sx={{
-          p: 2,
-          mt: 3,
-          borderRadius: 3,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          transition: "all 0.3s ease",
-        }}
-      >
+    <Paper
+      elevation={3}
+      sx={{
+        p: 2,
+        mt: 3,
+        borderRadius: 3,
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+      }}
+    >
+      <Box display="flex" alignItems="center" justifyContent="space-between">
         <Typography variant="h6" fontWeight={500}>
-          Initial Assessment
+          Initial Assessments
         </Typography>
         <IconButton
-          onClick={handleOpen}
+          onClick={openChat}
           color="primary"
           sx={{
-            ml: "auto",
-            backgroundColor: theme.palette.action.hover,
-            color: theme.palette.primary.contrastText,
-            borderRadius: 2,
+            backgroundColor: "action.hover",
             "&:hover": {
-              backgroundColor: theme.palette.primary.main,
+              backgroundColor: "primary.main",
+              color: "white",
             },
           }}
         >
           <AddIcon />
         </IconButton>
-      </Paper>
+      </Box>
 
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle>
-          <Typography variant="h6" fontWeight="bold">
-            Initial Assessment Form
+      <Stack spacing={2}>
+        {assessmentList.length === 0 ? (
+          <Typography variant="body2" color="text.secondary">
+            No assessments yet.
           </Typography>
-        </DialogTitle>
+        ) : (
+          assessmentList.map((item) => (
+            <Paper
+              key={item.number}
+              sx={{ p: 2, cursor: "pointer" }}
+              onClick={() => handleOpenModal(item.fullSummary)}
+            >
+              <Typography fontWeight={600}>
+                Assessment #{item.number}
+              </Typography>
+              <Typography variant="body2">
+                Time: {item.date}, {item.time}
+              </Typography>
+              <Typography variant="body2">
+                Summary:{" "}
+                {item.fullSummary
+                  .split("\n")
+                  [item.fullSummary.split("\n").length - 1].slice(0, 50)}
+                ...
+              </Typography>
+            </Paper>
+          ))
+        )}
+      </Stack>
 
-        <form onSubmit={handleSubmit}>
-          <DialogContent dividers>
-            <Stack spacing={2}>
-              <ResponsiveField
-                label="Assessment Detail"
-                name="assessment"
-                required
-                value={formData.assessment}
-                onChange={handleChange}
-                inputProps={{ "data-cy": "assessment-detail" }}
-              />
-              <ResponsiveField
-                label="Comments"
-                name="comments"
-                required
-                value={formData.comments}
-                onChange={handleChange}
-                inputProps={{ "data-cy": "assessment-comments" }}
-              />
-            </Stack>
-          </DialogContent>
-          <DialogActions sx={{ px: 3, py: 2 }}>
-            <Button onClick={handleClose} color="secondary">
-              Cancel
-            </Button>
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
-          </DialogActions>
-        </form>
+      {/* Modal for full chat view */}
+      <Dialog
+        open={openModal}
+        onClose={handleCloseModal}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Full Chat Summary</DialogTitle>
+        <DialogContent dividers>
+          <Stack spacing={2}>
+            {selectedSummary.split("\n").map((line, index) => (
+              <Box
+                key={index}
+                sx={{
+                  backgroundColor: line.startsWith("Doctor:")
+                    ? "primary.light"
+                    : "grey.300",
+                  color: "black",
+                  p: 1.5,
+                  borderRadius: 2,
+                  maxWidth: "75%",
+                  alignSelf: line.startsWith("Doctor:")
+                    ? "flex-start"
+                    : "flex-end",
+                }}
+              >
+                <Typography variant="body2">{line.trim()}</Typography>
+              </Box>
+            ))}
+          </Stack>
+        </DialogContent>
       </Dialog>
-    </>
+    </Paper>
   );
 };
 
