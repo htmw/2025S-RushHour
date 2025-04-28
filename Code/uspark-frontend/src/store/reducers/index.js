@@ -21,6 +21,9 @@ import doctorAvailabilityReducer from "./doctorAvailabilityReducer";
 import { doctorPatientsReducer } from "./doctorPatientsReducer";
 import chatHistoryReducer from "./chatHistoryReducer"; // Import the chat history reducer
 import assessmentReducer from "./assessmentReducer"; // Import the assessment reducer
+// ⭐️ NEW import for MedSeg
+import { medsegReducer } from "./medsegReducer";
+
 /**
  * Root reducer object containing all application reducers.
  * Used in Redux store configuration.
@@ -53,6 +56,7 @@ export const reducer = {
   makeAppointments: makeAppointmentsReducer,
   doctorAvailability: doctorAvailabilityReducer,
   doctorPatients: doctorPatientsReducer,
+  medseg: medsegReducer,
   chatHistory: chatHistoryReducer,
   assessments: assessmentReducer, // Add the assessment reducer here
 };

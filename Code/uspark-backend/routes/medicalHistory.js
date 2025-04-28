@@ -11,11 +11,10 @@ const authenticate = require("../Middleware/authenticate").default;
 const { AWS_BUCKET_RUSH_HOUR_UPLOADS, FRONTEND_URL } = require("../config.js");
 const { getS3SignedUrl } = require("../Middleware/s3.js");
 const upload = require("../Middleware/upload")(
-    "medical-history",
-    AWS_BUCKET_RUSH_HOUR_UPLOADS
+  "medical-history",
+  AWS_BUCKET_RUSH_HOUR_UPLOADS
 );
 const MedicalHistory = require("../Models/MedicalHistory");
-
 
 /**
  * @swagger
@@ -56,24 +55,30 @@ const MedicalHistory = require("../Models/MedicalHistory");
  *         description: Server Error
  */
 router.post("/", authenticate, async (req, res) => {
-    try {
-        const { healthIssue, dateOfOccurrence, status, treatmentGiven, ...optionalFields } = req.body;
+  try {
+    const {
+      healthIssue,
+      dateOfOccurrence,
+      status,
+      treatmentGiven,
+      ...optionalFields
+    } = req.body;
 
-        const history = new MedicalHistory({
-            userId: req.user.userId,
-            healthIssue,
-            dateOfOccurrence,
-            status,
-            treatmentGiven,
-            ...optionalFields
-        });
+    const history = new MedicalHistory({
+      userId: req.user.userId,
+      healthIssue,
+      dateOfOccurrence,
+      status,
+      treatmentGiven,
+      ...optionalFields,
+    });
 
-        await history.save();
-        res.status(201).json({ message: "Medical history saved", history });
-    } catch (err) {
-        console.error("Error saving medical history:", err);
-        res.status(500).json({ message: "Server Error" });
-    }
+    await history.save();
+    res.status(201).json({ message: "Medical history saved", history });
+  } catch (err) {
+    console.error("Error saving medical history:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
 
 /**
@@ -113,17 +118,18 @@ router.post("/", authenticate, async (req, res) => {
  *         description: No file uploaded
  */
 router.post(
-    "/upload",
-    authenticate,
-    upload.single("medicalReport"),
-    async (req, res) => {
-        if (!req.file) return res.status(400).json({ message: "No file uploaded." });
+  "/upload",
+  authenticate,
+  upload.single("medicalReport"),
+  async (req, res) => {
+    if (!req.file)
+      return res.status(400).json({ message: "No file uploaded." });
 
-        res.status(200).json({
-            message: "File uploaded successfully",
-            fileUrl: req.file.location,
-        });
-    }
+    res.status(200).json({
+      message: "File uploaded successfully",
+      fileUrl: req.file.location,
+    });
+  }
 );
 
 /**
@@ -163,9 +169,9 @@ router.post(
  *         description: No file uploaded
  */
 router.get("/signed-url", authenticate, async (req, res) => {
-    const { key } = req.query;
-    const signedUrl = await getS3SignedUrl(key, AWS_BUCKET_RUSH_HOUR_UPLOADS); // your S3 util function
-    res.json({ url: signedUrl });
+  const { key } = req.query;
+  const signedUrl = await getS3SignedUrl(key, AWS_BUCKET_RUSH_HOUR_UPLOADS); // your S3 util function
+  res.json({ url: signedUrl });
 });
 
 /**
@@ -202,19 +208,19 @@ router.get("/signed-url", authenticate, async (req, res) => {
  *         description: Server Error
  */
 router.get("/", authenticate, async (req, res) => {
-    try {
-        console.log({ userId: req.user.userId });
+  try {
+    console.log({ userId: req.user.userId });
 
-        const histories = await MedicalHistory.find({ userId: req.user.userId })
-            .sort({ dateOfOccurrence: -1 });
-        console.log({ histories });
+    const histories = await MedicalHistory.find({
+      userId: req.user.userId,
+    }).sort({ dateOfOccurrence: -1 });
+    console.log({ histories });
 
-        res.status(200).json(histories);
-    } catch (err) {
-        console.error("Error fetching medical history:", err);
-        res.status(500).json({ message: "Server Error" });
-    }
+    res.status(200).json(histories);
+  } catch (err) {
+    console.error("Error fetching medical history:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
-
 
 module.exports = router;

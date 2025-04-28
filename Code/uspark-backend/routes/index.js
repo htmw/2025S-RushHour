@@ -12,6 +12,7 @@ const profileRoutes = require("./profile");
 const doctorRoutes = require("./doctors");
 const chatHistory = require("./chatHistory");
 const assessmentsRoutes = require("./assessments");
+const medsegRoutes = require("./medseg");
 const router = express.Router();
 
 /**
@@ -44,5 +45,6 @@ router.use("/medical-history", MedicalHistory);
 router.use("/doctors", doctorRoutes);
 router.use("/chathistory", chatHistory);
 router.use("/assessments", assessmentsRoutes);
+router.use("/medseg", medsegRoutes);
 
 module.exports = router;

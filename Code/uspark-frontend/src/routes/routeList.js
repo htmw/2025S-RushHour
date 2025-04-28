@@ -10,7 +10,6 @@
 import { lazy } from "react";
 
 // Public Routes
-/** @constant {React.LazyExoticComponent<React.ComponentType>} */
 const Login = lazy(() => import("../components/public/auth/Login"));
 const ForgotPassword = lazy(() =>
   import("../components/public/auth/ForgotPassword")
@@ -47,13 +46,11 @@ const PatientAssessments = lazy(() =>
   import("../components/private/Assessments/index")
 );
 
-/**
- * List of private routes accessible only to authenticated users.
- *
- * @constant
- * @memberof src.routes.routeList
- * @property {Array<{path: string, component: React.ComponentType, exact: boolean}>}
- */
+// ✅ NEW Import
+const MedsegUpload = lazy(() =>
+  import("../components/private/DoctorPatient/MedsegUpload")
+); // ⭐️ ADDED THIS
+
 export const PrivateRoutes = [
   {
     path: "/",
@@ -75,7 +72,6 @@ export const PrivateRoutes = [
     component: AdminDashboard,
     exact: true,
   },
-
   {
     path: "/profile",
     component: ProfilePage,
@@ -91,7 +87,6 @@ export const PrivateRoutes = [
     component: Appointments,
     exact: true,
   },
-
   {
     path: "/findahosp",
     component: MakeAppointments,
@@ -105,6 +100,11 @@ export const PrivateRoutes = [
   {
     path: "/assessments",
     component: PatientAssessments,
+    exact: true,
+  },
+  {
+    path: "/doctor/medseg-upload",
+    component: MedsegUpload,
     exact: true,
   },
 ];
@@ -154,13 +154,6 @@ export const PublicRoutes = [
   },
 ];
 
-/**
- * Routes used in the navigation header.
- *
- * @constant
- * @memberof src.routes.routeList
- * @property {Array<{path: string, name: string}>}
- */
 export const publicHeaderRouteList = [
   {
     path: "/aboutus",
@@ -172,13 +165,6 @@ export const publicHeaderRouteList = [
   },
 ];
 
-/**
- * Routes used in the navigation header.
- *
- * @constant
- * @memberof src.routes.routeList
- * @property {Array<{path: string, name: string}>}
- */
 export const patientRouteList = [
   {
     path: "/dashboard",
@@ -217,5 +203,10 @@ export const doctorRouteList = [
   {
     path: "/my-patients",
     name: "My Patients",
+  },
+  // ✅ OPTIONAL: Add MedsegUpload to doctor's sidebar
+  {
+    path: "/doctor/medseg-upload",
+    name: "Segmentation",
   },
 ];
