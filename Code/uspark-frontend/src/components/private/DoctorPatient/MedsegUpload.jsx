@@ -1,215 +1,267 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Typography,
+  Grid,
+  CardMedia,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  useTheme,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { useSnackbar } from "notistack";
+import {
+  fetchSegmentations,
+  resegmentImage,
+  deleteSegmentedImage,
+  doctorUpload,
+} from "../../../store/actions";
+import dayjs from "dayjs";
 
-function MedsegUpload() {
+const MedsegUpload = () => {
+  const theme = useTheme();
+  const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
+  const token = useSelector((state) => state.auth.token);
+  const { segmentations, loading } = useSelector((state) => state.medseg);
+
   const [file, setFile] = useState(null);
-  const [email, setEmail] = useState('');
-  const [segmentedImageUrl, setSegmentedImageUrl] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [message, setMessage] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [filterDate, setFilterDate] = useState(""); // State for filtering by date
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!file || !email) {
-      alert('Please fill both fields');
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchSegmentations({ token }));
+    }
+  }, [dispatch, token]);
+
+  const handleUpload = async () => {
+    if (!file) {
+      enqueueSnackbar("Please select a file to upload.", { variant: "error" });
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('patientEmail', email);
+    formData.append("file", file);
 
     try {
-      setLoading(true);
-      setProgress(0);
-      setMessage('');
+      await dispatch(doctorUpload({ formData, token }));
+      enqueueSnackbar("Image uploaded successfully!", { variant: "success" });
 
-      const response = await axios.post('http://localhost:5001/api/medseg/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          setProgress(percentCompleted);
-        }
-      });
-
-      setSegmentedImageUrl(response.data.s3Url);
-      setMessage('Segmentation and Upload Successful!');
+      // Fetch the updated list of segmentations
+      dispatch(fetchSegmentations({ token }));
     } catch (error) {
-      console.error(error);
-      setMessage('Segmentation Failed. Please try again.');
-    } finally {
-      setLoading(false);
+      enqueueSnackbar("Failed to upload the image.", { variant: "error" });
     }
   };
 
+  const handleResegment = (imageUrl) => {
+    dispatch(resegmentImage({ imageUrl, token }));
+    enqueueSnackbar("Image resegmented successfully!", { variant: "success" });
+
+    // Fetch the updated list of segmentations
+    dispatch(fetchSegmentations({ token }));
+  };
+
+  const handleDeleteClick = (url) => {
+    setSelectedImage(url);
+    setOpenDialog(true);
+  };
+
+  const confirmDelete = () => {
+    dispatch(deleteSegmentedImage({ segmentedUrl: selectedImage, token }));
+    setOpenDialog(false);
+    enqueueSnackbar("Image deleted successfully!", { variant: "success" });
+
+    // Fetch the updated list of segmentations
+    dispatch(fetchSegmentations({ token }));
+  };
+
+  // Filter segmentations based on the selected date
+  const filteredSegmentations = segmentations.filter((segmentation) => {
+    if (!filterDate) return true;
+    const uploadedDate = dayjs(segmentation.uploadedAt).format("YYYY-MM-DD");
+    return uploadedDate === filterDate;
+  });
+
   return (
-    <div style={{
-      minHeight: '100vh',
-      padding: '40px 20px',
-      background: '#f5f6fa',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-    }}>
-      
-      {/* Card for Form */}
-      <div style={{
-        background: '#ffffff',
-        borderRadius: '20px',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-        padding: '30px',
-        width: '100%',
-        maxWidth: '600px',
-        marginBottom: '40px'
-      }}>
-        <h2 style={{ textAlign: 'center', fontWeight: '700', fontSize: '26px', marginBottom: '25px', color: '#333' }}>
-          Useg Biomedical Image Segmentation
-        </h2>
+    <Box mt={4} ml={4}>
+      <Typography variant="h5" fontWeight="bold" gutterBottom>
+        Upload and Manage Segmentations
+      </Typography>
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Enter Patient Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '15px',
-              marginBottom: '20px',
-              borderRadius: '10px',
-              fontSize: '16px',
-              border: '1px solid #ccc',
-              background: '#f9f9f9'
-            }}
-            required
-          />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setFile(e.target.files[0])}
-            style={{
-              width: '100%',
-              padding: '15px',
-              marginBottom: '20px',
-              borderRadius: '10px',
-              fontSize: '16px',
-              background: '#f9f9f9',
-              border: '1px solid #ccc'
-            }}
-            required
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '15px',
-              borderRadius: '10px',
-              fontSize: '17px',
-              fontWeight: 'bold',
-              color: 'white',
-              backgroundColor: '#28a745',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'background 0.3s ease'
-            }}
-          >
-            {loading ? 'Uploading...' : 'Segment and Upload'}
-          </button>
-        </form>
+      {/* Upload Section */}
+      <Box mb={4} display="flex" alignItems="center" gap={2}>
+        <input
+          type="file"
+          onChange={(e) => setFile(e.target.files[0])}
+          style={{ display: "none" }}
+          id="upload-input"
+        />
+        <label htmlFor="upload-input">
+          <Button variant="contained" component="span">
+            Choose File
+          </Button>
+        </label>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleUpload}
+          disabled={!file}
+        >
+          Upload
+        </Button>
+      </Box>
 
-        {loading && (
-          <div style={{
-            marginTop: '20px',
-            height: '20px',
-            background: '#ddd',
-            borderRadius: '10px',
-            overflow: 'hidden'
-          }}>
-            <div
-              style={{
-                height: '100%',
-                width: `${progress}%`,
-                backgroundColor: '#28a745',
-                color: 'white',
-                textAlign: 'center',
-                fontSize: '13px',
-                fontWeight: 'bold',
-                lineHeight: '20px',
-                transition: 'width 0.4s'
+      {/* Filter Section */}
+      <Box mb={4} display="flex" alignItems="center" gap={2}>
+        <TextField
+          label="Filter by Date"
+          type="date"
+          InputLabelProps={{ shrink: true }}
+          value={filterDate}
+          onChange={(e) => setFilterDate(e.target.value)}
+          sx={{ width: "250px" }}
+        />
+        <Button
+          variant="outlined"
+          onClick={() => setFilterDate("")}
+          disabled={!filterDate}
+        >
+          Clear Filter
+        </Button>
+      </Box>
+
+      {/* Segmented Images Section */}
+      <Typography variant="h6" gutterBottom>
+        Segmented Images
+      </Typography>
+      {loading ? (
+        <Box display="flex" justifyContent="center" mt={4}>
+          <CircularProgress />
+        </Box>
+      ) : filteredSegmentations.length > 0 ? (
+        <Box>
+          {filteredSegmentations.map((segmentation, idx) => (
+            <Box
+              key={segmentation._id}
+              display="flex"
+              alignItems="center"
+              gap={2}
+              mb={4}
+              mr={4}
+              sx={{
+                position: "relative",
+                backgroundColor: theme.palette.background.default,
+                borderRadius: 2,
+                boxShadow: theme.shadows[3],
+                p: 2,
               }}
             >
-              {progress}%
-            </div>
-          </div>
-        )}
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  mt: 2,
+                  mr: 2,
+                }}
+              >
+                <Typography variant="body2" color="text.secondary">
+                  Uploaded At:{" "}
+                  {dayjs(segmentation.uploadedAt).format("YYYY-MM-DD HH:mm:ss")}
+                </Typography>
+              </Box>
+              {/* Original Image */}
+              <Box>
+                <Typography variant="body2" color="text.secondary">
+                  Original Image
+                </Typography>
+                <CardMedia
+                  component="img"
+                  image={segmentation.originalImage}
+                  alt={`Original ${idx}`}
+                  sx={{
+                    maxHeight: 200,
+                    maxWidth: 400,
+                    objectFit: "contain",
+                    borderRadius: 1,
+                  }}
+                />
+              </Box>
 
-        {message && (
-          <div style={{
-            marginTop: '20px',
-            padding: '15px',
-            borderRadius: '10px',
-            backgroundColor: message.includes('Successful') ? '#d4edda' : '#f8d7da',
-            color: message.includes('Successful') ? '#155724' : '#721c24',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            fontSize: '15px'
-          }}>
-            {message}
-          </div>
-        )}
-      </div>
+              {/* Arrow */}
+              <Typography variant="h6" color="text.secondary">
+                →
+              </Typography>
 
-      {/* Card for Output */}
-      {segmentedImageUrl && (
-        <div style={{
-          background: '#ffffff',
-          borderRadius: '20px',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-          padding: '30px',
-          width: '100%',
-          maxWidth: '800px',
-          textAlign: 'center'
-        }}>
-          <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '20px', color: '#333' }}>
-            Segmented Output
-          </h3>
-          <div style={{
-            background: '#f2f2f2',
-            borderRadius: '12px',
-            padding: '20px',
-            marginBottom: '15px'
-          }}>
-            <img
-              src={segmentedImageUrl}
-              alt="Segmented Result"
-              style={{
-                width: '100%',
-                maxHeight: '500px',
-                objectFit: 'contain',
-                borderRadius: '10px'
-              }}
-            />
-          </div>
-          <a
-            href={segmentedImageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: '#007bff',
-              fontWeight: 'bold',
-              fontSize: '16px',
-              textDecoration: 'underline'
-            }}
-          >
-            View Full Image
-          </a>
-        </div>
+              {/* Segmented Image */}
+              <Box>
+                <Typography variant="body2" color="text.secondary">
+                  Segmented Image
+                </Typography>
+                <CardMedia
+                  component="img"
+                  image={segmentation.segmentedImage}
+                  alt={`Segmented ${idx}`}
+                  sx={{
+                    maxHeight: 200,
+                    maxWidth: 600,
+                    objectFit: "contain",
+                    borderRadius: 1,
+                  }}
+                />
+              </Box>
+
+              {/* Actions */}
+              <Box display="flex" flexDirection="column" gap={1}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => handleResegment(segmentation.originalImage)}
+                >
+                  Resegment
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="error"
+                  onClick={() => handleDeleteClick(segmentation.segmentedImage)}
+                >
+                  Delete
+                </Button>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      ) : (
+        <Typography variant="body1" color="text.secondary" mt={4}>
+          No segmented images found. Upload a file to get started.
+        </Typography>
       )}
 
-    </div>
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this segmented image?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button onClick={confirmDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
-}
+};
 
 export default MedsegUpload;

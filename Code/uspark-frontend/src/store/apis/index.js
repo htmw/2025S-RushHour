@@ -112,7 +112,7 @@ export const uploadDocsApi = (token, formData) =>
     },
   });
 
-  /**
+/**
  * API request to upload an image for biomedical segmentation (MedSeg).
  *
  * @param {FormData} formData - The form data containing patient email and file.
@@ -124,7 +124,6 @@ export const medsegUploadApi = (formData) =>
       "Content-Type": "multipart/form-data",
     },
   });
-
 
 /**
  * API request to onboard a doctor.
@@ -518,3 +517,47 @@ export const deleteAssessmentApi = async (token, id) => {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
+
+/**
+ * API request to upload an image for segmentation or re-segmentation.
+ *
+ * @param {Object} payload - The payload containing image URL or file and patient ID.
+ * @returns {Promise<Object>} Resolves with the S3 upload result URL.
+ */
+export const medsegApi = (payload) =>
+  api.post("/api/medseg/upload", payload, {
+    headers: { "Content-Type": "application/json" },
+  });
+
+export const deleteSegmentedImageApi = (payload, token) =>
+  api.delete("/api/medseg/delete", {
+    data: payload, // Pass segmentedUrl and medicalHistoryId in the payload
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+export const fetchSegmentationsApi = (token) =>
+  api.get("/api/medseg/list", {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+export const resegmentImageApi = (payload) =>
+  api.post("/api/medseg/resegment", payload, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+export const doctorUploadApi = (formData, token) =>
+  api.post("/api/medseg/doctor/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  });

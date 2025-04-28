@@ -91,10 +91,27 @@ export const fetchDoctorPatientDetails = createAsyncActions(
   types.FETCH_DOCTOR_PATIENT_DETAILS
 );
 export const adminDoctor = createAsyncActions(types.ADMIN_DOCTOR_API);
+export const saveChatHistory = createAsyncActions(types.SAVE_CHAT_HISTORY);
+
+export const startChatWithBot = createAsyncActions(types.START_CHAT_WITH_BOT);
+export const sendMessageWithBot = createAsyncActions(
+  types.SEND_MESSAGE_WITH_BOT
+);
+
+export const fetchAssessments = createAsyncActions(types.FETCH_ASSESSMENTS);
+export const deleteAssessment = createAsyncActions(types.DELETE_ASSESSMENT);
 
 // ⭐⭐ NEWLY ADDED ⭐⭐
 export const medsegUpload = createAsyncActions(types.MEDSEG_UPLOAD_API);
 
+export const segmentImage = createAsyncActions(types.SEGMENT_IMAGE);
+
+export const fetchSegmentations = createAsyncActions(types.FETCH_SEGMENTATIONS);
+export const resegmentImage = createAsyncActions(types.RESEGMENT_IMAGE);
+export const doctorUpload = createAsyncActions(types.DOCTOR_UPLOAD);
+export const deleteSegmentedImage = createAsyncActions(
+  types.DELETE_SEGMENTED_IMAGE
+);
 // For non-standard patterns
 export const updateAppointment = (payload) => ({
   type: types.UPDATE_APPOINTMENT,
