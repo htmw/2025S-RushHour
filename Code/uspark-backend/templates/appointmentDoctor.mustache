@@ -6,7 +6,14 @@
     <li><strong>Patient:</strong> {{patientName}}</li>
     <li><strong>Email:</strong> {{patientEmail}}</li>
     <li><strong>Date:</strong> {{date}}</li>
+    <li><strong>Time:</strong> {{startTime}}</li>
     <li><strong>Reason:</strong> {{reason}}</li>
+    {{#platform}}
+    <li><strong>Platform:</strong> {{platform}}</li>
+    {{/platform}}
+    {{#meetingLink}}
+    <li><strong>Meeting Link:</strong> <a href="{{meetingLink}}">Join Meeting</a></li>
+    {{/meetingLink}}
   </ul>
   <p>Please check your dashboard for more info.</p>
   <p>– Rush Hour Health Team</p>

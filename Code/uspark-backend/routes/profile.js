@@ -276,7 +276,8 @@ router.post("/doctor/availability", authenticate, async (req, res) => {
       startTime: slot.startTime,
       endTime: slot.endTime,
       slotDuration: slot.slotDuration,
-      mode: slot.mode || "both", // default to both if not provided
+      mode: slot.mode || "both",
+      platform: slot.platform || "both", // Save platform
     }));
     await doctor.save();
 
@@ -378,6 +379,7 @@ router.put("/doctor/availability/:id", authenticate, async (req, res) => {
     slot.endTime = endTime;
     slot.slotDuration = slotDuration;
     slot.mode = mode || slot.mode; // fallback to previous if mode not passed
+    slot.platform = req.body.platform || slot.platform;
 
     await doctor.save();
 

@@ -7,11 +7,15 @@ const AvailabilitySlotSchema = new mongoose.Schema({
   slotDuration: { type: Number },
   mode: {
     type: String,
-    enum: ['in-person', 'virtual', 'both'],
-    default: 'both',
+    enum: ["in-person", "virtual", "both"],
+    default: "both",
+  },
+  platform: {
+    type: String,
+    enum: ["google-meet", "zoom", "both"],
+    default: "both",
   },
 });
-
 
 const DoctorSchema = new mongoose.Schema(
   {
@@ -27,7 +31,7 @@ const DoctorSchema = new mongoose.Schema(
     verificationStatus: {
       type: String,
       enum: ["pending", "approved", "rejected"],
-      default: "pending"
+      default: "pending",
     },
     verificationDocs: [{ type: String }],
     hospitalName: { type: String },
@@ -37,6 +41,5 @@ const DoctorSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 
 module.exports = mongoose.model("Doctor", DoctorSchema);
