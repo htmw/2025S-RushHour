@@ -7,7 +7,7 @@
  * @memberof store.sagas
  */
 
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest, select } from "redux-saga/effects";
 import {
   FETCH_DOCTOR_PATIENTS,
   FETCH_DOCTOR_PATIENT_DETAILS,
@@ -82,6 +82,10 @@ function* handleSegmentImage(action) {
   try {
     yield put(segmentImage.pending());
     const res = yield call(medsegApi, action.payload);
+    const token = yield select((state) => state.auth?.token);
+    yield put(
+      fetchDoctorPatientDetails({ token, patientId: action.payload.patientId })
+    );
     yield put(segmentImage.success(res.data.s3Url)); // Store segmented image URL
   } catch (err) {
     yield put(segmentImage.error(err.message));
@@ -94,6 +98,9 @@ function* handleDeleteSegmentedImage(action) {
 
     yield put(deleteSegmentedImage.pending());
     yield call(deleteSegmentedImageApi, action.payload, token);
+    yield put(
+      fetchDoctorPatientDetails({ token, patientId: action.payload.patientId })
+    );
     yield put(deleteSegmentedImage.success(action.payload.segmentedUrl));
   } catch (err) {
     yield put(deleteSegmentedImage.error(err.message));

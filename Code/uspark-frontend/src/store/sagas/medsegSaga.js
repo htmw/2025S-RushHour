@@ -42,18 +42,6 @@ function* handleResegmentImage(action) {
   }
 }
 
-function* handleDeleteSegmentedImage(action) {
-  try {
-    const token = yield select((state) => state.auth?.token);
-
-    yield put(deleteSegmentedImage.pending());
-    yield call(deleteSegmentedImageApi, action.payload, token);
-    yield put(deleteSegmentedImage.success(action.payload.segmentedUrl));
-  } catch (err) {
-    yield put(deleteSegmentedImage.error(err.message));
-  }
-}
-
 function* handleDoctorUpload(action) {
   try {
     yield put(doctorUpload.pending());
@@ -73,6 +61,5 @@ function* handleDoctorUpload(action) {
 export default function* watchMedsegSaga() {
   yield takeLatest(FETCH_SEGMENTATIONS, handleFetchSegmentations);
   yield takeLatest(RESEGMENT_IMAGE, handleResegmentImage);
-  yield takeLatest(DELETE_SEGMENTED_IMAGE, handleDeleteSegmentedImage);
   yield takeLatest(DOCTOR_UPLOAD, handleDoctorUpload); // Add doctor upload watcher
 }

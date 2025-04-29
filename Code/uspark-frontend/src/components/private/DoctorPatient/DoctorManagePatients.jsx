@@ -43,8 +43,9 @@ const DoctorManagePatients = () => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
 
-  const { patients, patientDetails, loading, error, segmentedImage } =
-    useSelector((state) => state.doctorPatients);
+  const { patients, patientDetails, loading, error } = useSelector(
+    (state) => state.doctorPatients
+  );
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loadingSegmentation, setLoadingSegmentation] = useState(false);
@@ -70,12 +71,18 @@ const DoctorManagePatients = () => {
     }
   };
 
-  const handleDeleteSegmentedImage = async (segmentedUrl, medicalHistoryId) => {
+  const handleDeleteSegmentedImage = async (
+    segmentedUrl,
+    medicalHistoryId,
+    patientId
+  ) => {
     try {
       // Dispatch an action or make an API call to delete the image
       console.log(`Deleting segmented image: ${segmentedUrl}`);
       // Example API call (replace with actual implementation)
-      dispatch(deleteSegmentedImage({ segmentedUrl, medicalHistoryId }));
+      dispatch(
+        deleteSegmentedImage({ segmentedUrl, medicalHistoryId, patientId })
+      );
     } catch (error) {
       console.error("Failed to delete segmented image:", error);
       alert("Failed to delete the segmented image.");
@@ -280,7 +287,8 @@ const DoctorManagePatients = () => {
                               onClick={() =>
                                 handleDeleteSegmentedImage(
                                   segmentedUrl,
-                                  entry._id
+                                  entry._id,
+                                  patientDetails.user._id
                                 )
                               }
                             >
@@ -290,23 +298,6 @@ const DoctorManagePatients = () => {
                           </Tooltip>
                         </Box>
                       ))}
-
-                      {/* Render new segmented image after segmentation */}
-                      {segmentedImage && (
-                        <Box mt={2}>
-                          <Typography variant="caption" fontWeight="bold">
-                            New Segmented Image:
-                          </Typography>
-                          <img
-                            src={segmentedImage}
-                            alt="New Segmented"
-                            style={{
-                              maxWidth: "100%",
-                              borderRadius: "8px",
-                            }}
-                          />
-                        </Box>
-                      )}
 
                       {/* Show loading spinner during segmentation */}
                       {loadingSegmentation && (
