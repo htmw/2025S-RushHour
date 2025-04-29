@@ -9,10 +9,7 @@
 
 import { lazy } from "react";
 
-
-
 // Public Routes
-/** @constant {React.LazyExoticComponent<React.ComponentType>} */
 const Login = lazy(() => import("../components/public/auth/Login"));
 const ForgotPassword = lazy(() =>
   import("../components/public/auth/ForgotPassword")
@@ -20,7 +17,9 @@ const ForgotPassword = lazy(() =>
 const ResetPassword = lazy(() =>
   import("../components/public/auth/ResetPassword")
 );
-const Appointments = lazy(() => import("../components/private/Dashboard/Appointments"));
+const Appointments = lazy(() =>
+  import("../components/private/Dashboard/Appointments")
+);
 const Signup = lazy(() => import("../components/public/auth/Signup"));
 const PublicAboutUs = lazy(() => import("../components/public/AboutUs"));
 const ContactUs = lazy(() => import("../components/public/ContactUs"));
@@ -36,16 +35,22 @@ const AdminDashboard = lazy(() =>
 const Admin = lazy(() =>
   import("../components/private/Dashboard/AdminDashboard")
 );
-const MakeAppointments = lazy(() => import("../components/private/Dashboard/MakeAppointments"));
-const DoctorManagePatients = lazy(() => import("../components/private/DoctorPatient/DoctorManagePatients"));
+const MakeAppointments = lazy(() =>
+  import("../components/private/Dashboard/MakeAppointments")
+);
+const DoctorManagePatients = lazy(() =>
+  import("../components/private/DoctorPatient/DoctorManagePatients")
+);
 
-/**
- * List of private routes accessible only to authenticated users.
- *
- * @constant
- * @memberof src.routes.routeList
- * @property {Array<{path: string, component: React.ComponentType, exact: boolean}>}
- */
+const PatientAssessments = lazy(() =>
+  import("../components/private/Assessments/index")
+);
+
+// ✅ NEW Import
+const MedsegUpload = lazy(() =>
+  import("../components/private/DoctorPatient/MedsegUpload")
+); // ⭐️ ADDED THIS
+
 export const PrivateRoutes = [
   {
     path: "/",
@@ -67,7 +72,6 @@ export const PrivateRoutes = [
     component: AdminDashboard,
     exact: true,
   },
-
   {
     path: "/profile",
     component: ProfilePage,
@@ -83,7 +87,6 @@ export const PrivateRoutes = [
     component: Appointments,
     exact: true,
   },
-
   {
     path: "/findahosp",
     component: MakeAppointments,
@@ -93,8 +96,17 @@ export const PrivateRoutes = [
     path: "/my-patients",
     component: DoctorManagePatients,
     exact: true,
-
-  }
+  },
+  {
+    path: "/assessments",
+    component: PatientAssessments,
+    exact: true,
+  },
+  {
+    path: "/doctor/medseg-upload",
+    component: MedsegUpload,
+    exact: true,
+  },
 ];
 
 /**
@@ -142,13 +154,6 @@ export const PublicRoutes = [
   },
 ];
 
-/**
- * Routes used in the navigation header.
- *
- * @constant
- * @memberof src.routes.routeList
- * @property {Array<{path: string, name: string}>}
- */
 export const publicHeaderRouteList = [
   {
     path: "/aboutus",
@@ -160,13 +165,6 @@ export const publicHeaderRouteList = [
   },
 ];
 
-/**
- * Routes used in the navigation header.
- *
- * @constant
- * @memberof src.routes.routeList
- * @property {Array<{path: string, name: string}>}
- */
 export const patientRouteList = [
   {
     path: "/dashboard",
@@ -179,6 +177,10 @@ export const patientRouteList = [
   {
     path: "/appointments",
     name: "Appointments",
+  },
+  {
+    path: "/assessments",
+    name: "Assessments",
   },
 ];
 
@@ -201,5 +203,10 @@ export const doctorRouteList = [
   {
     path: "/my-patients",
     name: "My Patients",
+  },
+  // ✅ OPTIONAL: Add MedsegUpload to doctor's sidebar
+  {
+    path: "/doctor/medseg-upload",
+    name: "Segmentation",
   },
 ];

@@ -4,7 +4,14 @@
   <p>Your appointment has been confirmed with Dr. {{doctorName}}.</p>
   <ul>
     <li><strong>Date:</strong> {{date}}</li>
+    <li><strong>Time:</strong> {{startTime}}</li>
     <li><strong>Reason:</strong> {{reason}}</li>
+    {{#platform}}
+    <li><strong>Platform:</strong> {{platform}}</li>
+    {{/platform}}
+    {{#meetingLink}}
+    <li><strong>Meeting Link:</strong> <a href="{{meetingLink}}">Join Meeting</a></li>
+    {{/meetingLink}}
     <li><strong>Hospital:</strong> {{hospitalName}}</li>
     <li><strong>Address:</strong> {{hospitalAddress}}</li>
   </ul>

@@ -4,8 +4,11 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const authRoutes = require("./routes/auth");
-const routes = require("./routes"); // Import the consolidated routes
-const { swaggerUi, swaggerSpec } = require("./swagger"); // Import Swagger setup
+const routes = require("./routes"); // Consolidated routes
+const { swaggerUi, swaggerSpec } = require("./swagger"); // Swagger setup
+
+// ✅ NEW: Import medseg route
+const medsegRoutes = require("./routes/medseg"); // ⭐ ADDED THIS LINE
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -37,6 +40,9 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // ✅ Routes
 app.use("/", authRoutes);
 app.use("/api", routes);
+
+// ✅ NEW: Add medseg route
+app.use("/api", medsegRoutes); // ⭐ ADDED THIS LINE
 
 app.get("/test", (req, res) => {
   res.send("Hello Tester");
