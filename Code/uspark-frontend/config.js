@@ -11,6 +11,7 @@ const config = {
   },
   prod: {
     API_BASE_URL: import.meta.env.VITE_API_BASE_URL_PROD,
+    BASE: "PROD",
   },
 };
 console.log(config[ENV]);

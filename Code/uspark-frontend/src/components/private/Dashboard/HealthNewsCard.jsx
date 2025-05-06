@@ -84,6 +84,7 @@ const HealthNewsCard = () => {
 
   const currentArticle = articles[currentIndex];
   const BASE = config?.BASE;
+  console.log("BASE", BASE);
   if (BASE === "STAGE") {
     return null;
   }
