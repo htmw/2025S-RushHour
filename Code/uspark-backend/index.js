@@ -41,9 +41,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/", authRoutes);
 app.use("/api", routes);
 
-// ✅ NEW: Add medseg route
-app.use("/api", medsegRoutes); // ⭐ ADDED THIS LINE
-
 app.get("/test", (req, res) => {
   res.send("Hello Tester");
 });
