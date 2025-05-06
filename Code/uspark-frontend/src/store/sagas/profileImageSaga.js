@@ -1,6 +1,11 @@
 import { call, put, select, takeLatest, all } from "redux-saga/effects";
 import { uploadProfileImageApi, fetchProfileImageApi } from "../apis";
-import { uploadProfileImage, fetchProfileImage, login } from "../actions";
+import {
+  uploadProfileImage,
+  fetchProfileImage,
+  login,
+  fetchDashboard,
+} from "../actions";
 import { UPLOAD_PROFILE_IMAGE, FETCH_PROFILE_IMAGE } from "../actions/types";
 
 /**
@@ -22,6 +27,7 @@ function* uploadProfileImageSaga(action) {
 
     yield put(uploadProfileImage.success(response.data.imageUrl));
     yield put(login.success({ image: response.data.imageUrl }));
+    yield put(fetchDashboard({ token }));
   } catch (error) {
     yield put(uploadProfileImage.error(error.message));
   }

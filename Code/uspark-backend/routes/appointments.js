@@ -91,19 +91,14 @@ router.post("/", authenticate, async (req, res) => {
         .json({ message: "This time slot is already booked." });
     }
 
-    let meetingLink = null;
-
-    // Schedule a virtual meeting if the mode is virtual
-    if (platform === "google-meet") {
-      meetingLink = await scheduleGoogleMeet({
-        date,
-        startTime,
-        patientName: user.fullName,
-        doctorName: doctor.userId.fullName,
-        patientEmail: user.email,
-        doctorEmail: doctor.userId.email,
-      });
-    }
+    let meetingLink = await scheduleGoogleMeet({
+      date,
+      startTime,
+      patientName: user.fullName,
+      doctorName: doctor.userId.fullName,
+      patientEmail: user.email,
+      doctorEmail: doctor.userId.email,
+    });
 
     const newAppointment = new Appointment({
       doctor: doctorId,
@@ -292,6 +287,14 @@ router.put("/:id", authenticate, async (req, res) => {
 
     const doctorUser = updatedAppointment.doctor.userId;
 
+    let meetingLink = await scheduleGoogleMeet({
+      date,
+      startTime,
+      patientName: user.fullName,
+      doctorName: doctorUser.fullName,
+      patientEmail: user.email,
+      doctorEmail: doctorUser.email,
+    });
     // Send updated confirmation emails
     await sendEmail(
       doctorUser.email,
@@ -304,6 +307,7 @@ router.put("/:id", authenticate, async (req, res) => {
         date: appointment.date,
         startTime: appointment.startTime,
         reason: appointment.reason,
+        meetingLink,
       }
     );
 
@@ -319,6 +323,7 @@ router.put("/:id", authenticate, async (req, res) => {
         reason: appointment.reason,
         hospitalName: updatedAppointment.doctor.hospitalName,
         hospitalAddress: updatedAppointment.doctor.hospitalAddress,
+        meetingLink,
       }
     );
 

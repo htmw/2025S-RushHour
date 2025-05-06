@@ -38,7 +38,7 @@ const InitialAssessmentCard = ({ openChat }) => {
 
   useEffect(() => {
     // Fetch assessments if not already present
-    if (!assessments || assessments.length === 0) {
+    if (!assessments) {
       dispatch(fetchAssessments());
     }
   }, [dispatch, assessments]);

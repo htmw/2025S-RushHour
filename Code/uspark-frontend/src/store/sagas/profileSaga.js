@@ -9,23 +9,24 @@
 
 import { call, put, takeLatest, select } from "redux-saga/effects";
 import {
-    fetchHospitals,
-    fetchInsurance,
-    fetchMedicalHistory,
-    fetchProfile,
-    fetchProfileImage,
-    updateDoctorProfile,
-    updatePatientProfile,
+  fetchHospitals,
+  fetchInsurance,
+  fetchMedicalHistory,
+  fetchProfile,
+  fetchProfileImage,
+  updateDoctorProfile,
+  updatePatientProfile,
+  fetchDashboard,
 } from "../actions";
 import {
-    FETCH_PROFILE,
-    UPDATE_DOCTOR_PROFILE,
-    UPDATE_PATIENT_PROFILE,
+  FETCH_PROFILE,
+  UPDATE_DOCTOR_PROFILE,
+  UPDATE_PATIENT_PROFILE,
 } from "../actions/types";
 import {
-    fetchProfileApi,
-    updateDoctorProfileApi,
-    updatePatientProfileApi,
+  fetchProfileApi,
+  updateDoctorProfileApi,
+  updatePatientProfileApi,
 } from "../apis";
 import { enqueueSnackbar } from "notistack";
 
@@ -41,27 +42,28 @@ import { enqueueSnackbar } from "notistack";
  * @yields {Generator} Saga effects for API call and state updates.
  */
 function* handleFetchProfile(action) {
-    try {
-        const role = yield select((state) => state.profile?.userData?.role);
+  try {
+    const role = yield select(
+      (state) => state.auth.role || state.profile?.userData?.role
+    );
 
+    const { token, fromProfilePage } = action.payload;
+    yield put(fetchProfile.pending());
 
-        const { token, fromProfilePage } = action.payload
-        yield put(fetchProfile.pending());
-
-        const response = yield call(fetchProfileApi, token);
-        yield put(fetchProfile.success(response.data));
-        if (fromProfilePage) {
-            yield put(fetchProfileImage())
-            if (role === "patient") {
-                yield put(fetchMedicalHistory())
-                yield put(fetchInsurance())
-            }
-        }
-
-    } catch (error) {
-        const errorMsg = error.response?.data?.message || "Failed to fetch data";
-        yield put(fetchProfile.error(errorMsg));
+    const response = yield call(fetchProfileApi, token);
+    yield put(fetchProfile.success(response.data));
+    if (fromProfilePage) {
+      yield put(fetchProfileImage());
+      if (role === "patient") {
+        yield put(fetchMedicalHistory());
+        yield put(fetchInsurance());
+      }
     }
+    yield put(fetchDashboard({ token }));
+  } catch (error) {
+    const errorMsg = error.response?.data?.message || "Failed to fetch data";
+    yield put(fetchProfile.error(errorMsg));
+  }
 }
 
 /**
@@ -79,17 +81,19 @@ function* handleFetchProfile(action) {
  */
 
 function* handleUpdatePatientProfile(action) {
-    try {
-        yield put(updatePatientProfile.pending());
+  try {
+    yield put(updatePatientProfile.pending());
 
-        const { token, ...profileData } = action.payload;
-        const response = yield call(updatePatientProfileApi, token, profileData);
+    const { token, ...profileData } = action.payload;
+    const response = yield call(updatePatientProfileApi, token, profileData);
 
-        yield put(updatePatientProfile.success(response.data.patient));
-        enqueueSnackbar("Patient profile updated!", { variant: "success" });
-    } catch (error) {
-        yield put(updatePatientProfile.error(error.message));
-    }
+    yield put(updatePatientProfile.success(response.data.patient));
+    yield put(fetchDashboard({ token }));
+
+    enqueueSnackbar("Patient profile updated!", { variant: "success" });
+  } catch (error) {
+    yield put(updatePatientProfile.error(error.message));
+  }
 }
 
 /**
@@ -105,20 +109,22 @@ function* handleUpdatePatientProfile(action) {
  */
 
 function* handleUpdateDoctorProfile(action) {
-    try {
-        const token = yield select((state) => state.auth.token);
+  try {
+    const token = yield select((state) => state.auth.token);
 
-        yield put(updateDoctorProfile.pending());
-        const response = yield call(updateDoctorProfileApi, token, action.payload);
+    yield put(updateDoctorProfile.pending());
+    const response = yield call(updateDoctorProfileApi, token, action.payload);
 
-        yield put(updateDoctorProfile.success(response.data));
-        enqueueSnackbar("Doctor profile updated!", { variant: "success" });
-    } catch (error) {
-        console.log({ error });
+    yield put(updateDoctorProfile.success(response.data));
+    yield put(fetchDashboard({ token }));
 
-        enqueueSnackbar("Failed to update doctor profile", { variant: "error" });
-        yield put(updateDoctorProfile.error(error.message));
-    }
+    enqueueSnackbar("Doctor profile updated!", { variant: "success" });
+  } catch (error) {
+    console.log({ error });
+
+    enqueueSnackbar("Failed to update doctor profile", { variant: "error" });
+    yield put(updateDoctorProfile.error(error.message));
+  }
 }
 
 /**
@@ -131,7 +137,7 @@ function* handleUpdateDoctorProfile(action) {
  * @yields {Generator} Watches for FETCH_PROFILE actions.
  */
 export default function* watchProfileSaga() {
-    yield takeLatest(FETCH_PROFILE, handleFetchProfile);
-    yield takeLatest(UPDATE_PATIENT_PROFILE, handleUpdatePatientProfile);
-    yield takeLatest(UPDATE_DOCTOR_PROFILE, handleUpdateDoctorProfile);
+  yield takeLatest(FETCH_PROFILE, handleFetchProfile);
+  yield takeLatest(UPDATE_PATIENT_PROFILE, handleUpdatePatientProfile);
+  yield takeLatest(UPDATE_DOCTOR_PROFILE, handleUpdateDoctorProfile);
 }

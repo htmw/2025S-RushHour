@@ -6,6 +6,7 @@ import {
 } from "../apis";
 import {
   saveChatHistory,
+  fetchAssessments,
   startChatWithBot,
   sendMessageWithBot,
 } from "../actions";
@@ -28,6 +29,7 @@ function* saveChatHistorySaga(action) {
       }
     );
     yield put(saveChatHistory.success(response.data));
+    yield put(fetchAssessments());
   } catch (error) {
     yield put(saveChatHistory.error(error.message));
   }

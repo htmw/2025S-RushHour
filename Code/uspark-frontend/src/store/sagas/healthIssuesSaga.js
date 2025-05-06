@@ -1,6 +1,6 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import { FETCH_HEALTH_ISSUES, ADD_HEALTH_ISSUE } from "../actions/types";
-import { fetchHealthIssues, addHealthIssue } from "../actions";
+import { fetchHealthIssues, addHealthIssue, fetchDashboard } from "../actions";
 import { addHealthIssuesApi, fetchHealthIssuesApi } from "../apis";
 
 /**
@@ -40,6 +40,7 @@ function* addHealthIssueSaga(action) {
     const { health_issue, token } = action.payload;
     const response = yield call(addHealthIssuesApi, { health_issue }, token);
     yield put(addHealthIssue.success(response.data));
+    yield put(fetchDashboard({ token }));
   } catch (error) {
     yield put(
       addHealthIssue.error(

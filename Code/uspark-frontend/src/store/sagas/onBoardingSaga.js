@@ -8,11 +8,25 @@
  */
 
 import { call, put, takeLatest } from "redux-saga/effects";
-import { doctorOnboarding, fetchDashboard, login, patientOnboarding, uploadVerificationDocs } from "../actions";
+import {
+  doctorOnboarding,
+  fetchDashboard,
+  login,
+  patientOnboarding,
+  uploadVerificationDocs,
+} from "../actions";
 import { enqueueSnackbar } from "notistack";
-import { DOCTOR_ONBOARDING, PATIENT_ONBOARDING, UPLOAD_VERIFICATION_DOCS } from "../actions/types";
+import {
+  DOCTOR_ONBOARDING,
+  PATIENT_ONBOARDING,
+  UPLOAD_VERIFICATION_DOCS,
+} from "../actions/types";
 import history from "../../history";
-import { doctorOnboardingApi, patientOnboardingApi, uploadDocsApi } from "../apis";
+import {
+  doctorOnboardingApi,
+  patientOnboardingApi,
+  uploadDocsApi,
+} from "../apis";
 
 /**
  * Worker saga: Handles doctor onboarding.
@@ -43,6 +57,8 @@ function* handleDoctorOnboarding(action) {
         isOnboarded: true,
       })
     );
+    yield put(fetchDashboard({ token }));
+
     history.push("/dashboard");
   } catch (error) {
     const errorMsg = error.response?.data?.message || "Onboarding Failed";
@@ -80,7 +96,7 @@ function* handlePatientOnboarding(action) {
       })
     );
     enqueueSnackbar("Patient Onboarding Completed!", { variant: "success" });
-
+    yield put(fetchDashboard({ token }));
     history.push("/dashboard");
   } catch (error) {
     const errorMsg = error.response?.data?.message || "Onboarding Failed";
@@ -128,5 +144,4 @@ export default function* watchOnBoardingSaga() {
   yield takeLatest(PATIENT_ONBOARDING, handlePatientOnboarding);
   yield takeLatest(DOCTOR_ONBOARDING, handleDoctorOnboarding);
   yield takeLatest(UPLOAD_VERIFICATION_DOCS, handleUploadVerificationDocs);
-
 }
