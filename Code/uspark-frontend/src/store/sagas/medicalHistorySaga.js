@@ -8,8 +8,15 @@
  */
 
 import { call, put, takeLatest, select } from "redux-saga/effects";
-import { CREATE_MEDICAL_HISTORY, FETCH_MEDICAL_HISTORY } from "../actions/types";
-import { createMedicalHistory, fetchMedicalHistory } from "../actions";
+import {
+  CREATE_MEDICAL_HISTORY,
+  FETCH_MEDICAL_HISTORY,
+} from "../actions/types";
+import {
+  createMedicalHistory,
+  fetchMedicalHistory,
+  fetchDashboard,
+} from "../actions";
 import { createMedicalHistoryApi, fetchMedicalHistoryApi } from "../apis";
 import { enqueueSnackbar } from "notistack";
 
@@ -31,8 +38,10 @@ function* handleCreateMedicalHistory(action) {
     yield put(createMedicalHistory.success());
     enqueueSnackbar("Medical history saved!", { variant: "success" });
     yield put(fetchMedicalHistory());
+    yield put(fetchDashboard({ token }));
   } catch (error) {
-    const msg = error.response?.data?.message || "Failed to save medical history";
+    const msg =
+      error.response?.data?.message || "Failed to save medical history";
     yield put(createMedicalHistory.error(msg));
     enqueueSnackbar(msg, { variant: "error" });
   }
@@ -53,7 +62,8 @@ function* handleFetchMedicalHistory() {
     const response = yield call(fetchMedicalHistoryApi, token);
     yield put(fetchMedicalHistory.success(response.data));
   } catch (error) {
-    const message = error.response?.data?.message || "Failed to fetch medical history";
+    const message =
+      error.response?.data?.message || "Failed to fetch medical history";
     yield put(fetchMedicalHistory.error(message));
   }
 }

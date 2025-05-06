@@ -18,6 +18,7 @@ import {
   fetchDoctorAvailability,
   saveDoctorAvailability,
   updateDoctorAvailability,
+  fetchDashboard,
 } from "../actions";
 
 import {
@@ -40,7 +41,10 @@ function* fetchDoctorAvailabilitySaga({ payload, meta }) {
     yield put(fetchDoctorAvailability.pending(meta?.navigate));
     const response = yield call(fetchDoctorAvailabilityApi, payload);
     yield put(
-      fetchDoctorAvailability.success(response.data.availability, meta?.navigate)
+      fetchDoctorAvailability.success(
+        response.data.availability,
+        meta?.navigate
+      )
     );
   } catch (error) {
     yield put(fetchDoctorAvailability.error(error.message, meta?.navigate));
@@ -66,6 +70,7 @@ function* saveDoctorAvailabilitySaga({ payload, meta }) {
     yield put(
       saveDoctorAvailability.success(response.data.availability, meta?.navigate)
     );
+    yield put(fetchDashboard({ token }));
   } catch (error) {
     yield put(saveDoctorAvailability.error(error.message, meta?.navigate));
   }
@@ -88,9 +93,14 @@ function* updateDoctorAvailabilitySaga({ payload, meta }) {
     const { token, slot } = payload;
     const response = yield call(updateDoctorAvailabilityApi, token, slot);
     yield put(
-      updateDoctorAvailability.success(response.data.availability, meta?.navigate)
+      updateDoctorAvailability.success(
+        response.data.availability,
+        meta?.navigate
+      )
     );
+
     yield put(fetchDoctorAvailability(token)); // Refresh after update
+    yield put(fetchDashboard({ token }));
   } catch (error) {
     yield put(updateDoctorAvailability.error(error.message, meta?.navigate));
   }

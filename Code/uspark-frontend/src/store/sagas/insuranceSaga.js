@@ -1,6 +1,6 @@
 import { call, put, takeLatest, select } from "redux-saga/effects";
 import { CREATE_INSURANCE, FETCH_INSURANCE } from "../actions/types";
-import { createInsurance, fetchInsurance } from "../actions";
+import { createInsurance, fetchInsurance, fetchDashboard } from "../actions";
 import { createInsuranceApi, fetchInsuranceApi } from "../apis";
 import { enqueueSnackbar } from "notistack";
 
@@ -19,6 +19,8 @@ function* handleCreateInsurance(action) {
     const token = yield select((state) => state.auth?.token);
     yield call(createInsuranceApi, action.payload, token);
     yield put(createInsurance.success());
+    yield put(fetchDashboard({ token }));
+
     enqueueSnackbar("Insurance details created!", { variant: "success" });
   } catch (error) {
     const message = error.response?.data?.message || "Create insurance failed";
