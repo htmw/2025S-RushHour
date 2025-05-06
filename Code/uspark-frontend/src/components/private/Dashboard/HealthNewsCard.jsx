@@ -26,7 +26,7 @@ import {
   Container,
 } from "@mui/material";
 import axios from "axios";
-
+import config from "../../../../config";
 /**
  * HealthNewsCard Component
  *
@@ -83,7 +83,10 @@ const HealthNewsCard = () => {
   }
 
   const currentArticle = articles[currentIndex];
-
+  const BASE = config?.BASE;
+  if (BASE === "STAGE") {
+    return null;
+  }
   return (
     <Container
       component={Paper}
